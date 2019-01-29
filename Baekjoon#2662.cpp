@@ -22,9 +22,9 @@ private:
 	vector<int> *CI;				//투자 검토과정 저장
 	const int TotalMoney;			
 	const int TargetCompany;
-	vector<pair<int, int>> Investment;			//투자를 결정한 기업과 해당기업에 대한 투자금 목록 pair로 저장
+	vector<pair<int, int>> Investment;				//투자를 결정한 기업과 해당기업에 대한 투자금 목록 pair로 저장
 	int Revenue;									//최상의 시나리오에서 얻게되는 이득
-	int Index, Profit1, Profit2;				//인풋값 읽어올 때 사용할 변수
+	int Index, Profit1, Profit2;					//인풋값 읽어올 때 사용할 변수
 public:
 	static const int MAX_MONEY = 301;
 	static const int MAX_COMPANY = 21;
@@ -56,13 +56,18 @@ public:
 	}
 	void Analysis()
 	{
-		for (int row = 1; row <= TotalMoney; ++row)
+		for (int i = 0; i < TargetCompany; ++i)
 		{
-			for (int column = 1; column <= TargetCompany; ++column)
+			CI[TotalMoney].push_back(Information[TotalMoney][i]);
+		}
+
+		for (int row = 1; row < TotalMoney; ++row)
+		{
+			for (int column = 0; column < TargetCompany; ++column)
 			{
-				for (int a = 1; (a + row) <= TotalMoney; ++a)
+				for (int a = 1; a <= TotalMoney-row; ++a)
 				{
-					for (int b = 2; (b + column) <= TargetCompany; ++b)
+					for (int b = 1; b < TargetCompany-column; ++b)
 					{
 						if (CI[row][column] < Information[row][column] + Information[a][b])
 						{
@@ -72,7 +77,7 @@ public:
 							if (!Investment.empty())							//CI값이 갱신되면 Investment(map)에 저장된 내용을 지우고
 								Investment.clear();
 
-							Investment.push_back(pair<int, int>(column, row));		//갱신된 내용을 저장
+							Investment.push_back(pair<int, int>(column+1, row));		//갱신된 내용을 저장
 							Investment.push_back(pair<int, int>(b, a));
 						}
 					}
@@ -123,3 +128,31 @@ public:
 		}
 	}
 };
+
+int main(void)
+{
+	int Money = 0;
+	int Company = 0;
+	clock_t timer_start, timer_end;
+	double timer;
+
+	timer_start = clock();
+
+	ifstream in("testcase_BAEKJOON#2662.txt");
+	if (!in.is_open())
+		cout << "파일을 찾을 수 없습니다." << endl;
+
+	in >> Money >> Company;
+	CompanyInvestment ci(Money, Company);
+
+	ci.Research(in);
+
+	ci.Analysis();
+
+	timer_end = clock();
+	timer = (double)(timer_end - timer_start);
+	cout << "Execution Time : " << timer << "ms" << endl;
+
+	in.close();
+	return 0;
+}
