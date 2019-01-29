@@ -39,6 +39,10 @@ public:
 			CI[init].clear();
 		}
 		Investment.clear();
+		for (int init = 0; init < _TotalMoney; ++init)		//CI 0으로 초기화하는데, CI[최대금액] 은 어짜피 정해져있으므로 나중에 특정 값 push_back 할 것임
+		{
+			CI[init].resize(_TargetCompany, 0);
+		}
 	}
 	~CompanyInvestment()
 	{
@@ -58,7 +62,7 @@ public:
 	{
 		for (int i = 0; i < TargetCompany; ++i)
 		{
-			CI[TotalMoney].push_back(Information[TotalMoney][i]);
+			CI[TotalMoney].push_back(Information[TotalMoney][i]);		//CI[최대금액] 은 어짜피 정해져있으므로
 		}
 
 		for (int row = 1; row < TotalMoney; ++row)
@@ -67,18 +71,21 @@ public:
 			{
 				for (int a = 1; a <= TotalMoney-row; ++a)
 				{
-					for (int b = 1; b < TargetCompany-column; ++b)
+					for (int b = 0; b < TargetCompany; ++b)
 					{
-						if (CI[row][column] < Information[row][column] + Information[a][b])
+						if (column != b)
 						{
-							CI[row].erase(CI[row].begin() + column);
-							CI[row].insert(CI[row].begin() + column, Information[row][column] + Information[a][b]);
+							if (CI[row][column] < Information[row][column] + Information[a][b])
+							{
+								CI[row].erase(CI[row].begin() + column);
+								CI[row].insert(CI[row].begin() + column, Information[row][column] + Information[a][b]);
 
-							if (!Investment.empty())							//CI값이 갱신되면 Investment(map)에 저장된 내용을 지우고
-								Investment.clear();
+								if (!Investment.empty())							//CI값이 갱신되면 Investment(map)에 저장된 내용을 지우고
+									Investment.clear();
 
-							Investment.push_back(pair<int, int>(column+1, row));		//갱신된 내용을 저장
-							Investment.push_back(pair<int, int>(b, a));
+								Investment.push_back(pair<int, int>(column + 1, row));		//갱신된 내용을 저장
+								Investment.push_back(pair<int, int>(b + 1, a));
+							}
 						}
 					}
 				}
@@ -101,7 +108,7 @@ public:
 	void PrintReport() const
 	{
 		cout << "[Research Report]" << endl<<endl;
-		cout << "(Investment Money \ Target Company)" << endl;
+		cout << "(Investment Money \\ Target Company)" << endl;
 		for (int r = 1; r <= TotalMoney; ++r)
 		{
 			for (int c = 1; c <= TargetCompany; ++c)
