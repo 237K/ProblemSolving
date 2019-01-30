@@ -63,8 +63,8 @@ public:
 		for (int i = 0; i < TargetCompany; ++i)
 		{
 			CI[TotalMoney].push_back(Information[TotalMoney][i]);		//CI[최대금액] 은 어짜피 정해져있으므로
+			Investment.push_back(pair<int, int>(i+1, Information[TotalMoney][i]));
 		}
-
 		for (int row = 1; row < TotalMoney; ++row)
 		{
 			for (int column = 0; column < TargetCompany; ++column)
@@ -80,11 +80,15 @@ public:
 								CI[row].erase(CI[row].begin() + column);
 								CI[row].insert(CI[row].begin() + column, Information[row][column] + Information[a][b]);
 
-								if (!Investment.empty())							//CI값이 갱신되면 Investment(map)에 저장된 내용을 지우고
+								if (Information[TotalMoney][0] < Information[row][column] + Information[a][b] && Information[TotalMoney][1] < Information[row][column] + Information[a][b])							//CI값이 갱신되면 Investment(map)에 저장된 내용을 지우고
+								{
 									Investment.clear();
+									Investment.insert(Investment.begin(), pair<int, int>(column + 1, row));		//갱신된 내용을 저장
+									Investment.insert(Investment.begin() + 1, pair<int, int>(b + 1, a));
 
-								Investment.push_back(pair<int, int>(column + 1, row));		//갱신된 내용을 저장
-								Investment.push_back(pair<int, int>(b + 1, a));
+									Revenue = Information[row][column] + Information[a][b];
+								}
+								else Revenue = max(Investment[0].second, Investment[1].second);
 							}
 						}
 					}
@@ -92,16 +96,6 @@ public:
 			}
 		}
 		PrintReport();
-
-		for (int row = 1; row <= TotalMoney; ++row)
-		{
-			sort(CI[row].begin(), CI[row].end());
-		}
-		for (int row = 1; row < TotalMoney; ++row)
-		{
-			Revenue = max(CI[row][TargetCompany], CI[row][TargetCompany + 1]);
-		}
-
 		cout << "Your Revenue : " << Revenue << endl << endl;
 
 	}
@@ -111,9 +105,9 @@ public:
 		cout << "(Investment Money \\ Target Company)" << endl;
 		for (int r = 1; r <= TotalMoney; ++r)
 		{
-			for (int c = 1; c <= TargetCompany; ++c)
+			for (int c = 0; c < TargetCompany; ++c)
 			{
-				cout << r << ' ' << Information[r][c] << ' ';
+				cout << Information[r][c] << ' ';
 			}
 			cout << endl << endl;
 		}
@@ -121,14 +115,14 @@ public:
 		cout << "[Analysis Report]" << endl << endl;
 		for (int r = 1; r <= TotalMoney; ++r)
 		{
-			for (int c = 1; c <= TargetCompany; ++c)
+			for (int c = 0; c < TargetCompany; ++c)
 			{
-				cout << r << ' ' << CI[r][c] << ' ';
+				cout << CI[r][c] << ' ';
 			}
 			cout << endl << endl;
 		}
 		cout << "[Proposal]" << endl;
-		cout << "[Buy]" << endl;
+		cout << "[Strong Buy]" << endl;
 		for (vector<pair<int, int>>::size_type i = 0 ; i < Investment.size() ; ++i)
 		{
 			cout <<i+1<< ") Company : " << Investment[i].first << "/ Investment : " << Investment[i].second << endl;
