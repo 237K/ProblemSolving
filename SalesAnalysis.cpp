@@ -14,11 +14,10 @@
 #include <vector>
 using namespace std;
 
-const static int MAX_TESTCASE = 100;
-const static int MAX_SALES = 5000;
-
 int main(void)
 {
+	const int MAX_TESTCASE = 100;
+	const int MAX_SALES = 5000;
 	int testcase = 0, day = 0;
 	int sales = 0;
 	int count;
