@@ -3,7 +3,7 @@
 //	2019.01.30
 //
 //	[Algorithm Problem Solving]
-//		<Algorithm Category : Simple Imprementation>
+//		<Algorithm Category : Simple Implementation>
 //
 //	'매출 분석'
 //	N일의 매출 리포트가 주어졌을 때, 이전 날 이상의 매출 일수를 뽑은 리스트의 합을 구하라
