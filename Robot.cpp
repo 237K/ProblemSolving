@@ -77,6 +77,40 @@ public:
 			}
 		}
 	}
+	bool CanGo(PII _locate, Direction _direct)
+	{
+		switch (_direct)
+		{
+		case North:
+			if (Map[_locate.first][_locate.second + 1].first == 0 && Map[_locate.first][_locate.second + 1].second == false)
+				return true;
+			else
+				return false;
+			break;
+		case East:
+			if (Map[_locate.first + 1][_locate.second].first == 0 && Map[_locate.first + 1][_locate.second].second == false)
+				return true;
+			else
+				return false;
+			break;
+		case South:
+			if (Map[_locate.first][_locate.second - 1].first == 0 && Map[_locate.first][_locate.second - 1].second == false)
+				return true;
+			else
+				return false;
+			break;
+		case West:
+			if (Map[_locate.first - 1][_locate.second].first == 0 Map[_locate.first - 1][_locate.second].second == false)
+				return true;
+			else
+				return false;
+			break;
+		}
+	}
+	void RouteCheck(PII _locate)
+	{
+		Map[_locate.first][_locate.second] = true;
+	}
 	void PrintMap() const
 	{
 		for (int row = 1; row <= Row; ++row)
@@ -108,6 +142,7 @@ public:
 	MouseBot(const int N, const int M, const int R, const int C, const int D) : Bot(N, M), Locate(PII(R, C))
 	{
 		Direct = (Direction)D;
+		Bot::RouteCheck(Locate);
 	}
 	MouseBot() : Bot(), Locate(PII(0, 0))
 	{
@@ -128,16 +163,34 @@ public:
 			switch (Direct)
 			{
 			case North:
-				Locate.second += 1;
+				if (Bot::CanGo(Locate, Direct))
+				{
+					Locate.second += 1;
+					Bot::RouteCheck(Locate);
+				}
+				else
+
 				break;
 			case East:
-				Locate.first += 1;
+				if (Bot::CanGo(Locate, Direct))
+				{
+					Locate.first += 1;
+					Bot::RouteCheck(Locate);
+				}
 				break;
 			case South:
-				Locate.second -= 1;
+				if (Bot::CanGo(Locate, Direct))
+				{
+					Locate.second -= 1;
+					Bot::RouteCheck(Locate);
+				}
 				break;
 			case West:
-				Locate.first -= 1;
+				if (Bot::CanGo(Locate, Direct))
+				{
+					Locate.first -= 1;
+					Bot::RouteCheck(Locate);
+				}
 				break;
 			}
 	}
