@@ -3,7 +3,7 @@
 //	2019.01.30
 //
 //	[Algorithm Problem Solving]
-//		<Algorithm Category : Simple Imprementation>
+//		<Algorithm Category : Simple Implementation>
 //
 //	'°¶·¯±× Á¡¼ö'
 //	
