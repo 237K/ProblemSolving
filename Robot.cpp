@@ -3,7 +3,7 @@
 //	2019.01.31
 //
 //	[Algorithm Problem Solving]
-//		<Algorithm Category : Simple Imprementation>
+//		<Algorithm Category : DP>
 //
 //	'로봇 쥐'
 //	
@@ -15,11 +15,12 @@ using namespace std;
 enum Direction { North = 0, East = 1, South = 2, West = 3 };
 typedef pair<int, bool> PIB;
 typedef pair<int, int> PII;
+static int BlockCounter;
 
 class Bot
 {
 private:
-	PIB** Map;
+	PIB** Map;			//좌표가 막혀있는지 열려있는지에 대한 int 정보와 봇이 방문한 적 있는지에 대한 bool 정보 저장
 	int Row;
 	int Column;
 	int Wall;			//구역이 막혀있는지 비어있는지에 대한 값을 입력받기 위한 변수
@@ -77,39 +78,69 @@ public:
 			}
 		}
 	}
-	bool CanGo(PII _locate, Direction _direct)
+	bool CanGo(PII _locate, Direction _direct)			//더 갈 수 있는지 확인하는 함수
 	{
 		switch (_direct)
 		{
 		case North:
-			if (Map[_locate.first][_locate.second + 1].first == 0 && Map[_locate.first][_locate.second + 1].second == false)
+			if (Map[_locate.first - 1][_locate.second].first == 0 && Map[_locate.first - 1][_locate.second].second == false)
 				return true;
 			else
 				return false;
 			break;
 		case East:
-			if (Map[_locate.first + 1][_locate.second].first == 0 && Map[_locate.first + 1][_locate.second].second == false)
+			if (Map[_locate.first][_locate.second + 1].first == 0 && Map[_locate.first][_locate.second + 1].second == false)
 				return true;
 			else
 				return false;
 			break;
 		case South:
-			if (Map[_locate.first][_locate.second - 1].first == 0 && Map[_locate.first][_locate.second - 1].second == false)
+			if (Map[_locate.first+1][_locate.second].first == 0 && Map[_locate.first+1][_locate.second].second == false)
 				return true;
 			else
 				return false;
 			break;
 		case West:
-			if (Map[_locate.first - 1][_locate.second].first == 0 Map[_locate.first - 1][_locate.second].second == false)
+			if (Map[_locate.first][_locate.second - 1].first == 0 && Map[_locate.first][_locate.second - 1].second == false)
 				return true;
 			else
 				return false;
 			break;
 		}
 	}
-	void RouteCheck(PII _locate)
+	bool IsTheEnd(PII _locate, Direction _direct)
 	{
-		Map[_locate.first][_locate.second] = true;
+		switch (_direct)
+		{
+		case North:
+			if (Map[_locate.first + 1][_locate.second].first == 1)
+				return true;
+			else
+				return false;
+			break;
+		case East:
+			if (Map[_locate.first][_locate.second - 1].first == 1)
+				return true;
+			else
+				return false;
+			break;
+		case South:
+			if (Map[_locate.first - 1][_locate.second].first == 1)
+				return true;
+			else
+				return false;
+			break;
+		case West:
+			if (Map[_locate.first][_locate.second + 1].first == 1)
+				return true;
+			else
+				return false;
+			break;
+		}
+	}
+	void RouteCheck(PII _locate)			
+	{
+		Map[_locate.first][_locate.second].second = true;
 	}
 	void PrintMap() const
 	{
@@ -138,11 +169,11 @@ class MouseBot : public Bot
 private:
 	PII Locate;
 	Direction Direct;
+	int MoveCounter;
 public:
-	MouseBot(const int N, const int M, const int R, const int C, const int D) : Bot(N, M), Locate(PII(R, C))
+	MouseBot(const int N, const int M, const int R, const int C, const int D) : Bot(N, M), Locate(PII(R, C)), MoveCounter(0)
 	{
 		Direct = (Direction)D;
-		Bot::RouteCheck(Locate);
 	}
 	MouseBot() : Bot(), Locate(PII(0, 0))
 	{
@@ -157,42 +188,163 @@ public:
 	{
 		Locate = assign.Locate;
 		Direct = assign.Direct;
+		return *this;
 	}
-	void Move()
+	bool Move()
 	{
+			Bot::RouteCheck(Locate);
+
 			switch (Direct)
 			{
 			case North:
 				if (Bot::CanGo(Locate, Direct))
 				{
-					Locate.second += 1;
-					Bot::RouteCheck(Locate);
+					Locate.first -= 1;
+					//Bot::RouteCheck(Locate);
+					Cheep_Go();
+					MoveCounter++;
+					BlockCounter = 0;
+					return true;
 				}
 				else
-
+				{
+					Cheep_Wall();
+					BlockCounter++;
+					if (BlockCounter == 4)
+					{
+						Locate.first += 1;
+						Direct = (Direction)(Direct + 1);
+						MoveCounter++;
+						if (Bot::IsTheEnd(Locate, Direct))
+						{
+							cout << "더 이상 이동할 수 없습니다." << endl;
+							return false;
+						}
+						else
+						{
+							return true;
+						}
+					}
+					else
+					{
+						Direct = (Direction)(Direct + 1);
+						return true;
+					}
+				}
 				break;
 			case East:
 				if (Bot::CanGo(Locate, Direct))
 				{
-					Locate.first += 1;
-					Bot::RouteCheck(Locate);
+					Locate.second += 1;
+					//Bot::RouteCheck(Locate);
+					Cheep_Go();
+					MoveCounter++;
+					BlockCounter = 0;
+					return true;
+				}
+				else
+				{
+					Cheep_Wall();
+					BlockCounter++;
+					if (BlockCounter == 4)
+					{
+						Locate.second -= 1;
+						Direct = (Direction)(Direct + 1);
+						MoveCounter++;
+						if (Bot::IsTheEnd(Locate, Direct))
+						{
+							cout << "더 이상 이동할 수 없습니다." << endl;
+							return false;
+						}
+						else
+						{
+							return true;
+						}
+					}
+					else
+					{
+						Direct = (Direction)(Direct + 1);
+						return true;
+					}
 				}
 				break;
 			case South:
 				if (Bot::CanGo(Locate, Direct))
 				{
-					Locate.second -= 1;
-					Bot::RouteCheck(Locate);
+					Locate.first += 1;
+					//Bot::RouteCheck(Locate);
+					Cheep_Go();
+					MoveCounter++;
+					BlockCounter = 0;
+					return true;
+				}
+				else
+				{
+					Cheep_Wall();
+					BlockCounter++;
+					if (BlockCounter == 4)
+					{
+						Locate.first -= 1;
+						Direct = (Direction)(Direct + 1);
+						MoveCounter++;
+						if (Bot::IsTheEnd(Locate, Direct))
+						{
+							cout << "더 이상 이동할 수 없습니다." << endl;
+							return false;
+						}
+						else
+						{
+							return true;
+						}
+					}
+					else
+					{
+						Direct = (Direction)(Direct + 1);
+						return true;
+					}
 				}
 				break;
 			case West:
 				if (Bot::CanGo(Locate, Direct))
 				{
-					Locate.first -= 1;
-					Bot::RouteCheck(Locate);
+					Locate.second -= 1;
+					//Bot::RouteCheck(Locate);
+					Cheep_Go();
+					MoveCounter++;
+					BlockCounter = 0;
+					return true;
+				}
+				else
+				{
+					Cheep_Wall();
+					BlockCounter++;
+					if (BlockCounter == 4)
+					{
+						Locate.second += 1;
+						Direct = (Direction)0;
+						MoveCounter++;
+						if (Bot::IsTheEnd(Locate, Direct))
+						{
+							cout << "더 이상 이동할 수 없습니다." << endl;
+							return false;
+						}
+						else
+						{
+							return true;
+						}
+					}
+					else
+					{
+						Direct = (Direction)0;
+						return true;
+					}
 				}
 				break;
 			}
+	}
+	int GetMoveCounter() const
+	{
+		return MoveCounter;
 	}
 	void Cheep_Wall()
 	{
@@ -210,14 +362,13 @@ class BotControl
 private:
 	MouseBot *Mickey[5];
 	const int TestCase;
-	int MoveCounter;
 	int _row, _column;
 	int _location_row, _location_column, _direct;
 public:
-	BotControl(const int _TestCase) : TestCase(_TestCase), MoveCounter(0), _row(0), _column(0), _location_row(0), _location_column(0), _direct(0)
+	BotControl(const int _TestCase) : TestCase(_TestCase), _row(0), _column(0), _location_row(0), _location_column(0), _direct(0)
 	{
 	}
-	void Setting(ifstream& _in)
+	void Test(ifstream& _in)
 	{
 		for (int tc = 1; tc <= TestCase; ++tc)
 		{
@@ -227,6 +378,11 @@ public:
 			Mickey[tc]->MakeMap(_in);
 			cout << "#" << tc << endl;
 			Mickey[tc]->PrintMap();
+			while (true)
+			{
+				Mickey[tc]->Move();
+			}
+			cout << "Move Counter : " << Mickey[tc]->GetMoveCounter() << endl << endl;
 		}
 	}
 	~BotControl()
@@ -248,7 +404,7 @@ int main(void)
 
 	in >> _testcase;
 	BotControl BC(_testcase);
-	BC.Setting(in);
+	BC.Test(in);
 
 	in.close();
 	return 0;
