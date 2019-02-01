@@ -209,16 +209,17 @@ public:
 				else
 				{
 					Cheep_Wall();
-					BlockCounter++;
 					if (BlockCounter == 4)
 					{
+						//Direct = (Direction)(Direct + 1);
 						Locate.first += 1;
-						Direct = (Direction)(Direct + 1);
+						Cheep_Back();
 						MoveCounter++;
 						if (Bot::IsTheEnd(Locate, Direct))
 						{
 							cout << "더 이상 이동할 수 없습니다." << endl;
 							return false;
+							
 						}
 						else
 						{
@@ -228,6 +229,7 @@ public:
 					else
 					{
 						Direct = (Direction)(Direct + 1);
+						BlockCounter++;
 						return true;
 					}
 				}
@@ -245,16 +247,17 @@ public:
 				else
 				{
 					Cheep_Wall();
-					BlockCounter++;
 					if (BlockCounter == 4)
 					{
+						//Direct = (Direction)(Direct + 1);
 						Locate.second -= 1;
-						Direct = (Direction)(Direct + 1);
+						Cheep_Back();
 						MoveCounter++;
 						if (Bot::IsTheEnd(Locate, Direct))
 						{
 							cout << "더 이상 이동할 수 없습니다." << endl;
 							return false;
+							
 						}
 						else
 						{
@@ -264,6 +267,7 @@ public:
 					else
 					{
 						Direct = (Direction)(Direct + 1);
+						BlockCounter++;
 						return true;
 					}
 				}
@@ -281,16 +285,17 @@ public:
 				else
 				{
 					Cheep_Wall();
-					BlockCounter++;
 					if (BlockCounter == 4)
 					{
+						//Direct = (Direction)(Direct + 1);
 						Locate.first -= 1;
-						Direct = (Direction)(Direct + 1);
+						Cheep_Back();
 						MoveCounter++;
 						if (Bot::IsTheEnd(Locate, Direct))
 						{
 							cout << "더 이상 이동할 수 없습니다." << endl;
 							return false;
+							
 						}
 						else
 						{
@@ -300,6 +305,7 @@ public:
 					else
 					{
 						Direct = (Direction)(Direct + 1);
+						BlockCounter++;
 						return true;
 					}
 				}
@@ -317,16 +323,17 @@ public:
 				else
 				{
 					Cheep_Wall();
-					BlockCounter++;
 					if (BlockCounter == 4)
 					{
+						//Direct = (Direction)0;
 						Locate.second += 1;
-						Direct = (Direction)0;
+						Cheep_Back();
 						MoveCounter++;
 						if (Bot::IsTheEnd(Locate, Direct))
 						{
 							cout << "더 이상 이동할 수 없습니다." << endl;
 							return false;
+							
 						}
 						else
 						{
@@ -336,6 +343,7 @@ public:
 					else
 					{
 						Direct = (Direction)0;
+						BlockCounter++;
 						return true;
 					}
 				}
@@ -348,11 +356,15 @@ public:
 	}
 	void Cheep_Wall()
 	{
-		cout << "(OㅅO)?";
+		cout << "(OㅅO)? Blocked! " << "("<<Locate.first<<", "<<Locate.second<<")"<<"/"<<Direct<<endl;
 	}
 	void Cheep_Go()
 	{
-		cout << "(^ㅅ^)" << endl;
+		cout << "(^ㅅ^) Go!" << "(" << Locate.first << ", " << Locate.second << ")" << "/" << Direct << endl;
+	}
+	void Cheep_Back()
+	{
+		cout << "(=ㅅ=;) 후진" << "(" << Locate.first << ", " << Locate.second << ")" << "/" << Direct << endl;
 	}
 	~MouseBot() { cout << "Call MouseBot Destructor" << endl; }
 };
@@ -364,6 +376,7 @@ private:
 	const int TestCase;
 	int _row, _column;
 	int _location_row, _location_column, _direct;
+	bool TheEnd;
 public:
 	BotControl(const int _TestCase) : TestCase(_TestCase), _row(0), _column(0), _location_row(0), _location_column(0), _direct(0)
 	{
@@ -378,9 +391,9 @@ public:
 			Mickey[tc]->MakeMap(_in);
 			cout << "#" << tc << endl;
 			Mickey[tc]->PrintMap();
-			while (true)
+			while (TheEnd != false)
 			{
-				Mickey[tc]->Move();
+				TheEnd = Mickey[tc]->Move();
 			}
 			cout << "Move Counter : " << Mickey[tc]->GetMoveCounter() << endl << endl;
 		}
