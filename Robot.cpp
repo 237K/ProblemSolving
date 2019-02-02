@@ -223,7 +223,8 @@ public:
 						}
 						else
 						{
-							return true;
+							BlockCounter = 0;
+							Move();
 						}
 					}
 					else
@@ -261,7 +262,8 @@ public:
 						}
 						else
 						{
-							return true;
+							BlockCounter = 0;
+							Move();
 						}
 					}
 					else
@@ -299,7 +301,8 @@ public:
 						}
 						else
 						{
-							return true;
+							BlockCounter = 0;
+							Move();
 						}
 					}
 					else
@@ -337,7 +340,8 @@ public:
 						}
 						else
 						{
-							return true;
+							BlockCounter = 0;
+							Move();
 						}
 					}
 					else
@@ -380,11 +384,14 @@ private:
 public:
 	BotControl(const int _TestCase) : TestCase(_TestCase), _row(0), _column(0), _location_row(0), _location_column(0), _direct(0)
 	{
+		TheEnd = true;
 	}
 	void Test(ifstream& _in)
 	{
 		for (int tc = 1; tc <= TestCase; ++tc)
 		{
+			TheEnd = true;
+			BlockCounter = 0;
 			_in >> _row >> _column;
 			_in >> _location_row >> _location_column >> _direct;
 			Mickey[tc] = new MouseBot(_row, _column, _location_row, _location_column, _direct);
