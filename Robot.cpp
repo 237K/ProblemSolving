@@ -67,7 +67,7 @@ public:
 		}
 		return *this;
 	}
-	void MakeMap(ifstream& _in)
+	void MakeMap(ifstream& _in)							//인풋값 읽어와서 맵 만드는 함수
 	{
 		for (int row = 1; row <= Row; ++row)
 		{
@@ -108,7 +108,7 @@ public:
 			break;
 		}
 	}
-	bool IsTheEnd(PII _locate, Direction _direct)
+	bool IsTheEnd(PII _locate, Direction _direct)			//후진 했을 때 뒤가 벽인지 확인하는 함수
 	{
 		switch (_direct)
 		{
@@ -138,7 +138,7 @@ public:
 			break;
 		}
 	}
-	void RouteCheck(PII _locate)			
+	void RouteCheck(PII _locate)						//로봇쥐가 해당 좌표를 방문했는지 체크하는 함수
 	{
 		Map[_locate.first][_locate.second].second = true;
 	}
@@ -158,17 +158,17 @@ public:
 		cout << "Call Bot Destructor" << endl;
 		for (int d = 1; d <= Row; ++d)
 		{
-			delete[] Map[d];
+			delete Map[d];
 		}
 		delete[] Map;
 	}
 };
 
-class MouseBot : public Bot
+class MouseBot : public Bot					//MouseBot 'is a' Bot
 {
 private:
-	PII Locate;
-	Direction Direct;
+	PII Locate;								//로봇쥐의 좌표
+	Direction Direct;						//로봇쥐의 방향
 	int MoveCounter;
 public:
 	MouseBot(const int N, const int M, const int R, const int C, const int D) : Bot(N, M), Locate(PII(R, C)), MoveCounter(0)
@@ -177,7 +177,7 @@ public:
 	}
 	MouseBot() : Bot(), Locate(PII(0, 0))
 	{
-		Direct = South;
+		Direct = South;						//크게 의미없는 디폴트값
 	}
 	MouseBot(const MouseBot& cpy)
 	{
@@ -190,56 +190,53 @@ public:
 		Direct = assign.Direct;
 		return *this;
 	}
-	bool Move()
+	bool Move()								//주요 작동 함수. while(TheEnd != false) 일 때 Move를 반복함
 	{
-			Bot::RouteCheck(Locate);
+			Bot::RouteCheck(Locate);		//로봇쥐의 현재 좌표 체크하고
 
-			switch (Direct)
+			switch (Direct)					//현재 로봇쥐의 방향이
 			{
-			case North:
-				if (Bot::CanGo(Locate, Direct))
+			case North:								//북쪽이면
+				if (Bot::CanGo(Locate, Direct))		//이 방향으로 갈 수 있는지 검사하고
 				{
-					Locate.first -= 1;
-					//Bot::RouteCheck(Locate);
-					Cheep_Go();
-					MoveCounter++;
-					BlockCounter = 0;
-					return true;
+					Locate.first -= 1;				//갈 수 있으면 북쪽으로 한 칸 이동
+					Cheep_Go();						//(실행창에서 이동하는지 확인하기 위함)
+					MoveCounter++;					//Move Counter 하나 증가
+					BlockCounter = 0;				//이동했으니까 Block Counter는 초기화
+					return true;					//다시 Move 실행
 				}
 				else
 				{
-					Cheep_Wall();
-					if (BlockCounter == 4)
+					Cheep_Wall();					//이 방향으로 갈 수 없는데
+					if (BlockCounter == 4)			//Block Counter가 4이면 (4방향이 모두 막혀 있으면)
 					{
-						//Direct = (Direction)(Direct + 1);
-						Locate.first += 1;
-						Cheep_Back();
-						MoveCounter++;
-						if (Bot::IsTheEnd(Locate, Direct))
+						Locate.first += 1;			//한 칸 후진
+						Cheep_Back();				//(실행창에서 후진하는지 확인하기 위함)
+						MoveCounter++;				//후진도 Move Counter에 포함되므로 하나 증가
+						if (Bot::IsTheEnd(Locate, Direct))		//후진했는데 뒷쪽이 벽이면 끝이므로
 						{
 							cout << "더 이상 이동할 수 없습니다." << endl;
-							return false;
+							return false;			//while문 끝
 							
 						}
 						else
-						{
-							BlockCounter = 0;
-							Move();
+						{							//후진했는데 뒷쪽이 벽이 아니면 
+							BlockCounter = 0;		//Block Counter 초기화
+							Move();					//다시 Move
 						}
 					}
 					else
 					{
-						Direct = (Direction)(Direct + 1);
-						BlockCounter++;
+						Direct = (Direction)(Direct + 1);	//CanGo 함수에 의해 지금 방향이 막혀있는데 Block Counter가 4가 아니면 방향을 90도 회전 
+						BlockCounter++;						//Block Counter 하나 증가
 						return true;
 					}
 				}
 				break;
-			case East:
+			case East:	
 				if (Bot::CanGo(Locate, Direct))
 				{
 					Locate.second += 1;
-					//Bot::RouteCheck(Locate);
 					Cheep_Go();
 					MoveCounter++;
 					BlockCounter = 0;
@@ -250,7 +247,6 @@ public:
 					Cheep_Wall();
 					if (BlockCounter == 4)
 					{
-						//Direct = (Direction)(Direct + 1);
 						Locate.second -= 1;
 						Cheep_Back();
 						MoveCounter++;
@@ -278,7 +274,6 @@ public:
 				if (Bot::CanGo(Locate, Direct))
 				{
 					Locate.first += 1;
-					//Bot::RouteCheck(Locate);
 					Cheep_Go();
 					MoveCounter++;
 					BlockCounter = 0;
@@ -289,7 +284,6 @@ public:
 					Cheep_Wall();
 					if (BlockCounter == 4)
 					{
-						//Direct = (Direction)(Direct + 1);
 						Locate.first -= 1;
 						Cheep_Back();
 						MoveCounter++;
@@ -317,7 +311,6 @@ public:
 				if (Bot::CanGo(Locate, Direct))
 				{
 					Locate.second -= 1;
-					//Bot::RouteCheck(Locate);
 					Cheep_Go();
 					MoveCounter++;
 					BlockCounter = 0;
@@ -328,7 +321,6 @@ public:
 					Cheep_Wall();
 					if (BlockCounter == 4)
 					{
-						//Direct = (Direction)0;
 						Locate.second += 1;
 						Cheep_Back();
 						MoveCounter++;
@@ -358,15 +350,15 @@ public:
 	{
 		return MoveCounter;
 	}
-	void Cheep_Wall()
+	void Cheep_Wall()				//실행창에서 어떻게 움직이는지 확인하기 위함
 	{
 		cout << "(OㅅO)? Blocked! " << "("<<Locate.first<<", "<<Locate.second<<")"<<"/"<<Direct<<endl;
 	}
-	void Cheep_Go()
+	void Cheep_Go()					//실행창에서 어떻게 움직이는지 확인하기 위함
 	{
 		cout << "(^ㅅ^) Go!" << "(" << Locate.first << ", " << Locate.second << ")" << "/" << Direct << endl;
 	}
-	void Cheep_Back()
+	void Cheep_Back()				//실행창에서 어떻게 움직이는지 확인하기 위함
 	{
 		cout << "(=ㅅ=;) 후진" << "(" << Locate.first << ", " << Locate.second << ")" << "/" << Direct << endl;
 	}
@@ -398,7 +390,7 @@ public:
 			Mickey[tc]->MakeMap(_in);
 			cout << "#" << tc << endl;
 			Mickey[tc]->PrintMap();
-			while (TheEnd != false)
+			while (TheEnd != false)					//로봇쥐가 더 이상 움직일 수 없을 때 까지 Move 반복
 			{
 				TheEnd = Mickey[tc]->Move();
 			}
@@ -414,11 +406,13 @@ public:
 	}
 };
 
+//main
 int main(void)
 {
 	int _testcase = 0;
 
 	ifstream in("testcase_Robot1.txt");
+
 	if (!in.is_open())
 		cout << "파일을 찾을 수 없습니다." << endl;
 
