@@ -76,9 +76,93 @@ public:
             }
         }
     }
-    void BombAType(PII _Location);
-    void BombBType(PII _Location);
-    void BombCType(PII _Location);
+    void BombAType(PII _Location)
+    {
+        Map[_Location.first][_Location.second] = true;
+        if(_Location.first+1 <= size-1)
+            Map[_Location.first+1][_Location.second] = true;
+        if(_Location.second+1 <= size-1)
+            Map[_Location.first][Location.second+1] = true;
+        if(_Location.first-1 >= 0)
+            Map[_Location.first-1][_Location.second] = true;
+        if(_Location.second-1 >= 0)
+            Map[_Location.first][_Location.second-1] = true;
+        
+    }
+    void BombBType(PII _Location)
+    {
+        Map[_Location.first][_Location.second] = true;
+        if(_Location.first+1 <= size-1)
+            Map[_Location.first+1][_Location.second] = true;
+        if(_Location.second+1 <= size-1)
+            Map[_Location.first][Location.second+1] = true;
+        if(_Location.first+2 <= size-1)
+            Map[_Location.first+2][_Location.second] = true;
+        if(_Location.second+2 <= size-1)
+            Map[_Location.first][_Location.second+2] = true;
+        if(_Location.first-1 >= 0)
+            Map[_Location.first-1][_Location.second] = true;
+        if(_Location.second-1 >= 0)
+            Map[_Location.first][_Location.second-1] = true;
+        if(_Location.first-2 >= 0)
+            Map[_Location.first-2][_Location.second] = true;
+        if(_Location.second-2 >= 0)
+            Map[_Location.first][_Location.second-2] = true;
+    }
+    
+    void BombCType(PII _Location)
+    {
+        Map[_Location.first][_Location.second] = true;
+        if(_Location.first+1 <= size-1)
+            Map[_Location.first+1][_Location.second] = true;
+        if(_Location.second+1 <= size-1)
+            Map[_Location.first][Location.second+1] = true;
+        if(_Location.first+2 <= size-1)
+            Map[_Location.first+2][_Location.second] = true;
+        if(_Location.second+2 <= size-1)
+            Map[_Location.first][_Location.second+2] = true;
+        if(_Location.first+3 <= size-1)
+            Map[_Location.first+3][_Location.second] = true;
+        if(_Location.second+3 <= size-1)
+            Map[_Location.first][_Location.second+3] = true;
+        if(_Location.first-1 >= 0)
+            Map[_Location.first-1][_Location.second] = true;
+        if(_Location.second-1 >= 0)
+            Map[_Location.first][_Location.second-1] = true;
+        if(_Location.first-2 >= 0)
+            Map[_Location.first-2][_Location.second] = true;
+        if(_Location.second-2 >= 0)
+            Map[_Location.first][_Location.second-2] = true;
+        if(_Location.first-3 >= 0)
+            Map[_Location.first-3][_Location.second] = true;
+        if(_Location.second-3 >= 0)
+            Map[_Location.first][_Location.second-3] = true;
+    }
+    void FindUnaffectedArea()
+    {
+        for(int r = 0 ; r < size ; ++r)
+        {
+            for(int c = 0 ; c < size ; ++c)
+            {
+                if(Map[r][c] == false)
+                    Unaffected++;
+            }
+        }
+        cout<<"Unaffected Area : "<<Unaffected<<endl<<endl;
+    }
+    void PrintResult()
+    {
+        cout<<"=====[Map]====="<<endl;
+        for(int r = 0 ; r < size ; ++r)
+        {
+            for(int c = 0 ; c < size ; ++c)
+            {
+                cout<<Map[r][c]<<' ';
+            }
+            cout<<endl<<endl;
+        }
+        FindUnaffectedArea();
+    }
 };
 
 int main(void)
@@ -94,8 +178,8 @@ int main(void)
         in>>MapSize;
         BT[tc] = new BombTest(MapSize);
         BT[tc]->MakeMap(in);
+        BT[tc]->PrintResult();
     }
-    
     
     in.close();
     for(int del = 0 ; del < testcase ; ++del)
