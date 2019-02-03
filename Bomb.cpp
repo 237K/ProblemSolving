@@ -14,47 +14,24 @@
 //  4. 지도의 크기, 폭탄의 종류와 투하한 좌표를 입력받아서
 //  5. 폭탄의 영향을 받지 않은 지역의 수를 출력
 //
-enum BombType{Atype = 0, Btype = 1, Ctype = 2};
 
 #include <iostream>
 #include <fstream>
 using namespace std;
 
-class Bomb
-{
-public:
-    Bomb() {}
-    virtual ~Bomb() {}
-};
-
-class BombAType : public Bomb
-{
-private:
-    const int EffectArea;
-public:
-    
-};
-
-class BombBType : public Bomb
-{
-    
-};
-
-class BombCType : public Bomb
-{
-    
-};
+enum BombType{Atype = 0, Btype = 1, Ctype = 2};
+typedef pair<int, int> PII;
 
 class BombTest
 {
 private:
     bool **Map;
     const int size;
-    pair<int, int> Location;        //폭탄을 투하하는 위치
+    PII Location;        //폭탄을 투하하는 위치
     int Unaffected;
     const char comma;
 public:
-    BombTest(const int _size) : size(_size), Location(pair<int, int>(0, 0)), Unaffected(0), comma(',')
+    BombTest(const int _size) : size(_size), Location(PII(0, 0)), Unaffected(0), comma(',')
     {
         Map = new bool* [_size];
         for(int init = 0 ; init < _size ; ++init)
@@ -79,11 +56,29 @@ public:
     }
     void MakeMap(ifstream& _in)
     {
-        for(int i = 0 ; i < 3 ; ++i)
+        for(BombType b = (BombType) 0 ; b < (BombType)3 ; b = (BombType)(b + 1))
         {
-            
+            while(Location.first != comma)
+            {
+                _in>>Location.first>>Location.second;
+                switch (b)
+                {
+                    case Atype :
+                        BombAType(Location);
+                        break;
+                    case Btype :
+                        BombBType(Location);
+                        break;
+                    case Ctype :
+                        BombCType(Location);
+                        break;
+                }
+            }
         }
     }
+    void BombAType(PII _Location);
+    void BombBType(PII _Location);
+    void BombCType(PII _Location);
 };
 
 int main(void)
