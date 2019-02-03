@@ -26,6 +26,7 @@ class Graph
 private:
     vector<int>* Room;
     stack<int> Stack;
+    vector<int> *IsThereExit;
     bool* Check;
     const int NumOfRoom;
     const int Exit;
@@ -36,16 +37,19 @@ public:
     {
         Room = new vector<int> [_NumOfRoom+1];
         Check = new bool [_NumOfRoom+1];
+        IsThereExit = new vector<int> [_NumOfRoom+1];
         for(int init = 0 ; init <= _NumOfRoom ; ++init)
         {
             Room[init].clear();
             Check[init] = false;
+            IsThereExit[init].clear();
         }
     }
     ~Graph()
     {
         delete[] Room;
         delete[] Check;
+        delete[] IsThereExit;
     }
     void MakeGraph(ifstream& _in)
     {
@@ -58,16 +62,21 @@ public:
     }
     void DFS()
     {
-        Stack.push(1);
-        Check[1] = true;
-        cout<<"Escape Route : "<<"1 ";
+        for(int dfs = 1 ; dfs <= Exit ; ++dfs)
+        {
+            int ThisScore = 0;
+            Stack.push(dfs);
+            IsThereExit[dfs].push_back(dfs);
+            Check[dfs] = true;
+            cout<<"Escape Route : "<<dfs<<' ';
             while(!Stack.empty())
             {
-                int CurrentNode = Room[1].front();
+                int CurrentNode = Room[dfs].front();
                 if(CurrentNode == Exit)
                     break;
-                Score++;
+                ThisScore++;
                 Stack.push(CurrentNode);
+                IsThereExit[dfs].push_back(CurrentNode);
                 Check[CurrentNode] = true;
                 Stack.pop();
                 cout<<CurrentNode<<' ';
@@ -82,7 +91,13 @@ public:
                     }
                 }
             }
-        cout<<endl<<"Score : "<<endl<<endl;
+            if(find(IsThereExit[dfs].begin(), IsThereExit[dfs].end(), Exit) != IsThereExit[dfs].end())
+                ThisScore = -1;
+            cout<<endl<<"Score : "<<ThisScore<<endl<<endl;
+            if(ThisScore > Score)
+                Score = ThisScore;
+        }
+        cout<<"*Final Score : "<<Score<<endl<<endl;
     }
 };
 
