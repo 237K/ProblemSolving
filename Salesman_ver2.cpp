@@ -36,8 +36,9 @@ private:
     priority_queue<PII, vector<PII>> PQ;
     int NumOfCity;
     int InputCost;
+    int Answer;
 public:
-    Graph(int _Cities) : NumOfCity(_Cities)
+    Graph(int _Cities) : NumOfCity(_Cities), InputCost(0), Answer(0)
     {
         DG = new vector<PII> [_Cities+1];
         for(int init = 0 ; init <= _Cities ; ++init)
@@ -64,6 +65,8 @@ public:
     }
     void DFS(int _Start)
     {
+        Check[_Start] = true;
+        Cost[_Start] = 237000;
         for(auto iter = DG[_Start].begin() ; iter < DG[_Start].end() ; ++iter)
         {
             PQ.push(*iter);
@@ -73,7 +76,39 @@ public:
             int CurrentNode = PQ.top().first;
             int CurrentNodeWeight = PQ.top().second;
             PQ.pop();
-            if()
+            Check[CurrentNode] = true;
+            for(auto iter = DG[CurrentNode].begin() ; iter != DG[CurrentNode].end() ; ++iter)
+            {
+                int NextNode = iter->first;
+                int NextNodeWeight = iter->second;
+                
+                if(NextNode == NumOfCity)
+                {
+                    for(auto iter = DG[NextNode].begin() ; iter != DG[NextNode].end() ; ++iter)
+                    {
+                        if(iter->first == _Start)
+                        {
+                            if(Answer == -1 || Answer > Cost[NextNode] + iter->second)
+                                Answer = Cost[NextNode] + iter->second;
+                        }
+                        else
+                        {
+                            Answer = -1;
+                            break;
+                        }
+                    }
+                }
+                
+                if(Check[NextNode] == false)
+                {
+                    PQ.push(*iter);
+                    if(Cost[CurrentNode] != INF && Cost[NextNode] > CurrentNodeWeight + NextNodeWeight)
+                    {
+                        Cost[CurrentNode] = CurrentNodeWeight + NextNodeWeight;
+                    }
+                }
+            }
+            cout<<"Answer : "<<Answer<<endl<<endl;
         }
     }
 };
@@ -94,7 +129,8 @@ public:
             _in>>Cities>>Cities>>StartCity;
             graph[tc] = new Graph(Cities);
             graph[tc]->MakeGraph(_in);
-            graph[tc]->Dijkstra(StartCity);
+            cout<<"#"<<tc<<endl;
+            graph[tc]->DFS(StartCity);
         }
     }
                             
@@ -108,6 +144,8 @@ int main(void)
         cout<<"파일을 찾을 수 없습니다."<<endl<<endl;
     
     in>>testcase;
-    GraphGenerator(testcase);
+    GraphGenerator GG(testcase);
     
+    in.close();
+    return 0;
 }
