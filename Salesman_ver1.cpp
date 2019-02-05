@@ -20,18 +20,47 @@
 #include <fstream>
 using namespace std;
 
-typedef pair<int, int> PII;
-const static int INF = 21470000;
+int testcase = 0;
+int Cities = 0;
+int Start = 0;
+int Cost = 0;
+int **Graph;
+bool *Check;
+
+void DFS(int index, int cost, int count)
+{
+    if(count == Cities)
+    {
+        cout<<index<<endl;
+        if(Graph[index][Start] != 0)
+        {
+            if(Cost == -1 || Cost > cost + Graph[index][Start])
+            {
+                Cost = cost + Graph[index][Start];
+                cout<<"*Cost : "<<Cost<<endl<<endl;
+            }
+        }
+    }
+    else
+    {
+        for(int i = 1 ; i <= Cities ; ++i)
+        {
+            if(Check[i] == false && Graph[index][i] != 0)
+            {
+                cout<<index<<' '<<i<<' ';
+                if(Cost == -1 || Cost > cost + Graph[index][i])
+                {
+                    Check[i] = true;
+                    DFS(i, Graph[index][i], count+1);
+                    Check[i] = false;
+                }
+            }
+        }
+    }
+}
 
 int main(void)
 {
-    int testcase = 0;
-    int Cities = 0;
-    int Start = 0;
-    int Cost = 0;
-    int **Graph;
-    bool *Check;
-    
     cout<<"Test Case : "; cin>>testcase;
     cout<<endl;
     for(int tc = 1 ; tc <= testcase ; ++tc)
@@ -53,11 +82,16 @@ int main(void)
         {
             for(int c = 1; c <= Cities ; ++c)
             {
-                cout<<"Cost : "; cin>>Cost;
-                Graph[r][c] = Cost;
+                int RecentCost = 0;
+                cout<<"Cost : "; cin>>RecentCost;
+                Graph[r][c] = RecentCost;
             }
         }
-        
+        Cost = -1;
+        Check[Start] = true;
+        cout<<"#"<<tc<<endl<<"Route : ";
+        DFS(Start, 0, 1);
+        cout<<endl<<endl;
     }
     
     return 0;
