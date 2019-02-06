@@ -54,22 +54,40 @@ public:
         }
         delete[] Map;
     }
-    void MakeMap(string& _Input)
+    void MakeMap(ifstream& _in)
     {
-		string InputLocateA;      //폭탄을 투하하는 좌표 인풋값 (char형으로 입력받음)
-		int findcomma;
+		string InputLocate;
+		string InputLocateA;
+		int findcomma = 0;
+		getline(_in, InputLocate);
 
         for(int i = 0 ; i < 3 ; ++i)
         {
-			findcomma = _Input.find(',');
-			InputLocateA = _Input.substr(0, findcomma-1);
-			_Input.erase(_Input.begin(), _Input.begin() + findcomma + 1);
-
-			for (int s = 0; s < InputLocateA.size(); ++s)
+			findcomma = InputLocate.find(',');
+			if (findcomma != -1)
 			{
-				Location.first = (int)InputLocateA[0];
-				Location.second = (int)InputLocateA[1];
-				InputLocateA.erase(InputLocateA.begin(), InputLocateA.begin() + 1);
+				InputLocateA = InputLocate.substr(0, findcomma);
+				InputLocate.erase(InputLocate.begin(), InputLocate.begin() + findcomma + 2);
+			}
+			else if (findcomma == -1)
+			{
+				//findcomma = InputLocate.find('\n');
+				
+				InputLocateA = InputLocate;
+				InputLocate.clear();
+			}
+			for (int s = 0; s < InputLocateA.length(); s = s + 4)
+			{
+				string recent1;
+				recent1.push_back(InputLocateA[s]);
+				Location.first = atoi(recent1.c_str());
+
+				string recent2;
+				recent2.push_back(InputLocateA[s + 2]);
+				Location.second = atoi(recent2.c_str());
+
+				//InputLocateA.erase(InputLocateA.begin(), InputLocateA.begin() + 4);
+
 				switch (i)
 				{
 				case Atype:
@@ -83,6 +101,7 @@ public:
 					break;
 				}
 			}
+			InputLocateA.clear();
         }
     }
     void BombAType(PII _Location)
@@ -179,24 +198,21 @@ int main(void)
     BombTest *BT[100];
     int testcase = 0;
     int MapSize = 0;
-	string InputLocate;
-
+	string trash;
     ifstream in("testcase_Bomb.txt");
     in>>testcase;
     
     for(int tc = 1 ; tc <= testcase ; ++tc)
     {
         in>>MapSize;
+		getline(in, trash);
         BT[tc] = new BombTest(MapSize);
-
-		getline(in, InputLocate);
-
-        BT[tc]->MakeMap(InputLocate);
+        BT[tc]->MakeMap(in);
         BT[tc]->PrintResult();
     }
     
     in.close();
-    for(int del = 0 ; del < testcase ; ++del)
+    for(int del = 1 ; del <= testcase ; ++del)
     {
         delete BT[del];
     }
