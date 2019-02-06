@@ -116,12 +116,12 @@ int main(void)
         in>>_NumOfRoom>>_Exit;
         graph[tc] = new Graph(_NumOfRoom, _Exit);
         graph[tc]->MakeGraph(in);
-        cout<<"#"<<tc<<endl;
+		cout << "#" << tc << endl;
         graph[tc]->DFS();
     }
     
     in.close();
-    for(int del = 0 ; del < testcase ; ++del)
+    for(int del = 1 ; del <= testcase ; ++del)
     {
         delete graph[del];
         
