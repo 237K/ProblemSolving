@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <queue>
 using namespace std;
 
 enum Structure{ grassland = 0, gate = 1, vol = 2 };
@@ -20,7 +21,7 @@ class Volcano
 private:
 	int **Map;
 	int size;
-	vector<PII> VolcanoLocate;
+	queue<PII> VolcanoLocate;
 public:
 	Volcano(int _size) : size(_size)
 	{
@@ -33,7 +34,6 @@ public:
 				Map[r][c] = 0;
 			}
 		}
-		VolcanoLocate.clear();
 	}
 	~Volcano()
 	{
@@ -52,83 +52,47 @@ public:
 				_fin >>	Map[r][c];
 				if (Map[r][c] == 2)
 				{
-					VolcanoLocate.push_back(PII(r, c));
+					VolcanoLocate.push(PII(r, c));
 				}
 			}
 		}
 	}
-	void Explosion()
+	void Execution()
 	{
-		PII Loc;
-		PII LocCopy;
-		for (vector<PII>::size_type i = 1; i <= VolcanoLocate.size(); ++i)
+		PII RecentLoc;
+		while(!VolcanoLocate.empty())
 		{
-			if (!VolcanoLocate.empty())
-			{
-				Loc = VolcanoLocate.back();
-				VolcanoLocate.pop_back();
-				LocCopy = Loc;
-			}
-			//North
-			while (1)
-			{
-				if (LocCopy.first - 1 >= 0 && Map[LocCopy.first - 1][LocCopy.second] == 0)
-				{
-					Map[LocCopy.first - 1][LocCopy.second] = 1;
-					LocCopy.first -= 1;
-				}
-				else
-				{
-					LocCopy = Loc;
-					break;
-				}
-			}
-			//East
-			while (1)
-			{
-				if (LocCopy.second + 1 < size && Map[LocCopy.first][LocCopy.second + 1] == 0)
-				{
-					Map[LocCopy.first][LocCopy.second + 1] = 1;
-					LocCopy.second += 1;
-				}
-				else
-				{
-					LocCopy = Loc;
-					break;
-				}
-			}
-			//South
-			while (1)
-			{
-				if (LocCopy.first + 1 < size && Map[LocCopy.first + 1][LocCopy.second] == 0)
-				{
-					Map[LocCopy.first + 1][LocCopy.second] = 1;
-					LocCopy.first += 1;
-				}
-				else
-				{
-					LocCopy = Loc;
-					break;
-				}
-			}
-			//West
-			while (1)
-			{
-				if (LocCopy.second - 1 >= 0 && Map[LocCopy.first][LocCopy.second - 1] == 0)
-				{
-					Map[LocCopy.first][LocCopy.second - 1] = 1;
-					LocCopy.second -= 1;
-				}
-				else
-				{
-					LocCopy = Loc;
-					break;
-				}
-			}
+			RecentLoc = VolcanoLocate.front();
+			VolcanoLocate.pop();
+			Explosion(RecentLoc);
 		}
 		PrintMap();
 		CheckMap();
 		cout << endl;
+	}
+	void Explosion(PII _RecentLoc)
+	{
+
+			if (_RecentLoc.first - 1 >= 0 && Map[_RecentLoc.first - 1][_RecentLoc.second] == 0)
+			{
+				Map[_RecentLoc.first - 1][_RecentLoc.second] = 1;
+				VolcanoLocate.push(PII(_RecentLoc.first - 1, _RecentLoc.second));
+			}
+			if (_RecentLoc.second + 1 < size && Map[_RecentLoc.first][_RecentLoc.second + 1] == 0)
+			{
+				Map[_RecentLoc.first][_RecentLoc.second + 1] = 1;
+				VolcanoLocate.push(PII(_RecentLoc.first, _RecentLoc.second + 1));
+			}
+			if (_RecentLoc.first + 1 < size && Map[_RecentLoc.first + 1][_RecentLoc.second] == 0)
+			{
+				Map[_RecentLoc.first + 1][_RecentLoc.second] = 1;
+				VolcanoLocate.push(PII(_RecentLoc.first + 1, _RecentLoc.second));
+			}
+			if (_RecentLoc.second - 1 >= 0 && Map[_RecentLoc.first][_RecentLoc.second - 1] == 0)
+			{
+				Map[_RecentLoc.first][_RecentLoc.second - 1] = 1;
+				VolcanoLocate.push(PII(_RecentLoc.first, _RecentLoc.second - 1));
+			}
 	}
 	void CheckMap()
 	{
@@ -181,7 +145,7 @@ public:
 			volcano[tc] = new Volcano(MapSize);
 			volcano[tc]->MakeMap(_fin);
 			cout << "#" << tc << endl;
-			volcano[tc]->Explosion();
+			volcano[tc]->Execution();
 		}
 	}
 };
