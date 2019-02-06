@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 
 enum BombType{Atype = 0, Btype = 1, Ctype = 2};
@@ -27,11 +28,10 @@ class BombTest
 private:
     bool **Map;
     const int size;
-    PII Location;        //폭탄을 투하하는 위치
+	PII Location;
     int Unaffected;
-    const char comma;
 public:
-    BombTest(const int _size) : size(_size), Location(PII(0, 0)), Unaffected(0), comma(',')
+    BombTest(const int _size) : size(_size), Location(PII(0, 0)), Unaffected(0)
     {
         Map = new bool* [_size];
         for(int init = 0 ; init < _size ; ++init)
@@ -54,26 +54,35 @@ public:
         }
         delete[] Map;
     }
-    void MakeMap(ifstream& _in)
+    void MakeMap(string& _Input)
     {
-        for(BombType b = (BombType) 0 ; b < (BombType)3 ; b = (BombType)(b + 1))
+		string InputLocateA;      //폭탄을 투하하는 좌표 인풋값 (char형으로 입력받음)
+		int findcomma;
+
+        for(int i = 0 ; i < 3 ; ++i)
         {
-            while(Location.first != comma)
-            {
-                _in>>Location.first>>Location.second;
-                switch (b)
-                {
-                    case Atype :
-                        BombAType(Location);
-                        break;
-                    case Btype :
-                        BombBType(Location);
-                        break;
-                    case Ctype :
-                        BombCType(Location);
-                        break;
-                }
-            }
+			findcomma = _Input.find(',');
+			InputLocateA = _Input.substr(0, findcomma-1);
+			_Input.erase(_Input.begin(), _Input.begin() + findcomma + 1);
+
+			for (int s = 0; s < InputLocateA.size(); ++s)
+			{
+				Location.first = (int)InputLocateA[0];
+				Location.second = (int)InputLocateA[1];
+				InputLocateA.erase(InputLocateA.begin(), InputLocateA.begin() + 1);
+				switch (i)
+				{
+				case Atype:
+					BombAType(Location);
+					break;
+				case Btype:
+					BombBType(Location);
+					break;
+				case Ctype:
+					BombCType(Location);
+					break;
+				}
+			}
         }
     }
     void BombAType(PII _Location)
@@ -170,6 +179,8 @@ int main(void)
     BombTest *BT[100];
     int testcase = 0;
     int MapSize = 0;
+	string InputLocate;
+
     ifstream in("testcase_Bomb.txt");
     in>>testcase;
     
@@ -177,7 +188,10 @@ int main(void)
     {
         in>>MapSize;
         BT[tc] = new BombTest(MapSize);
-        BT[tc]->MakeMap(in);
+
+		getline(in, InputLocate);
+
+        BT[tc]->MakeMap(InputLocate);
         BT[tc]->PrintResult();
     }
     
