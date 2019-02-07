@@ -66,7 +66,7 @@ public:
 			}
 		}
 	}
-	void Escape()
+	void Escape(ofstream& _fout)
 	{
 		Q.push(pair<PII, int>(Start, 0));
 		Map[Start.first][Start.second] = 1;
@@ -86,9 +86,13 @@ public:
 		if (IsThereAnswer)
 		{
 			cout << "Answer : " << Answer << endl << endl;
+			_fout<< "Answer : " << Answer << endl << endl;
 		}
 		else
+		{
 			cout << "Answer : -1" << endl << endl;
+			_fout<< "Answer : -1" << endl << endl;
+		}
 	}
 	void Search(PII Loc, int Dis)
 	{
@@ -153,15 +157,32 @@ int main(void)
 	int _Row = 0, _Column = 0;
 	ifstream fin("testcase_Maze.txt");
 	ofstream fout("Answer_237.txt");
-
-	fin >> testcase;
+	try
+	{
+		fin >> testcase;
+		if (testcase < 1)
+			throw testcase;
+	}
+	catch (int expn)
+	{
+		cout << "(exception) 입력받은 Test Case 개수 : " << expn << endl << endl;
+	}
 	for (int tc = 1; tc <= testcase; tc++)
 	{
-		fin >> _Row >> _Column;
-		maze[tc] = new Maze(_Row, _Column);
+		try
+		{
+			fin >> _Row >> _Column;
+			if (_Row < 3 || _Column < 3)
+				throw PII(_Row, _Column);
+			maze[tc] = new Maze(_Row, _Column);
+		}
+		catch (PII expn)
+		{
+			cout << "(exception) 입력받은 세로값 : " << expn.first << " 입력받은 가로값 : " << expn.second << endl << endl;
+		}
 		maze[tc]->MakeMap(fin);
-		cout << "#" << tc << endl;
-		maze[tc]->Escape();
+		fout << "#" << tc << endl;
+		maze[tc]->Escape(fout);
 	}
 
 	for (int del = 1; del <= testcase; del++)
