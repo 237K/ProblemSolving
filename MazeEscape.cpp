@@ -13,7 +13,6 @@
 #include <fstream>
 #include <vector>
 #include <queue>
-#include <algorithm>
 using namespace std;
 
 typedef pair<int, int> PII;
@@ -25,7 +24,6 @@ private:
 	int Row, Column;
 	PII Start;
 	PII Exit;
-	vector<int> Distance;
 	queue<PII> Q;
 	int Answer;
 	bool IsThereAnswer;
@@ -41,6 +39,10 @@ public:
 				Map[r][c] = 0;
 			}
 		}
+		while (!Q.empty())
+		{
+			Q.pop();
+		}
 	}
 	~Maze()
 	{
@@ -52,6 +54,7 @@ public:
 	}
 	void MakeMap(ifstream& _fin)
 	{
+		_fin >> Start.first >> Start.second >> Exit.first >> Exit.second;
 		for (int r = 1; r <= Row; ++r)
 		{
 			for (int c = 1; c <= Column; ++c)
@@ -64,11 +67,19 @@ public:
 	}
 	void Escape()
 	{
+		Answer = 0;
 		Q.push(Start);
+		Map[Start.first][Start.second] = 1;
 		while (!Q.empty())
 		{
 			PII CurLocate = Q.front();
 			Q.pop();
+			if (IsExit(CurLocate))
+			{
+				Answer++;
+				IsThereAnswer = true;
+				break;
+			}
 			Search(CurLocate);
 		}
 		if (IsThereAnswer)
@@ -81,70 +92,50 @@ public:
 	void Search(PII Loc)
 	{
 		int NotCounter = 0;
-		if (Loc.first - 1 >= 1 && Map[Loc.first - 1][Loc.second] == 0)
+		if (Loc.first - 1 >= 1)
 		{
-			Q.push(PII(Loc.first - 1, Loc.second));
-			if (IsExit(PII(Loc.first - 1, Loc.second)))
+			if (Map[Loc.first - 1][Loc.second] == 0)
 			{
-				Answer++;
-				IsThereAnswer = true;
-				while (!Q.empty())
-				{
-					Q.pop();
-				}
-				break;
+				Q.push(PII(Loc.first - 1, Loc.second));
+				Map[Loc.first - 1][Loc.second] = 1;
 			}
 		}
 		else
 			NotCounter++;
-		if (Loc.second + 1 <= Column && Map[Loc.first][Loc.second + 1] == 0)
+
+		if (Loc.second + 1 <= Column)
 		{
-			Q.push(PII(Loc.first, Loc.second + 1));
-			if (IsExit(PII(Loc.first - 1, Loc.second)))
+			if (Map[Loc.first][Loc.second + 1] == 0)
 			{
-				Answer++;
-				IsThereAnswer = true;
-				while (!Q.empty())
-				{
-					Q.pop();
-				}
-				break;
+				Q.push(PII(Loc.first, Loc.second + 1));
+				Map[Loc.first][Loc.second + 1] = 1;
 			}
 		}
 		else
 			NotCounter++;
-		if (Loc.first + 1 <= Row && Map[Loc.first + 1][Loc.second] == 0)
+
+		if (Loc.first + 1 <= Row)
 		{
-			Q.push(PII(Loc.first + 1, Loc.second));
-			if (IsExit(PII(Loc.first - 1, Loc.second)))
+			if (Map[Loc.first + 1][Loc.second] == 0)
 			{
-				Answer++;
-				IsThereAnswer = true;
-				while (!Q.empty())
-				{
-					Q.pop();
-				}
-				break;
+				Q.push(PII(Loc.first + 1, Loc.second));
+				Map[Loc.first + 1][Loc.second] = 1;
 			}
 		}
 		else
 			NotCounter++;
-		if (Loc.second - 1 >= 1 && Map[Loc.first][Loc.second - 1] == 0)
+
+		if (Loc.second - 1 >= 1)
 		{
-			Q.push(PII(Loc.first, Loc.second - 1));
-			if (IsExit(PII(Loc.first - 1, Loc.second)))
+			if (Map[Loc.first][Loc.second - 1] == 0)
 			{
-				Answer++;
-				IsThereAnswer = true;
-				while (!Q.empty())
-				{
-					Q.pop();
-				}
-				break;
+				Q.push(PII(Loc.first, Loc.second - 1));
+				Map[Loc.first][Loc.second - 1] = 1;
 			}
 		}
 		else
 			NotCounter++;
+
 		if (NotCounter != 4)
 		{
 			Answer++;
@@ -173,6 +164,8 @@ int main(void)
 		fin >> _Row >> _Column;
 		maze[tc] = new Maze(_Row, _Column);
 		maze[tc]->MakeMap(fin);
+		cout << "#" << tc << endl;
+		maze[tc]->Escape();
 	}
 
 	for (int del = 1; del <= testcase; del++)
