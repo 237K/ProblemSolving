@@ -16,6 +16,7 @@
 using namespace std;
 
 typedef pair<int, int> PII;
+const static int INF = 21370000;
 
 class Maze
 {
@@ -24,7 +25,7 @@ private:
 	int Row, Column;
 	PII Start;
 	PII Exit;
-	queue<PII> Q;
+	queue<pair<PII, int>> Q;
 	int Answer;
 	bool IsThereAnswer;
 public:
@@ -67,20 +68,20 @@ public:
 	}
 	void Escape()
 	{
-		Answer = 0;
-		Q.push(Start);
+		Q.push(pair<PII, int>(Start, 0));
 		Map[Start.first][Start.second] = 1;
 		while (!Q.empty())
 		{
-			PII CurLocate = Q.front();
+			PII CurLocate = Q.front().first;
+			int Distance = Q.front().second;
 			Q.pop();
 			if (IsExit(CurLocate))
 			{
-				Answer++;
+				Answer = Distance;
 				IsThereAnswer = true;
 				break;
 			}
-			Search(CurLocate);
+			Search(CurLocate, Distance);
 		}
 		if (IsThereAnswer)
 		{
@@ -89,56 +90,51 @@ public:
 		else
 			cout << "Answer : -1" << endl << endl;
 	}
-	void Search(PII Loc)
+	void Search(PII Loc, int Dis)
 	{
-		int NotCounter = 0;
+		int RecentDis = Dis;
 		if (Loc.first - 1 >= 1)
 		{
 			if (Map[Loc.first - 1][Loc.second] == 0)
 			{
-				Q.push(PII(Loc.first - 1, Loc.second));
+				Dis++;
+				Q.push(pair<PII, int>(PII(Loc.first - 1, Loc.second), Dis));
 				Map[Loc.first - 1][Loc.second] = 1;
+				Dis = RecentDis;
 			}
 		}
-		else
-			NotCounter++;
 
 		if (Loc.second + 1 <= Column)
 		{
 			if (Map[Loc.first][Loc.second + 1] == 0)
 			{
-				Q.push(PII(Loc.first, Loc.second + 1));
+				Dis++;
+				Q.push(pair<PII, int>(PII(Loc.first, Loc.second + 1), Dis));
 				Map[Loc.first][Loc.second + 1] = 1;
+				Dis = RecentDis;
 			}
 		}
-		else
-			NotCounter++;
 
 		if (Loc.first + 1 <= Row)
 		{
 			if (Map[Loc.first + 1][Loc.second] == 0)
 			{
-				Q.push(PII(Loc.first + 1, Loc.second));
+				Dis++;
+				Q.push(pair<PII, int>(PII(Loc.first + 1, Loc.second), Dis));
 				Map[Loc.first + 1][Loc.second] = 1;
+				Dis = RecentDis;
 			}
 		}
-		else
-			NotCounter++;
 
 		if (Loc.second - 1 >= 1)
 		{
 			if (Map[Loc.first][Loc.second - 1] == 0)
 			{
-				Q.push(PII(Loc.first, Loc.second - 1));
+				Dis++;
+				Q.push(pair<PII, int>(PII(Loc.first, Loc.second - 1), Dis));
 				Map[Loc.first][Loc.second - 1] = 1;
+				Dis = RecentDis;
 			}
-		}
-		else
-			NotCounter++;
-
-		if (NotCounter != 4)
-		{
-			Answer++;
 		}
 	}
 	bool IsExit(PII Loc)
