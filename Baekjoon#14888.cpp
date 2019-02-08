@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <queue>
 #include <algorithm>
 using namespace std;
 
@@ -22,6 +23,7 @@ private:
 	vector<int> Number;
 	vector<char> Operator;
 	vector<int> Result;
+	queue<int> Q;
 	int InputNumber;
 	int Plus, Minus, Mul, Div;
 public:
@@ -42,32 +44,33 @@ public:
 			Number[init] = InputNumber;
 		}
 		_fin >> Plus >> Minus >> Mul >> Div;
-		for (int init = 1; init < Size; ++init)
-		{
+
+		int init = 1;
 			while (!(Plus == 0))
 			{
-				Operator.push_back('+');
+				Operator[init] = '+';
 				Plus--;
+				init++;
 			}
 			while (!(Minus == 0))
 			{
-				Operator.push_back('-');
+				Operator[init] = '-';
 				Minus--;
+				init++;
 			}
 			while (!(Mul == 0))
 			{
-				Operator.push_back('X');
+				Operator[init] = '*';
 				Mul--;
+				init++;
 			}
 			while (!(Div == 0))
 			{
-				Operator.push_back('/');
+				Operator[init] = '/';
 				Div--;
+				init++;
 			}
-		}
-
 		Print();
-
 	}
 	void Print() const
 	{
@@ -82,6 +85,45 @@ public:
 			cout << Operator[i] << ' ';
 		}
 		cout << endl << endl;
+	}
+	void Execution()
+	{
+		int Recent = 0;
+		for (int n = 1; n < Number.size(); ++n)
+		{
+			for (int o = 1; o <= Operator.size(); ++o)
+			{
+				Recent = Operating(Number[n], Number[n + 1], Operator[o]);
+			}
+		}
+	}
+	int Operating(int _Num1, int _Num2, char _Operator)
+	{
+		switch (_Operator)
+		{
+		case '+':
+			return _Num1 + _Num2;
+			break;
+		case '-':
+			return _Num1 - _Num2;
+			break;
+		case '*':
+			return _Num1 * _Num2;
+			break;
+		case '/':
+			if (_Num1 < 0 && _Num2 > 0)
+				return -((-(_Num1)) / _Num2);
+			if (_Num2 == 0)
+			{
+				cout << "Divided by 0" << endl;
+				return INF;
+			}
+			else
+			{
+				return _Num1 / _Num2;
+				break;
+			}
+		}
 	}
 };
 
