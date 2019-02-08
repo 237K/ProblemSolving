@@ -68,28 +68,24 @@ public:
 			Operator[0]--;
 			Operating(index+1, _Result + Number[index]);
 			Operator[0]++;
-			cout << _Result << " + " << Number[index] << endl;
 		}
 		if (Operator[1] > 0)
 		{
 			Operator[1]--;
 			Operating(index+1, _Result - Number[index]);
 			Operator[1]++;
-			cout << _Result << " - " << Number[index] << endl;
 		}
 		if (Operator[2] > 0)
 		{
 			Operator[2]--;
 			Operating(index+1, _Result * Number[index]);
 			Operator[2]++;
-			cout << _Result << " * " << Number[index] << endl;
 		}
 		if (Operator[3] > 0)
 		{
 			Operator[3]--;
 			Operating(index+1, _Result / Number[index]);
 			Operator[3]++;
-			cout << _Result << " / " << Number[index] << endl;
 		}
 	}
 	void PrintResult() const
@@ -117,6 +113,7 @@ int main(void)
 		fin >> _Size;
 		Cal[tc] = new Calculator(_Size);
 		Cal[tc]->Setting(fin);
+		cout << "#" << tc << endl;
 		Cal[tc]->Execution();
 		Cal[tc]->PrintResult();
 	}
