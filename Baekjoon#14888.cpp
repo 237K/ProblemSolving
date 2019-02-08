@@ -15,6 +15,7 @@
 using namespace std;
 
 const static int INF = 214700000;
+const static int INF_CASE = 100801;
 
 class Calculator
 {
@@ -23,7 +24,7 @@ private:
 	vector<int> Number;
 	vector<char> Operator;
 	vector<int> Result;
-	queue<int> Q;
+	queue<char> *Q;
 	int InputNumber;
 	int Plus, Minus, Mul, Div;
 public:
@@ -34,6 +35,7 @@ public:
 		Number.resize(_Size+1, 0);
 		Operator.resize(_Size, ' ');
 		Result.clear();
+		Q = new queue<char>[INF_CASE];	//수의 개수가 최대 개수인 11개일 경우 경우의 수 10800개이므로
 	}
 	~Calculator() {}
 	void Setting(ifstream& _fin)
@@ -71,6 +73,7 @@ public:
 				init++;
 			}
 		Print();
+
 	}
 	void Print() const
 	{
