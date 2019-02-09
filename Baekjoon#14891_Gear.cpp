@@ -42,22 +42,24 @@ public:
 		delete[] Gear;
 		delete[] Check;
 	}
-	void Set(ifstream& _fin)
+	void Set(FILE *_file)
 	{
 		int RecentNum = 0;
 		for (int g = 1; g <= 4; ++g)
 		{
 			for (int t = 0; t < GEAR_TEETH; ++t)
 			{
-				scanf_s("%1d", &RecentNum);
+				fscanf_s(_file, "%1d", &RecentNum);
 				Gear[g][t] = RecentNum;
 			}
 		}
-		_fin >> Rotate;
+		//_fin >> Rotate;
+		fscanf_s(_file, "%d", &Rotate);
 		for (int r = 1; r <= Rotate; ++r)
 		{
 			int count = 0;
-			_fin >> Rotate_Gear >> Rotate_Direct;
+			//_fin >> Rotate_Gear >> Rotate_Direct;
+			fscanf_s(_file, "%d %d", &Rotate_Gear, &Rotate_Direct);
 			rotate(Gear[Rotate_Gear].begin(), Gear[Rotate_Gear].begin()-(Rotate_Direct), Gear[Rotate_Gear].end());	//rotate가 기본적으로 왼쪽(반시계방향)으로 시프트하므로 입력받은 방향에 부호반전시킴
 			Check[Rotate_Gear] = true;
 			Execution(Rotate_Gear, Rotate_Direct);
@@ -134,17 +136,21 @@ int main(void)
 {
 	GearClass *gear[100];
 	int testcase = 0;
-	ifstream fin("testcase_Gear.txt");
+	FILE *file = NULL;
+	fopen_s(&file, "testcase_Gear.txt", "r");
+	//ifstream fin("testcase_Gear.txt");
 
-	fin >> testcase;
+	fscanf_s(file, "%d", &testcase);
+	//fin >> testcase;
 	for (int tc = 1; tc <= testcase; ++tc)
 	{
 		cout << "#" << tc << endl;
-		gear[tc]->Set(fin);
+		//gear[tc]->Set(fin);
+		gear[tc]->Set(file);
 	}
 
-	fin.close();
-
+	//fin.close();
+	fclose(file);
 	for (int del = 1; del <= testcase; ++del)
 	{
 		delete gear[del];
