@@ -33,7 +33,7 @@ public:
 		Check = new bool[GEAR_NUMBER + 1];
 		for (int init = 1; init <= GEAR_NUMBER; init++)
 		{
-			Gear[init].resize(GEAR_TEETH, 0);
+			Gear[init].resize(GEAR_TEETH);
 			Check[init] = false;
 		}
 	}
@@ -42,6 +42,26 @@ public:
 		delete[] Gear;
 		delete[] Check;
 	}
+	void Right_rotate(vector<int>& v)
+	{
+		int Recent;
+		Recent = v[v.size()-1];
+		for (auto i = 0; i < v.size()-1; i++)
+		{
+			v[i + 1] = v[i];
+		}
+		v[0] = Recent;
+	}
+	void Left_rotate(vector<int>& v)
+	{
+		int Recent;
+		Recent = v[0];
+		for (auto i = v.size()-1; i > 0; --i)
+		{
+			v[i - 1] = v[i];
+		}
+		v[v.size() - 1] = Recent;
+	}
 	void Set(FILE *_file)
 	{
 		int RecentNum = 0;
@@ -49,6 +69,7 @@ public:
 		{
 			for (int t = 0; t < GEAR_TEETH; ++t)
 			{
+				//fscanf_s(_file, "%1d", &Gear[g][t]);
 				fscanf_s(_file, "%1d", &RecentNum);
 				Gear[g][t] = RecentNum;
 			}
@@ -60,55 +81,65 @@ public:
 			int count = 0;
 			//_fin >> Rotate_Gear >> Rotate_Direct;
 			fscanf_s(_file, "%d %d", &Rotate_Gear, &Rotate_Direct);
-			rotate(Gear[Rotate_Gear].begin(), Gear[Rotate_Gear].begin()-(Rotate_Direct), Gear[Rotate_Gear].end());	//rotate가 기본적으로 왼쪽(반시계방향)으로 시프트하므로 입력받은 방향에 부호반전시킴
+			switch (Rotate_Direct)
+			{
+			case -1:
+				Left_rotate(Gear[Rotate_Gear]);
+				break;
+			case 1:
+				Right_rotate(Gear[Rotate_Gear]);
+				break;
+			}
+			//rotate(Gear[Rotate_Gear].begin(), Gear[Rotate_Gear].begin()-(Rotate_Direct), Gear[Rotate_Gear].end());	//rotate가 기본적으로 왼쪽(반시계방향)으로 시프트하므로 입력받은 방향에 부호반전시킴
 			Check[Rotate_Gear] = true;
 			Execution(Rotate_Gear, Rotate_Direct);
-			CheckScore();
 		}
+		CheckScore();
 		cout << "Score : " << Score << endl << endl;
 	}
 	void Execution(int _Rotate_Gear, int _Rotate_Direct)
 	{
-		if (!IsTheEnd())
+		if (IsTheEnd())
 			return;
-
-		if (_Rotate_Gear - 1 >= 1 && Check[_Rotate_Gear-1] == false)
+		else
 		{
-			Check[_Rotate_Gear - 1] = true;
-			if (Gear[_Rotate_Gear - 1][2] != Gear[_Rotate_Gear][6])
+			if (_Rotate_Gear - 1 >= 1 && Check[_Rotate_Gear - 1] == false)
 			{
-				switch (_Rotate_Direct)
+				Check[_Rotate_Gear - 1] = true;
+				if (Gear[_Rotate_Gear - 1][2] != Gear[_Rotate_Gear][6])
 				{
-				case -1:
-					rotate(Gear[_Rotate_Gear - 1].begin(), Gear[_Rotate_Gear - 1].begin()+_Rotate_Direct, Gear[_Rotate_Gear - 1].end());
-					Execution(_Rotate_Gear - 1, 1);
-					break;
-				case 1:
-					rotate(Gear[_Rotate_Gear - 1].begin(), Gear[_Rotate_Gear - 1].begin()-(_Rotate_Direct), Gear[_Rotate_Gear - 1].end());
-					Execution(_Rotate_Gear - 1, -1);
-					break;
+					switch (_Rotate_Direct)
+					{
+					case -1:
+						Right_rotate(Gear[_Rotate_Gear - 1]);
+						Execution(_Rotate_Gear - 1, 1);
+						break;
+					case 1:
+						Left_rotate(Gear[_Rotate_Gear - 1]);
+						Execution(_Rotate_Gear - 1, -1);
+						break;
+					}
+				}
+			}
+			if (_Rotate_Gear + 1 <= 4 && Check[_Rotate_Gear + 1] == false)
+			{
+				Check[_Rotate_Gear + 1] = true;
+				if (Gear[_Rotate_Gear][2] != Gear[_Rotate_Gear + 1][6])
+				{
+					switch (_Rotate_Direct)
+					{
+					case -1:
+						Right_rotate(Gear[_Rotate_Gear + 1]);
+						Execution(_Rotate_Gear + 1, 1);
+						break;
+					case 1:
+						Left_rotate(Gear[_Rotate_Gear + 1]);
+						Execution(_Rotate_Gear + 1, -1);
+						break;
+					}
 				}
 			}
 		}
-		if (_Rotate_Gear + 1 <= 4 && Check[_Rotate_Gear + 1] == false)
-		{
-			Check[_Rotate_Gear + 1] = true;
-			if (Gear[_Rotate_Gear][2] != Gear[_Rotate_Gear + 1][6])
-			{
-				switch (_Rotate_Direct)
-				{
-				case -1:
-					rotate(Gear[_Rotate_Gear + 1].begin(), Gear[_Rotate_Gear + 1].begin() + _Rotate_Direct, Gear[_Rotate_Gear + 1].end());
-					Execution(_Rotate_Gear + 1, 1);
-					break;
-				case 1:
-					rotate(Gear[_Rotate_Gear + 1].begin(), Gear[_Rotate_Gear + 1].begin() - (_Rotate_Direct), Gear[_Rotate_Gear + 1].end());
-					Execution(_Rotate_Gear + 1, -1);
-					break;
-				}
-			}
-		}
-
 	}
 	bool IsTheEnd()
 	{
@@ -125,10 +156,14 @@ public:
 	}
 	void CheckScore()
 	{
-		for (int s = 1; s <= 4; s++)
-		{
-			Score += Gear[s][0];
-		}
+		if (Gear[1][0] == 1)
+			Score += 1;
+		if (Gear[2][0] == 1)
+			Score += 2;
+		if (Gear[3][0] == 1)
+			Score += 4;
+		if (Gear[4][0] == 1)
+			Score += 8;
 	}
 };
 
@@ -144,6 +179,7 @@ int main(void)
 	//fin >> testcase;
 	for (int tc = 1; tc <= testcase; ++tc)
 	{
+		gear[tc] = new GearClass();
 		cout << "#" << tc << endl;
 		//gear[tc]->Set(fin);
 		gear[tc]->Set(file);
