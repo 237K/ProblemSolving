@@ -20,9 +20,9 @@ class Calculator
 {
 private:
 	int Size;
-	vector<int> Number;
-	vector<char> Operator;
-	queue<char> Q;
+	vector<int> Number;						//숫자 저장할 벡터
+	vector<char> Operator;					//연산자 저장할 벡터
+	queue<char> Q;							//연산자를 섞어서(조합해서) 넣어둘 큐
 	int Result;
 	int InputNumber;
 	int Plus, Minus, Mul, Div;
@@ -36,7 +36,7 @@ public:
 		Operator.resize(_Size, 'n');
 	}
 	~Calculator() {}
-	void Setting(ifstream& _fin)
+	void Setting(ifstream& _fin)					//인풋값 읽어오는 함수
 	{
 		for (int init = 1; init <= Size; ++init)
 		{
@@ -44,7 +44,7 @@ public:
 			Number[init] = InputNumber;
 		}
 		_fin >> Plus >> Minus >> Mul >> Div;
-
+													//주어진 연산자를 연산자 벡터에 넣음
 		int init = 1;
 			while (!(Plus == 0))
 			{
@@ -87,13 +87,13 @@ public:
 		cout << endl << endl;
 	}
 	void Execution()
-	{
+	{								//숫자 2개, 연산자 1개일 경우에 다음 순열이 없으므로 while 쓰면 실행 안함. 최소 1번은 실행하도록 do while 사용
 		do
 		{
 			int Recent = 0;
-			Result = Number[1];
+			Result = Number[1];		//첫번째 숫자를 인자로 전달하고, 이 인자를 연산의 왼쪽 인자로 반복 사용할 것임
 
-				for (vector<int>::size_type i = 1; i < Operator.size(); ++i)
+				for (vector<int>::size_type i = 1; i < Operator.size(); ++i)		//2. 연산자 벡터에 들어있는 순서대로 큐에 푸쉬
 				{
 					if (Operator[i] != '\0')
 					{
@@ -108,17 +108,16 @@ public:
 					char O = Q.front();
 					cout << O << ' ';
 					Q.pop();
-					Recent = Operating(Result, Number[n], O);
+					Recent = Operating(Result, Number[n], O);						//3. Result와 숫자벡터의 다음 숫자를 큐에서 꺼낸 연산자로 연산함
 					Result = Recent;
-					Max = max(Max, Result);
+					Max = max(Max, Result);											//4. 최대값/최소값 비교
 					Min = min(Min, Result);
 				}
-				//Result.push_back(Recent);
 				cout << endl;
 			}
 
 		}
-		while (next_permutation(Operator.begin(), Operator.end()));
+		while (next_permutation(Operator.begin(), Operator.end()));			//1. algorithm 헤더에 next_permutation 함수로 연산자 벡터를 다음 순열로 만듬 ( + * -> * + )
 
 		cout << "Max : " << Max << endl;
 		cout << "Min : " << Min << endl << endl;
