@@ -122,7 +122,7 @@ public:
 		cout << "Max : " << Max << endl;
 		cout << "Min : " << Min << endl << endl;
 	}
-	int Operating(int _Num1, int _Num2, char _Operator)
+	int Operating(int _Num1, int _Num2, char _Operator)				//연산 함수
 	{
 		switch (_Operator)
 		{
@@ -173,5 +173,11 @@ int main(void)
 
 	fin.close();
 	fout.close();
+
+	for (int del = 1; del <= testcase; ++del)
+	{
+		delete Cal[del];
+	}
+
 	return 0;
 }
