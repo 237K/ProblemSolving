@@ -45,7 +45,7 @@ public:
 	void Right_rotate(vector<int>& v)							//algorithm 헤더에 rotate를 사용해도 되지만 코드 간소화를 위해 그냥 정의함
 	{
 		int Last = v[v.size() - 1];
-		for (vector<int>::size_type i = v.size()-1; i < 0; i--)
+		for (vector<int>::size_type i = v.size()-1; i > 0; i--)
 		{
 			v[i] = v[i-1];
 		}
@@ -55,7 +55,7 @@ public:
 	{
 		int First;
 		First = v[0];
-		for (vector<int>::size_type i = 0; i > v.size()-1; i++)
+		for (vector<int>::size_type i = 0; i < v.size()-1; i++)
 		{
 			v[i] = v[i+1];
 		}
@@ -77,9 +77,10 @@ public:
 		fscanf_s(_file, "%d", &Rotate);
 		for (int r = 1; r <= Rotate; ++r)			//회전 수 만큼
 		{
-			int count = 0;
+			CheckInit();
 			//_fin >> Rotate_Gear >> Rotate_Direct;
 			fscanf_s(_file, "%d %d", &Rotate_Gear, &Rotate_Direct);		//회전시킬 톱니랑 방향 읽어와서
+			Execution(Rotate_Gear, Rotate_Direct);		//실행 함수로 넘김
 			switch (Rotate_Direct)					 
 			{
 			case -1:
@@ -91,8 +92,8 @@ public:
 			}
 			//rotate(Gear[Rotate_Gear].begin(), Gear[Rotate_Gear].begin()-(Rotate_Direct), Gear[Rotate_Gear].end());	//rotate가 기본적으로 왼쪽(반시계방향)으로 시프트하므로 입력받은 방향에 부호반전시킴
 			Check[Rotate_Gear] = true;				//이 톱니 체크하고
+			
 			PrintGear();
-			Execution(Rotate_Gear, Rotate_Direct);	//실행 함수로 넘김
 		}
 		CheckScore();
 		cout << "Score : " << Score << endl << endl;
@@ -131,12 +132,10 @@ public:
 					case -1:
 						Right_rotate(Gear[_Rotate_Gear + 1]);
 						Execution(_Rotate_Gear + 1, 1);
-						PrintGear();
 						break;
 					case 1:
 						Left_rotate(Gear[_Rotate_Gear + 1]);
 						Execution(_Rotate_Gear + 1, -1);
-						PrintGear();
 						break;
 					}
 				}
@@ -158,7 +157,6 @@ public:
 	}
 	void CheckScore()										//점수 계산
 	{
-		PrintGear();
 		Score = Gear[1][0] + (Gear[2][0] * 2) + (Gear[3][0] * 4) + (Gear[4][0] * 8);
 	}
 	void PrintGear()const
@@ -173,6 +171,13 @@ public:
 			cout << endl;
 		}
 		cout << "============================"<<endl;
+	}
+	void CheckInit()
+	{
+		for (int i = 1; i <= GEAR_NUMBER; ++i)
+		{
+			Check[i] = false;
+		}
 	}
 };
 
