@@ -47,6 +47,7 @@ public:
 			Distance[init] = INF;
 			Check[init] = false;
 		}
+		while (!Q.empty()) { Q.pop(); }
 	}
 	~Graph()
 	{
