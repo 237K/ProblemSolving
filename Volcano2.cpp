@@ -42,7 +42,6 @@ public:
 		for (int r = 0; r < _Size; ++r)
 		{
 			Map[r] = new int[_Size];
-			Gate[r].clear();
 			for (int c = 0; c < _Size; ++c)
 			{
 				Map[r][c] = 0;
@@ -80,7 +79,7 @@ public:
 	}
 	void Simulation()
 	{
-		while (!Grass.size() - NumOfGate == 0)
+		while (!Grass.size() - NumOfGate == 0)					//직접 조합을 만들어서 벡터에 집어넣음
 		{
 			for (int i = 1; i <= Grass.size() - NumOfGate; ++i)
 			{
@@ -93,8 +92,9 @@ public:
 		}
 		while (!Grass.empty())
 		{
-			Grass.pop();
+			Grass.pop();		//큐 재활용하려고
 		}
+
 	}
 	void InstallGata()
 	{
