@@ -11,15 +11,16 @@
 
 #include <iostream>
 #include <fstream>
+#include <stack>
 #include <vector>
-#include <queue>
 using namespace std;
 
 class Permutation
 {
 private:
 	vector<int> *Graph;
-	queue<int> Q;
+	vector<int> Answer;
+	stack<int> S;
 	bool *Check;
 	int N;
 public:
@@ -42,51 +43,47 @@ public:
 				}
 			}
 		}
+		while (!S.empty()) { S.pop(); }
+		Answer.clear();
 		PrintV();
-		while (!Q.empty()) { Q.pop(); }
 	}
 	~Permutation()
 	{
+		delete[] Graph;
 		delete[] Check;
+	}
+	void Go()
+	{
+		for (int i = 1; i <= N; ++i)
+		{
+			DFS(i);
+		}
 	}
 	void DFS(int _index)
 	{
-		/*
-		if (_depth == N+1)
+		S.push(_index);
+		Check[_index] = true;
+		while (!S.empty())
 		{
-			cout << "{";
-			while (!Q.empty())
+			int CurNode = S.top();
+			cout << CurNode << ' ';
+			S.pop();
+			for (vector<int>::size_type i = 0; i < Graph->size(); ++i)
 			{
-				cout << Q.front() << ' ';
-				Q.pop();
-			}
-			cout << "}";
-			return;
-		}
-		*/
-		//else
-		//{
-			Q.push(_index);
-			Check[_index] = true;
-			for (vector<int>::size_type i = 0; i < Graph[_index].size(); ++i)
-			{
-				if (Check[Graph[_index][i]] == false)
+				int NextNode = Graph[CurNode][i];
+				if (Check[NextNode] == false)
 				{
-					//Q.push(Check[Graph[_index][i]]);
-					//Check[Graph[_index][i]] = true;
-					DFS(Graph[_index][i]);
-					Check[Graph[_index][i]] = false;
+					S.push(NextNode);
+					Check[NextNode] = true;
 				}
 			}
-			cout << "{";
-			while (!Q.empty())
-			{
-				cout << Q.front() << ' ';
-				Q.pop();
-			}
-			cout << "}";
-			cout << endl;
-		//}
+		}
+		cout << endl;
+		for (int i = 1; i <= N; ++i)
+		{
+			Check[i] = false;
+		}
+		//PrintAnswer();
 	}
 	void PrintV() const
 	{
@@ -99,6 +96,14 @@ public:
 			}
 			cout << endl;
 		}
+	}
+	void PrintAnswer() const
+	{
+		for (vector<int>::size_type i = 0; i < Answer.size(); ++i)
+		{
+			cout << Answer[i] << ' ';
+		}
+		cout << endl;
 	}
 };
 
@@ -117,7 +122,7 @@ int main(void)
 		fin >> _N;
 		P[tc] = new Permutation(_N);
 		cout << "#" << tc << endl;
-		P[tc]->DFS(1);
+		P[tc]->Go();
 		cout << endl << endl;
 	}
 
