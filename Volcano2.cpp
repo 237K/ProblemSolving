@@ -31,25 +31,26 @@ private:
 	int NumOfGate;
 	vector<PII> Volcano;	//입력받을 때 화산의 좌표를 저장해둠
 	queue<PII> Lava;		//용암이 흘러가는 과정을 BFS로 구현하기 위함
-	queue<PII> Grass;		//초원에 게이트를 설치해보고 시뮬레이션 해보기 위함
-	vector<PII> *Gate;
+	vector<PII> Grass;		//입력받을 때 초원의 좌표를 저장해둠
+	bool **Check;			//
 	int Unaffected;
 public:
 	Graph(int _Size, int _Gate) : Size(_Size), NumOfGate(_Gate), Unaffected(0)
 	{
 		Map = new int*[_Size];
-		Gate = new vector<PII>[_Size];
+		Check = new bool*[_Size];
 		for (int r = 0; r < _Size; ++r)
 		{
 			Map[r] = new int[_Size];
+			Check[r] = new bool[_Size];
 			for (int c = 0; c < _Size; ++c)
 			{
 				Map[r][c] = 0;
+				Check[r][c] = false;
 			}
 		}
 		Volcano.clear();
 		while (!Lava.empty()) { Lava.pop(); }
-		while (!Grass.empty()) { Grass.pop(); }
 	}
 	~Graph()
 	{
@@ -68,7 +69,7 @@ public:
 				_fin >> Map[r][c];
 				if (Map[r][c] == 0)
 				{
-					Grass.push(PII(r, c));
+					Grass.push_back(PII(r, c));
 				}
 				if (Map[r][c] == 2)
 				{
@@ -77,28 +78,35 @@ public:
 			}
 		}
 	}
-	void Simulation()
+	void Simulation(int depth)
 	{
-		while (!Grass.size() - NumOfGate == 0)					//직접 조합을 만들어서 벡터에 집어넣음
+		cout << "depth : " << depth << endl;
+		if (depth == NumOfGate + 1)
 		{
-			for (int i = 1; i <= Grass.size() - NumOfGate; ++i)
+			//int ThisTime = 0;
+			//Eruption();
+			//ThisTime = CountArea();
+			//if (Unaffected > ThisTime)
+			//	Unaffected = ThisTime;
+			//cout << "Unaffected Area : " << Unaffected << endl << endl;
+			return;
+		}
+		else
+		{
+			for (vector<int>::size_type i = 0; i < Grass.size(); ++i)
 			{
-				PII CurGrass = Grass.front();
-				Grass.pop();
-				Gate[CurGrass].push_back(Grass.front());
-				Grass.push(Grass.front());
-				Grass.pop();
+				PII CurGrass = Grass[i];
+				cout << "(" << CurGrass.first << ", " << CurGrass.second << ") ";
+				if (Check[CurGrass.first][CurGrass.second] == false)
+				{
+					Check[CurGrass.first][CurGrass.second] = true;
+					Map[CurGrass.first][CurGrass.second] = 1;
+					Simulation(depth + 1);
+					Check[CurGrass.first][CurGrass.second] = false;
+					Map[CurGrass.first][CurGrass.second] = 0;
+				}
 			}
 		}
-		while (!Grass.empty())
-		{
-			Grass.pop();		//큐 재활용하려고
-		}
-
-	}
-	void InstallGata()
-	{
-
 	}
 	void Eruption()
 	{
@@ -140,19 +148,19 @@ public:
 			Map[_Loc.first][_Loc.second - 1] = 3;
 		}
 	}
-	void CountArea()
+	int CountArea()
 	{
+		int Recent = 0;
 		for (int r = 0; r < Size; ++r)
 		{
 			for (int c = 0; c < Size; ++c)
 			{
 				if (Map[r][c] == 0)
-					Unaffected++;
+					Recent++;
 			}
 		}
-		cout << "Unaffected Area : " << Unaffected << endl << endl;
+		return Recent;
 	}
-
 };
 
 int main(void)
@@ -174,9 +182,8 @@ int main(void)
 		fin >> _Size >> _Gate;
 		graph[tc] = new Graph(_Size, _Gate);
 		graph[tc]->Setting(fin);
-		graph[tc]->Simulation();
 		cout << "#" << tc << endl;
-		graph[tc]->CountArea();
+		graph[tc]->Simulation(1);
 	}
 
 	fin.close();
