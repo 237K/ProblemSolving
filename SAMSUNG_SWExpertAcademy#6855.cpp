@@ -4,7 +4,7 @@
 //
 //	[Algorithm Problem Solving]
 //
-//	SAMSUNG SW Expert Academy [#6855] <신도시 전기 연결하기> D4
+//	SAMSUNG SW Expert Academy [#6855] <신도시 전기 연결하기> (D4)
 //	
 //	K(발전소 개수)개 씩 조합해서(DFS) 완전탐색해보겠음
 
@@ -70,13 +70,6 @@ void Planning::Input(ifstream& _fin)
 
 void Planning::DFS(int count)
 {
-	if (NumOfHouse == NumOfPlant || NumOfHouse < NumOfPlant)
-	{
-		Answer = 0;
-		return;
-	}
-	else
-	{
 		if (count == NumOfPlant)
 		{
 			Calculation();
@@ -99,7 +92,6 @@ void Planning::DFS(int count)
 				}
 			}
 		}
-	}
 }
 void Planning::Calculation()
 {
@@ -171,8 +163,8 @@ int main(void)
 			fout << "(예외발생. 입력받은 N혹은K 값이 범위를 초과했습니다.) N : " << expn.first << ", K : " << expn.second << endl << endl;
 		}
 		Plan[tc]->Input(fin);
-		cout << "#" << tc << " ";
 		Plan[tc]->DFS(0);
+		cout << "#" << tc << " ";
 		Plan[tc]->PrintAnswer();
 	}
 
