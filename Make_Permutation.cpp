@@ -19,8 +19,8 @@ class Permutation
 {
 private:
 	vector<int> *Graph;
-	vector<int> Answer;
 	stack<int> S;
+	int *Answer;
 	bool *Check;
 	int N;
 public:
@@ -28,10 +28,12 @@ public:
 	{
 		Graph = new vector<int>[_N + 1];
 		Check = new bool[_N + 1];
+		Answer = new int[_N + 1];
 		for (int init = 1; init <= _N; ++init)
 		{
 			Graph[init].clear();
 			Check[init] = false;
+			Answer[init] = 0;
 		}
 		for (int r = 1; r <= _N; ++r)
 		{
@@ -44,7 +46,6 @@ public:
 			}
 		}
 		while (!S.empty()) { S.pop(); }
-		Answer.clear();
 		PrintV();
 	}
 	~Permutation()
@@ -63,17 +64,18 @@ public:
 	{
 		S.push(_index);
 		Check[_index] = true;
+		cout<< _index<< ' ' ;
 		while (!S.empty())
 		{
 			int CurNode = S.top();
-			cout << CurNode << ' ';
 			S.pop();
-			for (vector<int>::size_type i = 0; i < Graph->size(); ++i)
+			for (vector<int>::size_type i = 0; i < Graph[CurNode].size(); ++i)
 			{
 				int NextNode = Graph[CurNode][i];
 				if (Check[NextNode] == false)
 				{
 					S.push(NextNode);
+					cout << NextNode << " ";
 					Check[NextNode] = true;
 				}
 			}
@@ -99,7 +101,7 @@ public:
 	}
 	void PrintAnswer() const
 	{
-		for (vector<int>::size_type i = 0; i < Answer.size(); ++i)
+		for (int i = 1 ; i <= N ; ++i)
 		{
 			cout << Answer[i] << ' ';
 		}
