@@ -70,26 +70,33 @@ void Planning::Input(ifstream& _fin)
 
 void Planning::DFS(int count)
 {
-	if (count == NumOfPlant)
+	if (NumOfHouse == NumOfPlant || NumOfHouse < NumOfPlant)
 	{
-		Calculation();
-		if (Answer > Wire)
-		{
-			Answer = Wire;
-		}
-		
+		Answer = 0;
 		return;
 	}
 	else
 	{
-		for (vector<int>::size_type i = 0; i < Home.size(); ++i)
+		if (count == NumOfPlant)
 		{
-			if (Check[i] == false)
+			Calculation();
+			if (Answer > Wire)
 			{
-				Plant[count] = i;
-				Check[i] = true;
-				DFS(count + 1);
-				Check[i] = false;
+				Answer = Wire;
+			}
+			return;
+		}
+		else
+		{
+			for (vector<int>::size_type i = 0; i < Home.size(); ++i)
+			{
+				if (Check[i] == false)
+				{
+					Plant[count] = i;
+					Check[i] = true;
+					DFS(count + 1);
+					Check[i] = false;
+				}
 			}
 		}
 	}
@@ -133,10 +140,7 @@ void Planning::InitDistance()
 }
 void Planning::PrintAnswer() const
 {
-	if (Answer != INF)
-		cout << Answer << endl;
-	else
-		cout << "0" << endl;
+	cout << Answer << endl;
 }
 
 int main(void)
