@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 	int Answer;
 	vector<int> House;
 	vector<int> Distance;
-	//freopen("s_input.txt", "r", stdin);
+	freopen("s_input.txt", "r", stdin);
 	scanf("%d", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
