@@ -9,114 +9,79 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
 #include <iostream>
-#include <fstream>
 using namespace std;
+const static int MAX = 1001;
+char Input[MAX] = { NULL, };
+char Empty[2];
+int Num;
+int Count;
+
+int ATOI(char ch)
+{
+	switch (ch)
+	{
+	case 48:
+		return 0;
+		break;
+	case 49:
+		return 1;
+		break;
+	case 50:
+		return 2;
+		break;
+	case 51:
+		return 3;
+		break;
+	case 52:
+		return 4;
+		break;
+	case 53:
+		return 5;
+		break;
+	case 54:
+		return 6;
+		break;
+	case 55:
+		return 7;
+		break;
+	case 56:
+		return 8;
+		break;
+	case 57:
+		return 9;
+		break;
+	}
+}
 
 int main(int argc, char** argv)
 {
 	int test_case;
 	int T;
 	freopen("s_input6959.txt", "r", stdin);
-	scanf("%d", &T);
+	scanf("%d", &T); cin.getline(Empty, 2);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
-		int Number = 0;
-		int Quotient = 0;
-		int Remainder = 0;
-		int Count = 0;
-		int Recent = 0;
-		scanf("%d", &Number);
-		printf("#%d ", test_case);
-		if (Number < 10)
+		*Input = '\n'; Num = 0; Count = 0;
+		cin.getline(Input, 1001);
+		for (int i = 0; Input[i] != NULL; ++i)
 		{
-			if (Count % 2 == 0)
-				printf("B\n");
-			else
-				printf("A\n");
-			continue;
+			Num += ATOI(Input[i]);
+			if (Num < 10)
+			{
+				Count += 1;
+				continue;
+			}
+			else if (Num >= 10)
+			{
+				Count += 2;
+				Num = Num % 10;
+				continue;
+			}
 		}
-		else if (Number >= 1000)
-		{
-			Quotient = Number / 1000;
-			Remainder = Number % 1000;
-			Remainder = Remainder / 100;
-			Recent = Quotient + Remainder;
-			if (Recent < 10)
-				Count += 1;
-			else
-				Count += 2;
-
-			printf("%d, Count : %d\n", Recent, Count);
-
-			Remainder = Number % 100;
-			Remainder = Remainder / 10;
-			Recent = Recent + Remainder;
-			if (Recent < 10)
-				Count += 1;
-			else
-				Count += 2;
-
-			printf("%d, Count : %d\n", Recent, Count);
-
-			Remainder = Number % 10;
-			if (Recent + Remainder >= 10)
-				Count += 2;
-			else
-				Count += 1;
-
-			printf("%d, Count : %d\n", Recent + Remainder, Count);
-
-			if (Count % 2 == 0)
-				printf("B\n");
-			else
-				printf("A\n");
-			continue;
-		}
-		else if (Number >= 100 && Number < 1000)
-		{
-			Quotient = Number / 100;
-			Remainder = Number % 100;
-			Remainder = Remainder / 10;
-			Recent = Quotient + Remainder;
-			if (Recent < 10)
-				Count += 1;
-			else
-				Count += 2;
-
-			printf("%d, Count : %d\n", Recent, Count);
-
-			Remainder = Number % 10;
-			if (Recent + Remainder >= 10)
-				Count += 2;
-			else
-				Count += 1;
-
-			printf("%d, Count : %d\n", Recent + Remainder, Count);
-
-			if (Count % 2 == 0)
-				printf("B\n");
-			else
-				printf("A\n");
-			continue;
-		}
-		else if (Number >= 10 && Number < 100)
-		{
-			Quotient = Number / 10;
-			Remainder = Number % 10;
-			Recent = Quotient + Remainder;
-			if (Recent >= 10)
-				Count += 2;
-			else
-				Count += 1;
-
-			printf("%d, Count : %d\n", Recent, Count);
-
-			if (Count % 2 == 0)
-				printf("B\n");
-			else
-				printf("A\n");
-			continue;
-		}
+		if (Count % 2 == 0)
+			printf("#%d A\n", test_case);
+		else
+			printf("#%d B\n", test_case);
 	}
 	return 0;
 }
