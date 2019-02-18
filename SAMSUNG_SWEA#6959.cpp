@@ -44,9 +44,23 @@ void Play(int Number, int Count)
 			Remainder = Number % 1000;
 			Play(Quotient * 100 + Remainder, Count + 1);	//1000À¸·Î ³ª´« ¸ò¿¡ 100À» °öÇÑ ÈÄ ³ª¸ÓÁö¿Í ´õÇØ¼­ ´Ù½Ã Àç±ÍÇÔ¼ö·Î º¸³¿
 		}
-		else if (Number >= 10000)
+		else if (Number >= 10000 && Number < 100000)
 		{
-			Play(1, Count + 5);
+			Quotient = Number / 10000;
+			Remainder = Number % 10000;
+			Play(Quotient * 1000 + Remainder, Count + 1);
+		}
+		else if (Number >= 100000 && Number < 1000000)
+		{
+			Quotient = Number / 100000;
+			Remainder = Number % 100000;
+			Play(Quotient * 10000 + Remainder, Count + 1);
+		}
+		else if (Number >= 1000000 && Number < 10000000)
+		{
+			Quotient = Number / 1000000;
+			Remainder = Number % 1000000;
+			Play(Quotient * 100000 + Remainder, Count + 1);
 		}
 	}
 }
