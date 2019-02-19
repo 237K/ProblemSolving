@@ -19,6 +19,7 @@ using namespace std;
 
 int arr[10];
 int ReverseN;
+int Count;
 
 void Reverse(int n)
 {
@@ -29,12 +30,51 @@ void Reverse(int n)
 		int Remainder = Cur % 10;
 		ReverseN += Remainder;
 		Cur = Cur / 10;
+		Count++;
 		if (Cur == 0)
 			break;
 		else
 			ReverseN *= 10;
 	}
-	cout << "Number : " << n << ", Reverse : " << ReverseN << endl;
+	cout << "Number : " << n << ", Reverse : " << ReverseN << " Count : "<<Count<<endl;
+}
+
+void MakeArray(int n)
+{
+	for (int i = 1; i <= Count; ++i)
+	{
+		int Quotient = n / (int)(pow(10, Count - i));
+		int Remainder = n % (int)(pow(10, Count - i));
+		arr[i] = Quotient;
+		n = Remainder;
+	}
+
+	for (int i = 1; i <= Count; ++i)
+	{
+		cout << arr[i] << ' ';
+	}
+	cout << endl;
+}
+
+bool Palindrome(int a[])
+{
+	int Start = 1;
+	int End = Count;
+	bool Flag = true;
+	while (Start <= End)
+	{
+		if (arr[Start] != arr[End])
+		{
+			Flag = false;
+			break;
+		}
+		else
+		{
+			Start++;
+			End--;
+		}
+	}
+	return Flag;
 }
 
 int main(int argc, char** argv)
@@ -42,15 +82,22 @@ int main(int argc, char** argv)
 	int test_case;
 	int T;
 	int N;
+	int Sum;
 	freopen("testcase_ReverseAdd.txt", "r", stdin);
 	scanf("%d", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		*arr = { 0, };
-		ReverseN = 0;
+		ReverseN = 0;	Sum = 0;	Count = 0;
 		scanf("%d", &N);
 		cout << "#" << test_case << endl;
 		Reverse(N);
+		Sum = N + ReverseN;
+		MakeArray(Sum);
+		if (Palindrome(arr))
+			printf("Yes\n");
+		else
+			printf("No\n");
 	}
 	return 0;
 }
