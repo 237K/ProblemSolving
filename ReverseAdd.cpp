@@ -30,26 +30,29 @@ void Reverse(int n)
 		int Remainder = Cur % 10;
 		ReverseN += Remainder;
 		Cur = Cur / 10;
-		Count++;
 		if (Cur == 0)
 			break;
 		else
 			ReverseN *= 10;
 	}
-	cout << "Number : " << n << ", Reverse : " << ReverseN << " Count : "<<Count<<endl;
+	cout << "Number : " << n << ", Reverse : " << ReverseN << endl;
 }
 
 void MakeArray(int n)
 {
-	for (int i = 1; i <= Count; ++i)
+	int tmp = n;
+	int idx = 0;
+	while (tmp != 0)
 	{
-		int Quotient = n / (int)(pow(10, Count - i));
-		int Remainder = n % (int)(pow(10, Count - i));
-		arr[i] = Quotient;
-		n = Remainder;
+		int Quotient = tmp / 10;
+		int Remainder = tmp % 10;
+		arr[idx] = Remainder;
+		idx++;
+		Count++;
+		tmp /= 10;
 	}
 
-	for (int i = 1; i <= Count; ++i)
+	for (int i = 0; i < Count; ++i)
 	{
 		cout << arr[i] << ' ';
 	}
@@ -58,8 +61,8 @@ void MakeArray(int n)
 
 bool Palindrome(int a[])
 {
-	int Start = 1;
-	int End = Count;
+	int Start = 0;
+	int End = Count-1;
 	bool Flag = true;
 	while (Start <= End)
 	{
@@ -98,6 +101,7 @@ int main(int argc, char** argv)
 			printf("Yes\n");
 		else
 			printf("No\n");
+		printf("\n");
 	}
 	return 0;
 }
