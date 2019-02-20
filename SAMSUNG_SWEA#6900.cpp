@@ -14,24 +14,14 @@
 #include <iostream>
 using namespace std;
 
-int My[51][8];
-
-void MakeArray(int idx, int n)
-{
-	for (int i = 0; i < 8; ++i)
-	{
-		My[idx][i] = n / (int)(pow(10, 7 - i));
-		n = n % (int)(pow(10, 7 - i));
-	}
-}
-
 int main(int argc, char**argv)
 {
 	int test_case;
 	int T;
 	int N, M;
-	char Input[51][9];
-	int Money[51];
+	int **My;
+	char **Input;
+	int *Money;
 	int Answer;
 	bool Flag;
 	freopen("s_input6900.txt", "r", stdin);
@@ -40,15 +30,21 @@ int main(int argc, char**argv)
 	{
 		N = 0; M = 0; Flag = true; Answer = 0;
 		scanf("%d %d", &N, &M);
+		My = new int*[M];
+		Input = new char*[N];
+		Money = new int[N];
 		for (int i = 0; i < N; ++i)
 		{
+			Input[i] = new char[9];
 			scanf("%9s %d", Input[i], &Money[i]);
 		}
 		for (int i = 0; i < M; ++i)
 		{
-			int Temp;
-			scanf("%d", &Temp);
-			MakeArray(i, Temp);
+			My[i] = new int[8];
+			for (int j = 0; j < 8; ++j)
+			{
+				scanf("%1d", &My[i][j]);
+			}
 		}
 		for (int n = 0; n < N; ++n)
 		{
@@ -78,6 +74,17 @@ int main(int argc, char**argv)
 			}
 		}
 		printf("#%d %d\n", test_case, Answer);
+		for (int i = 0; i < N; ++i)
+		{
+			delete[] Input[i];
+		}
+		delete[] Input;
+		for (int i = 0; i < M; ++i)
+		{
+			delete[] My[i];
+		}
+		delete[] My;
+		delete[] Money;
 	}
 	return 0;
 }
