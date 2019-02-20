@@ -18,37 +18,37 @@ const static int MAX = 8;
 
 //처음에 class로 만들었다가 채점서버 통과가 안되서.. 안타깝게도 변수가 다 밖에 튀어나와있습니다..
 int Map[MAX][MAX];					//지형정보 저장
-bool Check[MAX][MAX];			  //좌표 방문 여부 확인
+bool Check[MAX][MAX];				//좌표 방문 여부 확인
 int N, K;
-stack<PII> Start;						//제일 높은 봉우리 좌표 저장해둘 stack
-int Top;								  //제일 높은 봉우리 높이 저장
-int Count;								 //등산로 길이 저장
-bool CanDig;						   //공사를 했는지 안했는지 확인하기 위함
+stack<PII> Start;					//제일 높은 봉우리 좌표 저장해둘 stack
+int Top;							//제일 높은 봉우리 높이 저장
+int Count;							//등산로 길이 저장
+bool CanDig;						//공사를 했는지 안했는지 확인하기 위함
 int Answer;
 
-void Make(PII L)						//DFS
+void Make(PII L)					//DFS
 {
-	Check[L.first][L.second] = true;										//좌표 방문 체크
+	Check[L.first][L.second] = true;								//좌표 방문 체크
 	if (L.first - 1 >= 0 && Check[L.first - 1][L.second] == false)	//맵을 벗어나지 않고, 방문한적이 없는 경우
 	{
-		if (Map[L.first - 1][L.second] < Map[L.first][L.second])	  //다음 지형이 지금보다 지형이 낮으면
+		if (Map[L.first - 1][L.second] < Map[L.first][L.second])	//다음 지형이 지금보다 지형이 낮으면
 		{
-			Count++;														 //등산로 설치하고
-			Make(PII(L.first - 1, L.second));								//다음 좌표로 재귀호출
-			Answer = max(Answer, Count);							  //이 경로로 갔을 때 등산로길이가 지금보다 길면 갱신
-			Count--;														   //다른 경로 탐색을 위해 초기화
+			Count++;												//등산로 설치하고
+			Make(PII(L.first - 1, L.second));						//다음 좌표로 재귀호출
+			Answer = max(Answer, Count);							//이 경로로 갔을 때 등산로길이가 지금보다 길면 갱신
+			Count--;												//다른 경로 탐색을 위해 초기화
 		}
 		else
-		{																									//맵을 벗어나지 않고 방문한적은 없는데, 다음 지형이 지금보다 높거나 지금과 같으면
-			int dig1 = abs(Map[L.first][L.second] - Map[L.first - 1][L.second]) + 1;		   //얼마나 파야될지 견적을 뽑아보고(지금보다 1만 낮은 경우에 그 다음 지형으로 갈 수 있을 확률이 높음)
-			if (CanDig == true && dig1 <= K)												   //공사를 한 적이 없고, 공사 가능 깊이면
+		{																				//맵을 벗어나지 않고 방문한적은 없는데, 다음 지형이 지금보다 높거나 지금과 같으면
+			int dig1 = abs(Map[L.first][L.second] - Map[L.first - 1][L.second]) + 1;	//얼마나 파야될지 견적을 뽑아보고(지금보다 1만 낮은 경우에 그 다음 지형으로 갈 수 있을 확률이 높음)
+			if (CanDig == true && dig1 <= K)											//공사를 한 적이 없고, 공사 가능 깊이면
 			{
-				Map[L.first - 1][L.second] -= dig1;													//공사하고
-				CanDig = false;																			//공사 한 번 했으니, 이제 못함
-				Count++;																				//등산로 설치
-				Make(PII(L.first - 1, L.second));													   //다음 좌표로 재귀호출
-				Answer = max(Answer, Count);													//여기로 갔을 때 최대 길이가 있으면 갱신
-				CanDig = true;																		  //다른 경로 탐색을 위해 초기화
+				Map[L.first - 1][L.second] -= dig1;										//공사하고
+				CanDig = false;															//공사 한 번 했으니, 이제 못함
+				Count++;																//등산로 설치
+				Make(PII(L.first - 1, L.second));										//다음 좌표로 재귀호출
+				Answer = max(Answer, Count);											//여기로 갔을 때 최대 길이가 있으면 갱신
+				CanDig = true;															//다른 경로 탐색을 위해 초기화
 				Map[L.first - 1][L.second] += dig1;
 				Count--;
 			}
