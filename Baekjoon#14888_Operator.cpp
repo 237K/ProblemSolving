@@ -6,6 +6,7 @@
 //
 //	BAEKJOON #14888	연산자 끼워넣기
 //	
+//	STL algorithm 헤더에 next_permutation 사용하여 구현
 
 #include <iostream>
 #include <fstream>
@@ -87,11 +88,11 @@ public:
 		cout << endl << endl;
 	}
 	void Execution()
-	{								//숫자 2개, 연산자 1개일 경우에 다음 순열이 없으므로 while 쓰면 실행 안함. 최소 1번은 실행하도록 do while 사용
+	{										//숫자 2개, 연산자 1개일 경우에 다음 순열이 없으므로 while 쓰면 실행 안함. 최소 1번은 실행하도록 do while 사용
 		do
 		{
 			int Recent = 0;
-			Result = Number[1];		//첫번째 숫자를 인자로 전달하고, 이 인자를 연산의 왼쪽 인자로 반복 사용할 것임
+			Result = Number[1];				//첫번째 숫자를 인자로 전달하고, 이 인자를 연산의 왼쪽 인자로 반복 사용할 것임
 
 				for (vector<int>::size_type i = 1; i < Operator.size(); ++i)		//2. 연산자 벡터에 들어있는 순서대로 큐에 푸쉬
 				{
@@ -108,21 +109,21 @@ public:
 					char O = Q.front();
 					cout << O << ' ';
 					Q.pop();
-					Recent = Operating(Result, Number[n], O);						//3. Result와 숫자벡터의 다음 숫자를 큐에서 꺼낸 연산자로 연산함
+					Recent = Operating(Result, Number[n], O);				//3. Result와 숫자벡터의 다음 숫자를 큐에서 꺼낸 연산자로 연산함
 					Result = Recent;
-					Max = max(Max, Result);											//4. 최대값/최소값 비교
+					Max = max(Max, Result);									//4. 최대값/최소값 비교
 					Min = min(Min, Result);
 				}
 				cout << endl;
 			}
 
 		}
-		while (next_permutation(Operator.begin(), Operator.end()));			//1. algorithm 헤더에 next_permutation 함수로 연산자 벡터를 다음 순열로 만듬 ( + * -> * + )
+		while (next_permutation(Operator.begin(), Operator.end()));		//1. algorithm 헤더에 next_permutation 함수로 연산자 벡터를 다음 순열로 만듬 ( + * -> * + )
 
 		cout << "Max : " << Max << endl;
 		cout << "Min : " << Min << endl << endl;
 	}
-	int Operating(int _Num1, int _Num2, char _Operator)				//연산 함수
+	int Operating(int _Num1, int _Num2, char _Operator)					//연산 함수
 	{
 		switch (_Operator)
 		{
