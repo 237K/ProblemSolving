@@ -5,6 +5,9 @@
 //	[Algorithm Problem Solving]
 //
 //	SAMSUNG SW Expert Academy [#6959] <이상한 나라의 덧셈게임> (D4)
+//
+//	***문제가 (1000의 자리) 이하의 수가 주어지는 것이 아니라, (1000자리) 이하의 수가 주어지는 것..
+//	처음에 1 ~ 9999 까지의 수가 주어지는 것으로 문제를 잘못 이해하고 풀이하여 이 코드로는 패스할 수 없음
 //	
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
@@ -68,7 +71,7 @@ int main(int argc, char** argv)
 {
 	int test_case;
 	int T;
-	//freopen("s_input6959.txt", "r", stdin);
+	freopen("s_input6959_2.txt", "r", stdin);
 	scanf("%d", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
