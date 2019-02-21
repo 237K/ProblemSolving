@@ -6,6 +6,8 @@
 //
 //	SAMSUNG SW Expert Academy [#6855] <신도시 전기 연결하기> (D4)
 //	
+//	거리순으로 정렬한다음 발전소 개수만큼 뺌
+//
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
