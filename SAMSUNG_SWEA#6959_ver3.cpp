@@ -19,11 +19,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
 #include <string>
-#include <sstream>
+#include <sstream>						//stringstream
 #include <iostream>
 using namespace std;
 
-static string ItoS(int n);
+static string ItoS(int n);				//숫자를 문자로 변환해서 문자열에 접합하기 위한 함수
 
 int main(int argc, char** argv)
 {
