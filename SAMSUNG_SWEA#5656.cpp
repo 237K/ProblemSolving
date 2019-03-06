@@ -24,7 +24,7 @@ static int N, Row, Col;
 static int Result;
 
 void Bomb(int shot_row, int shot_col, int range);
-void Drop(int drop_row, int drop_col);
+void Drop();
 void Shot(int n);
 int Count();
 void Print();
@@ -64,36 +64,52 @@ int main(int argv, char** argc)
 
 		Print();
 
-		Bomb(1, 2, 1);
-		Bomb(2, 2, 3);
+		Bomb(1, 2, 0);
+		Print();
+		Bomb(2, 2, 2);
+		Drop();
+		Print();
 		Bomb(8, 6, 2);
+		Drop();
 		Print();
 
 		printf("#%d %d\n", test_case, Result);
 	}
 }
 
-void Drop(int drop_row, int drop_col)
+void Drop()
 {
-	for (int dr = drop_row; dr > 0; --dr)
+	for (int c = 0; c < Col; ++c)
 	{
-		if (Map[dr][drop_col] == 0 && Map[dr-1][drop_col] != 0)
+		int cnt = Row - 1;
+		for (int r = Row - 1; r >= 0; --r)
 		{
-			Map[dr][drop_col] = Map[dr - 1][drop_col];
-			Map[dr - 1][drop_col] = 0;
+			if (Map[r][c] != 0)
+			{
+				if (Map[cnt][c] == 0)
+				{
+					Map[cnt][c] = Map[r][c];
+					Map[r][c] = 0;
+				}
+				else
+				{
+					Map[cnt][c] = Map[r][c];
+				}
+				cnt--;
+			}
 		}
 	}
+
 }
 
 void Bomb(int shot_row, int shot_col, int range)
 {
 	//int range = Map[shot_row][shot_col] - 1;
 	cout << "(" << shot_row << ", " << shot_col << ")" << endl;
-	//Print();
-	cout << endl;
 
 
 	Map[shot_row][shot_col] = 0;
+
 	for (int b = 1; b <= range; ++b)
 	{
 		if (shot_row + b < Row)
@@ -101,13 +117,11 @@ void Bomb(int shot_row, int shot_col, int range)
 			if (Map[shot_row + b][shot_col] == 1)
 			{
 				Map[shot_row + b][shot_col] = 0;
-				Drop(shot_row + b, shot_col);
 			}
 			else if (Map[shot_row + b][shot_col] > 1)
 			{
-				int _range = Map[shot_row + b][shot_col];
+				int _range = Map[shot_row + b][shot_col] - 1;
 				Bomb(shot_row + b, shot_col, _range);
-				Drop(shot_row + b, shot_col);
 			}
 		}
 		if (shot_row - b >= 0)
@@ -115,13 +129,11 @@ void Bomb(int shot_row, int shot_col, int range)
 			if (Map[shot_row - b][shot_col] == 1)
 			{
 				Map[shot_row - b][shot_col] = 0;
-				Drop(shot_row - b, shot_col);
 			}
 			else if (Map[shot_row - b][shot_col] > 1)
 			{
-				int _range = Map[shot_row - b][shot_col];
+				int _range = Map[shot_row - b][shot_col] - 1;
 				Bomb(shot_row - b, shot_col, _range);
-				Drop(shot_row - b, shot_col);
 			}
 		}
 		if (shot_col + b < Col)
@@ -129,13 +141,11 @@ void Bomb(int shot_row, int shot_col, int range)
 			if (Map[shot_row][shot_col + b] == 1)
 			{
 				Map[shot_row][shot_col + b] = 0;
-				Drop(shot_row, shot_col + b);
 			}
 			else if (Map[shot_row][shot_col + b] > 1)
 			{
-				int _range = Map[shot_row][shot_col + b];
+				int _range = Map[shot_row][shot_col + b] - 1;
 				Bomb(shot_row, shot_col + b, _range);
-				Drop(shot_row, shot_col + b);
 			}
 		}
 		if (shot_col - b >= 0)
@@ -143,13 +153,11 @@ void Bomb(int shot_row, int shot_col, int range)
 			if (Map[shot_row][shot_col - b] == 1)
 			{
 				Map[shot_row][shot_col - b] = 0;
-				Drop(shot_row, shot_col - b);
 			}
 			else if (Map[shot_row][shot_col - b] > 1)
 			{
-				int _range = Map[shot_row][shot_col - b];
+				int _range = Map[shot_row][shot_col - b] - 1;
 				Bomb(shot_row, shot_col - b, _range);
-				Drop(shot_row, shot_col + b);
 			}
 		}
 	}
