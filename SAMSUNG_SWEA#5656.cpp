@@ -20,15 +20,16 @@ static bool Check[MAX_ROW][MAX_COLUMN];
 static int Map[MAX_ROW][MAX_COLUMN];
 static int Map_copy[MAX_ROW][MAX_COLUMN];
 //static queue<PII> Q;
-static int N, H, W;
+static int N, Row, Col;
 static int Result;
 
-void Bomb(int shot_row, int shot_col, int row, int col);
-void Shot(int n, int row, int col);
-int Count(int row, int col);
-void Print(int row, int col);
-void MapCopy(int row, int col);
-void MapInit(int row, int col);
+void Bomb(int shot_row, int shot_col, int range);
+void Drop(int drop_row, int drop_col);
+void Shot(int n);
+int Count();
+void Print();
+void MapCopy();
+void MapInit();
 
 int main(int argv, char** argc)
 {
@@ -41,148 +42,130 @@ int main(int argv, char** argc)
 	{
 		Result = MAX;	W = 0; H = 0;
 		//while (!Q.empty()) { Q.pop(); }
-		scanf("%d %d %d", &N, &W, &H);
+		scanf("%d %d %d", &N, &Col, &Row);
 		for (int r = 0; r < MAX_ROW; ++r)
 		{
 			for (int c = 0; c < MAX_COLUMN; ++c)
 			{
-				Map[r][c] = -1;
-				Map_copy[r][c] = -1;
+				Map[r][c] = 0;
+				Map_copy[r][c] = 0;
 				Check[r][c] = false;
 			}
 		}
 
-		for (int r = 0; r < H; ++r)
+		for (int r = 0; r < Row; ++r)
 		{
-			for (int c = 0; c < W; ++c)
+			for (int c = 0; c < Col; ++c)
 			{
 				scanf("%d", &Map[r][c]);
-				Map_copy[r][c] = Map[r][c];
+				//Map_copy[r][c] = Map[r][c];
 			}
 		}
-		Shot(0, H, W);
+
+		Print();
+
+		Bomb(1, 2, 1);
+		Bomb(2, 2, 3);
+		Bomb(8, 6, 2);
+		Print();
+
 		printf("#%d %d\n", test_case, Result);
 	}
 }
 
-void Bomb(int shot_row, int shot_col, int row, int col)
+void Drop(int drop_row, int drop_col)
 {
-	int Bomb_range = Map[shot_row][shot_col] - 1;
-	//if (Bomb_range == 0)
-		//Map[shot_row][shot_col] = 0;
-	//else
-	//{
-
-	MapCopy(row, col);
-
-		for (int i = 0; i <= Bomb_range; ++i)
+	for (int dr = drop_row; dr > 0; --dr)
+	{
+		if (Map[dr][drop_col] == 0 && Map[dr-1][drop_col] != 0)
 		{
-			if (shot_row + i < row)
-			{
-				if (Map[shot_row + i][shot_col] == 1)
-					Map[shot_row + i][shot_col] = 0;
-				else if (Map[shot_row + i][shot_col] > 1)
-				{
-					Bomb_range += (Map[shot_row + i][shot_col] - 1);
-					Map[shot_row + i][shot_col] = 0;
-				}
-			}
-
-			if (shot_col + i < col)
-			{
-				if (Map[shot_row][shot_col + i] == 1)
-					Map[shot_row][shot_col + i] = 0;
-				else if (Map[shot_row][shot_col + i] > 1)
-				{
-					Bomb_range += (Map[shot_row][shot_col + i] - 1);
-					Map[shot_row][shot_col + i] = 0;
-				}
-			}
-			if (shot_col - i >= 0)
-			{
-				if (Map[shot_row][shot_col - i] == 1)
-					Map[shot_row][shot_col - i] = 0;
-				else if (Map[shot_row][shot_col - i] > 1)
-				{
-					Bomb_range += (Map[shot_row][shot_col - i] - 1);
-					Map[shot_row][shot_col + i] = 0;
-				}
-			}
+			Map[dr][drop_col] = Map[dr - 1][drop_col];
+			Map[dr - 1][drop_col] = 0;
 		}
-		/*
-		while (Bomb_range > 0)
-		{
-			if (shot_row + Bomb_range < row)
-			{
-				//int temp1 = Map[shot_row + Bomb_range][shot_col];
-				
-				Bomb(shot_row + Bomb_range, shot_col, row, col);
-				Map[shot_row + Bomb_range][shot_col] = 0;
-				//Map[shot_row + Bomb_range][shot_col] = temp1;
-			}
-			if (shot_col + Bomb_range < col)
-			{
-				//int temp2 = Map[shot_row][shot_col + Bomb_range];
-				
-				Bomb(shot_row, shot_col + Bomb_range, row, col);
-				Map[shot_row][shot_col + Bomb_range] = 0;
-				//Map[shot_row][shot_col + Bomb_range] = temp2;
-			}
-			if (shot_col - Bomb_range >= 0)
-			{
-				//int temp3 = Map[shot_row][shot_col - Bomb_range];
-				
-				Bomb(shot_row, shot_col - Bomb_range, row, col);
-				Map[shot_row][shot_col - Bomb_range] = 0;
-				//Map[shot_row][shot_col - Bomb_range] = temp3;
-			}
-			Bomb_range--;
-		}
-		*/
-	//}
+	}
 }
 
-void Shot(int n, int row, int col)
+void Bomb(int shot_row, int shot_col, int range)
 {
-	if (N == n)
+	//int range = Map[shot_row][shot_col] - 1;
+	cout << "(" << shot_row << ", " << shot_col << ")" << endl;
+	//Print();
+	cout << endl;
+
+
+	Map[shot_row][shot_col] = 0;
+	for (int b = 1; b <= range; ++b)
 	{
-		int cur_cnt = Count(row, col);
-		if (Result > cur_cnt)
-			Result = cur_cnt;
-
-		//Print(row, col);
-
-		MapInit(row, col);
-
-		return;
-	}
-	else
-	{
-		for (int r = 0; r < row; ++r)
+		if (shot_row + b < Row)
 		{
-			for (int c = 0; c < col; ++c)
+			if (Map[shot_row + b][shot_col] == 1)
 			{
-				if (Map[r][c] > 0 && Map[r-1][c] == 0 && Check[r][c] == false)
-				{
-					int temp = Map[r][c];
-					Bomb(r, c, row, col);
-					//cout << "(" << r << ", " << c << ") , n : " <<n<< endl;
-					Check[r][c] = true;
-					Shot(n + 1, row, col);
-					Check[r][c] = false;
-					Map[r][c] = temp;
-				}
+				Map[shot_row + b][shot_col] = 0;
+				Drop(shot_row + b, shot_col);
+			}
+			else if (Map[shot_row + b][shot_col] > 1)
+			{
+				int _range = Map[shot_row + b][shot_col];
+				Bomb(shot_row + b, shot_col, _range);
+				Drop(shot_row + b, shot_col);
+			}
+		}
+		if (shot_row - b >= 0)
+		{
+			if (Map[shot_row - b][shot_col] == 1)
+			{
+				Map[shot_row - b][shot_col] = 0;
+				Drop(shot_row - b, shot_col);
+			}
+			else if (Map[shot_row - b][shot_col] > 1)
+			{
+				int _range = Map[shot_row - b][shot_col];
+				Bomb(shot_row - b, shot_col, _range);
+				Drop(shot_row - b, shot_col);
+			}
+		}
+		if (shot_col + b < Col)
+		{
+			if (Map[shot_row][shot_col + b] == 1)
+			{
+				Map[shot_row][shot_col + b] = 0;
+				Drop(shot_row, shot_col + b);
+			}
+			else if (Map[shot_row][shot_col + b] > 1)
+			{
+				int _range = Map[shot_row][shot_col + b];
+				Bomb(shot_row, shot_col + b, _range);
+				Drop(shot_row, shot_col + b);
+			}
+		}
+		if (shot_col - b >= 0)
+		{
+			if (Map[shot_row][shot_col - b] == 1)
+			{
+				Map[shot_row][shot_col - b] = 0;
+				Drop(shot_row, shot_col - b);
+			}
+			else if (Map[shot_row][shot_col - b] > 1)
+			{
+				int _range = Map[shot_row][shot_col - b];
+				Bomb(shot_row, shot_col - b, _range);
+				Drop(shot_row, shot_col + b);
 			}
 		}
 	}
 }
 
-int Count(int row, int col)
+void Shot(int n)
+{
+
+}
+
+int Count()
 {
 	int C = 0;
-	for (int r = 0; r < row; ++r)
+	for (int r = 0; r < Row; ++r)
 	{
-		for (int c = 0; c < col; ++c)
+		for (int c = 0; c < Col; ++c)
 		{
 			if (Map[r][c] > 0)
 				C++;
@@ -191,11 +174,11 @@ int Count(int row, int col)
 	return C;
 }
 
-void Print(int row, int col)
+void Print()
 {
-	for (int r = 0; r < row; ++r)
+	for (int r = 0; r < Row; ++r)
 	{
-		for (int c = 0; c < col; ++c)
+		for (int c = 0; c < Col; ++c)
 		{
 			cout << Map[r][c] << ' ';
 		}
@@ -204,22 +187,22 @@ void Print(int row, int col)
 	cout << "Result : " << Result << endl << endl;
 }
 
-void MapCopy(int row, int col)
+void MapCopy()
 {
-	for (int r = 0; r < row; ++r)
+	for (int r = 0; r < Row; ++r)
 	{
-		for (int c = 0; c < col; ++c)
+		for (int c = 0; c < Col; ++c)
 		{
 			Map_copy[r][c] = Map[r][c];
 		}
 	}
 }
 
-void MapInit(int row, int col)
+void MapInit()
 {
-	for (int r = 0; r < row; ++r)
+	for (int r = 0; r < Row; ++r)
 	{
-		for (int c = 0; c < col; ++c)
+		for (int c = 0; c < Col; ++c)
 		{
 			Map[r][c] = Map_copy[r][c];
 		}
