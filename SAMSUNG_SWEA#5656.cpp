@@ -22,10 +22,63 @@ const static int MAX = 2147000000;
 static bool Check[MAX_ROW][MAX_COLUMN];
 static int Map[MAX_ROW][MAX_COLUMN];
 static int Map_copy[MAX_ROW][MAX_COLUMN];
+static int Break[MAX_COLUMN];
+static int Target_Col;
+static int Target_Row;
 static queue<PII> Q;
 static stack<PII> Stack;
 static int N, Row, Col;
 static int Result;
+
+
+void MapCopy()
+{
+	for (int r = 0; r < Row; ++r)
+	{
+		for (int c = 0; c < Col; ++c)
+		{
+			Map_copy[r][c] = Map[r][c];
+		}
+	}
+}
+
+void MapInit()
+{
+	for (int r = 0; r < Row; ++r)
+	{
+		for (int c = 0; c < Col; ++c)
+		{
+			Map[r][c] = Map_copy[r][c];
+		}
+	}
+}
+
+int Count()
+{
+	int C = 0;
+	for (int r = 0; r < Row; ++r)
+	{
+		for (int c = 0; c < Col; ++c)
+		{
+			if (Map[r][c] > 0)
+				C++;
+		}
+	}
+	return C;
+}
+
+void Print()
+{
+	for (int r = 0; r < Row; ++r)
+	{
+		for (int c = 0; c < Col; ++c)
+		{
+			cout << Map[r][c] << ' ';
+		}
+		cout << endl << endl;
+	}
+	cout << "Result : " << Result << endl << endl;
+}
 
 void Drop()
 {
@@ -54,6 +107,9 @@ void Drop()
 
 void Bomb(int shot_row, int shot_col)
 {
+	
+	cout << "(" << shot_row << ", " << shot_col << "), n : " << N << endl << endl;
+
 	Q.push(PII(shot_row, shot_col));
 
 	while (!Q.empty())
@@ -122,55 +178,76 @@ void Bomb(int shot_row, int shot_col)
 	Drop();
 }
 
-
-int Count()
+bool FindTarget(int n)
 {
-	int C = 0;
-	for (int r = 0; r < Row; ++r)
+	bool isTarget = false;
+	int cnt = 0;
+	for (int c = 0; c < Col; ++c)
 	{
-		for (int c = 0; c < Col; ++c)
+		for (int r = Row-1; r >= 0; --r)
 		{
-			if (Map[r][c] > 0)
-				C++;
+			if (Map[r][c] == 1)
+			{
+				cnt++;
+			}
+			else if (Map[r][c] > 1)
+			{
+				if (cnt <= n)
+				{
+					Break[c] = cnt;
+					Target_Col = c;
+					Target_Row = r;
+					isTarget = true;
+					return isTarget;
+				}
+			}
 		}
 	}
-	return C;
+	return isTarget;
 }
 
-void Print()
+
+void Shot()
 {
-	for (int r = 0; r < Row; ++r)
+	int temp_cnt = 0;
+	if (N == 0)
 	{
-		for (int c = 0; c < Col; ++c)
-		{
-			cout << Map[r][c] << ' ';
-		}
-		cout << endl << endl;
+		Print();
+
+
+		return;
 	}
-	cout << "Result : " << Result << endl << endl;
+	else
+	{
+		for (int r = 0; r < Row; ++r)
+		{
+			for (int c = 0; c < Col; ++c)
+			{
+				if (Map[r][c] > 0 && Check[r][c] == false)
+				{
+
+					Check[r][c] = true;
+					MapCopy();
+
+					
+
+					Bomb(r, c);
+
+						MapCopy();
+						N--;
+
+
+					Shot();
+					Check[r][c] = false;
+					MapInit();
+					N++;
+				}
+			}
+		}
+	}
 }
 
-void MapCopy()
-{
-	for (int r = 0; r < Row; ++r)
-	{
-		for (int c = 0; c < Col; ++c)
-		{
-			Map_copy[r][c] = Map[r][c];
-		}
-	}
-}
 
-void MapInit()
-{
-	for (int r = 0; r < Row; ++r)
-	{
-		for (int c = 0; c < Col; ++c)
-		{
-			Map[r][c] = Map_copy[r][c];
-		}
-	}
-}
 
 int main(int argv, char** argc)
 {
@@ -180,7 +257,7 @@ int main(int argv, char** argc)
 	scanf("%d", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
-		Result = MAX;	Row = 0; Col = 0;
+		Result = MAX;	Row = 0; Col = 0;	Target_Col = 0;	Target_Row = 0;
 		while (!Q.empty()) { Q.pop(); }
 		while (!Stack.empty()) { Stack.pop(); }
 
@@ -190,6 +267,7 @@ int main(int argv, char** argc)
 			for (int c = 0; c < MAX_COLUMN; ++c)
 			{
 				Map[r][c] = 0;
+				Break[c] = -1;
 				Map_copy[r][c] = 0;
 				Check[r][c] = false;
 			}
@@ -204,16 +282,7 @@ int main(int argv, char** argc)
 			}
 		}
 		
-		Bomb(1, 2);
-		//Drop();
-		Print();
-		Bomb(2, 2);
-		//Drop();
-		Print();
-		Bomb(8, 6);
-		//Drop();
-		Print();
-		Result = Count();
+		Shot();
 
 		printf("#%d %d\n", test_case, Result);
 	}
