@@ -29,6 +29,8 @@ static queue<PII> Q;
 static stack<PII> Stack;
 static int N, Row, Col;
 static int Result;
+static int Min_cnt;
+static int Min_cnt_value;
 
 
 void MapCopy()
@@ -190,9 +192,11 @@ void Bomb(int shot_row, int shot_col)
 
 bool FindTarget(int n)
 {
+	Min_cnt = MAX;
+	Min_cnt_value = MAX;
 	BreakInit();
 	bool isTarget = false;
-	
+
 	for (int c = 0; c < Col; ++c)
 	{
 		int cnt = 0;
@@ -206,6 +210,7 @@ bool FindTarget(int n)
 			{
 				if (cnt <= n)
 				{
+					Min_cnt = Min_cnt > cnt ? cnt : Min_cnt;
 					Break[r][c] = cnt;
 					isTarget = true;
 					return true;
@@ -216,7 +221,40 @@ bool FindTarget(int n)
 	return isTarget;
 }
 
+void Shot(int n)
+{
+	if (n > N)
+	{
+		Print();
 
+		int temp_cnt = Count();
+		Result = Result > temp_cnt ? temp_cnt : Result;
+		return;
+	}
+	else
+	{
+		for (int r = 0; r < Row; ++r)
+		{
+			for (int c = 0; c < Col; ++c)
+			{
+				if (Map[r][c] > 0 && Check[r][c] == false)
+				{
+					if (r > 0 && Map[r - 1][c] == 0)
+					{
+						Check[r][c] = true;
+						MapCopy();
+						Bomb(r, c);
+						Shot(n + 1);
+						MapInit();
+						Check[r][c] = false;
+					}
+				}
+			}
+		}
+	}
+}
+
+/*
 void Shot(int n)
 {
 	int temp_cnt = 0;
@@ -227,12 +265,12 @@ void Shot(int n)
 
 	if (temp_cnt > 0)
 	{
-		if (n == 1)
+		if (n <= 0)
 		{
 			Result = Result > temp_cnt ? temp_cnt : Result;
 			return;
 		}
-		if (n > 1 && !FindTarget(n))
+		else if (n > 0 && !FindTarget(n))
 		{
 			if (temp_cnt - n <= 0)
 			{
@@ -243,38 +281,62 @@ void Shot(int n)
 			{
 				temp_cnt -= n;
 				Result = Result > temp_cnt ? temp_cnt : Result;
+				return;
 			}
 		}
-		else if(n > 1 && FindTarget(n))
+		else if (n > 0 && FindTarget(n))
 		{
 			for (int c = 0; c < Col; ++c)
 			{
-				for(int r = 0 ; r < Row ; ++r)
+				for (int r = 0; r < Row; ++r)
 				{
+					if (Break[r][c] == Min_cnt && Break[r][c] <= n)
+					{
+						if (Min_cnt == 0)
+						{
+							MapCopy();
+							Bomb(r, c);
+							Shot(n - 1);
+							MapInit();
+							break;
+						}
+						else
+						{
+							for (int j = r - 1; j >= r - Break[r][c]; --j)
+							{
+								Map[j][c] = 0;
+							}
+							MapCopy();
+							Bomb(r, c);
+							Shot(n - Break[r][c] - 1);
+							MapInit();
+						}
+					}
+					
 					if (Break[r][c] != -1 && Break[r][c] <= n)
 					{
-						
-						for (int j = r-1; j >= r - Break[r][c]; --j)
+						for (int j = r - 1; j >= r - Break[r][c]; --j)
 						{
 							Map[j][c] = 0;
 						}
-						
-						Bomb(r, c);
+
 						MapCopy();
-						Shot(n - Break[r][c]);
+						Bomb(r, c);
+						Shot(n - Break[r][c] - 1);
 						MapInit();
 					}
+					
 				}
 			}
 		}
-	}
-	else
-	{
-		Result = 0;
+		else if(temp_cnt == 0)
+		{
+			Result = 0;
+			return;
+		}
 	}
 }
-
-
+*/
 
 int main(int argv, char** argc)
 {
@@ -284,7 +346,7 @@ int main(int argv, char** argc)
 	scanf("%d", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
-		Result = MAX;	Row = 0; Col = 0;	Target_Col = 0;	Target_Row = 0;
+		Result = MAX;	Row = 0; Col = 0;	Target_Col = 0;	Target_Row = 0;	Min_cnt = MAX;
 		while (!Q.empty()) { Q.pop(); }
 		while (!Stack.empty()) { Stack.pop(); }
 
@@ -308,7 +370,7 @@ int main(int argv, char** argc)
 			}
 		}
 		
-		Shot(N);
+		Shot(1);
 
 		printf("#%d %d\n", test_case, Result);
 	}
