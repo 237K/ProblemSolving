@@ -22,7 +22,7 @@ const static int MAX = 2147000000;
 static bool Check[MAX_ROW][MAX_COLUMN];
 static int Map[MAX_ROW][MAX_COLUMN];
 static int Map_copy[MAX_ROW][MAX_COLUMN];
-static int Break[MAX_COLUMN];
+static int Break[MAX_ROW][MAX_COLUMN];
 static int Target_Col;
 static int Target_Row;
 static queue<PII> Q;
@@ -49,6 +49,17 @@ void MapInit()
 		for (int c = 0; c < Col; ++c)
 		{
 			Map[r][c] = Map_copy[r][c];
+		}
+	}
+}
+
+void BreakInit()
+{
+	for (int r = 0; r < Row; ++r)
+	{
+		for (int c = 0; c < Col; ++c)
+		{
+			Break[r][c] = -1;
 		}
 	}
 }
@@ -107,7 +118,6 @@ void Drop()
 
 void Bomb(int shot_row, int shot_col)
 {
-	
 	cout << "(" << shot_row << ", " << shot_col << "), n : " << N << endl << endl;
 
 	Q.push(PII(shot_row, shot_col));
@@ -180,6 +190,7 @@ void Bomb(int shot_row, int shot_col)
 
 bool FindTarget(int n)
 {
+	BreakInit();
 	bool isTarget = false;
 	int cnt = 0;
 	for (int c = 0; c < Col; ++c)
@@ -194,11 +205,8 @@ bool FindTarget(int n)
 			{
 				if (cnt <= n)
 				{
-					Break[c] = cnt;
-					Target_Col = c;
-					Target_Row = r;
+					Break[r][c] = cnt;
 					isTarget = true;
-					return isTarget;
 				}
 			}
 		}
@@ -207,43 +215,59 @@ bool FindTarget(int n)
 }
 
 
-void Shot()
+void Shot(int n)
 {
 	int temp_cnt = 0;
-	if (N == 0)
-	{
-		Print();
+	temp_cnt = Count();
 
+	Print();
 
-		return;
-	}
-	else
+	if (temp_cnt > 0)
 	{
-		for (int r = 0; r < Row; ++r)
+		if (n == 0)
+		{
+			Result = Result > temp_cnt ? temp_cnt : Result;
+
+			return;
+		}
+		if (!FindTarget(n))
+		{
+			if (temp_cnt - n <= 0)
+			{
+				Result = 0;
+				return;
+			}
+			else
+			{
+				temp_cnt -= n;
+				Result = Result > temp_cnt ? temp_cnt : Result;
+			}
+		}
+		else if(FindTarget(n))
 		{
 			for (int c = 0; c < Col; ++c)
 			{
-				if (Map[r][c] > 0 && Check[r][c] == false)
+				for(int r = 0 ; r < Row ; ++r)
 				{
-
-					Check[r][c] = true;
-					MapCopy();
-
-					
-
-					Bomb(r, c);
-
+					if (Break[r][c] != -1 && Break[r][c] <= n)
+					{
+						
+						for (int j = r-1; j >= r - Break[r][c]; --j)
+						{
+							Map[j][c] = 0;
+						}
+						Bomb(r, c);
 						MapCopy();
-						N--;
-
-
-					Shot();
-					Check[r][c] = false;
-					MapInit();
-					N++;
+						Shot(n - Break[r][c]);
+						MapInit();
+					}
 				}
 			}
 		}
+	}
+	else
+	{
+		Result = 0;
 	}
 }
 
@@ -267,7 +291,6 @@ int main(int argv, char** argc)
 			for (int c = 0; c < MAX_COLUMN; ++c)
 			{
 				Map[r][c] = 0;
-				Break[c] = -1;
 				Map_copy[r][c] = 0;
 				Check[r][c] = false;
 			}
@@ -282,9 +305,11 @@ int main(int argv, char** argc)
 			}
 		}
 		
-		Shot();
+		Shot(N);
 
 		printf("#%d %d\n", test_case, Result);
 	}
+
+	return 0;
 }
 
