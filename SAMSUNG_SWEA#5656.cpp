@@ -192,10 +192,11 @@ bool FindTarget(int n)
 {
 	BreakInit();
 	bool isTarget = false;
-	int cnt = 0;
+	
 	for (int c = 0; c < Col; ++c)
 	{
-		for (int r = Row-1; r >= 0; --r)
+		int cnt = 0;
+		for (int r = 0; r < Row; ++r)
 		{
 			if (Map[r][c] == 1)
 			{
@@ -207,6 +208,7 @@ bool FindTarget(int n)
 				{
 					Break[r][c] = cnt;
 					isTarget = true;
+					return true;
 				}
 			}
 		}
@@ -218,19 +220,19 @@ bool FindTarget(int n)
 void Shot(int n)
 {
 	int temp_cnt = 0;
+
 	temp_cnt = Count();
 
 	Print();
 
 	if (temp_cnt > 0)
 	{
-		if (n == 0)
+		if (n == 1)
 		{
 			Result = Result > temp_cnt ? temp_cnt : Result;
-
 			return;
 		}
-		if (!FindTarget(n))
+		if (n > 1 && !FindTarget(n))
 		{
 			if (temp_cnt - n <= 0)
 			{
@@ -243,7 +245,7 @@ void Shot(int n)
 				Result = Result > temp_cnt ? temp_cnt : Result;
 			}
 		}
-		else if(FindTarget(n))
+		else if(n > 1 && FindTarget(n))
 		{
 			for (int c = 0; c < Col; ++c)
 			{
@@ -256,6 +258,7 @@ void Shot(int n)
 						{
 							Map[j][c] = 0;
 						}
+						
 						Bomb(r, c);
 						MapCopy();
 						Shot(n - Break[r][c]);
@@ -309,7 +312,6 @@ int main(int argv, char** argc)
 
 		printf("#%d %d\n", test_case, Result);
 	}
-
 	return 0;
 }
 
