@@ -10,6 +10,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
+#include <iostream>
 #include <string>
 using namespace std;
 
@@ -21,22 +22,31 @@ public:
 	Doorlock(string pw) : PW(pw) {}
 	bool Comp(const string& in)
 	{
-		bool check = true;
+		bool check = false;
 		int L = in.length();
 		for (int i = 0; i < L; ++i)
 		{
 			if (PW[0] == in[i])
 			{
+				int cnt = 0;
 				for (int j = 1; j < 4; ++j)
 				{
 					if (PW[j] != in[i + j])
 					{
-						check = false;
 						j = 4;
+						continue;
 					}
+					else
+						cnt = j;
+				}
+				if (cnt == 3)
+				{
+					check = true;
+					return check;
 				}
 			}
 		}
+		return false;
 	}
 };
 
@@ -53,7 +63,10 @@ int main(int argc, char** argv)
 	{
 		string in;
 		getline(cin, in);
-
+		if (dl.Comp(in))
+			printf("#%d 1\n", test_case);
+		else
+			printf("#%d 0\n", test_case);
 	}
 
 	return 0;
