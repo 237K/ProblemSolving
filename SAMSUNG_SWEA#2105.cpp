@@ -23,18 +23,42 @@ static int Result;
 
 void DFS(int r, int c)
 {
-	int temp = 0;
-	temp += Map[r][c];
 	Route.push_back(Map[r][c]);
-	if (r == N - 3 && c == N - 1)
+	if (r == r + 1 && c == c - 1)
 	{
+		int temp = 0;
+		while (!Route.size() == 1)
+		{
+			temp += Route.back();
+			Route.pop_back();
+		}
+
+		if (Result < temp)
+			Result = temp;
+
 		return;
 	}
 	else
 	{
 		if (r + 1 < N && c + 1 < N && Check[r + 1][c + 1] == false)
 		{
-
+			bool chk = true;
+			for (int i = 0; i < Route.size(); ++i)
+			{
+				if (Route[i] == Map[r + 1][c + 1])
+				{
+					chk = false;
+					break;
+				}
+			}
+			if (chk)
+			{
+				Check[r + 1][c + 1] = true;
+				Route.push_back(Map[r + 1][c + 1]);
+				DFS(r + 1, c + 1);
+				Route.pop_back();
+				Check[r + 1][c + 1] = false;
+			}
 		}
 		else if (r + 1 < N && c - 1 >= 0 && Check[r + 1][c - 1] == false)
 		{
