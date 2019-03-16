@@ -54,30 +54,51 @@ void Square1()
 			{
 				temp = 4;
 				cout << "(" << r << ", " << c << ")" << endl;
+
 				for (int i = 1; i <= N - 2; ++i)
 				{
-					if (isSquare1(r + i, c + i) &&
-						Map[r + i - 2][c + i - 1] != Map[r + i][c + i + 1] && Map[r + i - 2][c + i - 1] != Map[r + i + 1][c + i] &&
-						Map[r + i - 1][c + i - 2] != Map[r + i][c + i + 1] && Map[r + i - 1][c + i - 2] != Map[r + i + 1][c + i])
+					if (isSquare1(r + i, c + i))
 					{
-						cout << "RightDown (" << r + i << ", " << c + i << ")" << endl;
-						RightDown += 2;
+						for (int j = i; j > 0; --j)
+						{
+							if (Map[r + i - j + 1][c + i - j] != Map[r + i][c + i + 1] &&
+								Map[r + i - j + 1][c + i - j] != Map[r + i + 1][c + i] &&
+								Map[r + i - j][c + i - j - 1] != Map[r + i][c + i + 1] &&
+								Map[r + i - j][c + i - j - 1] != Map[r + i + 1][c + i])
+							{
+								cout << "RightDown (" << r + i << ", " << c + i << ")" << endl;
+								RightDown += 2;
+							}
+							else
+								break;
+						}
 					}
 					else
 						break;
 				}
+
 				for (int i = 1; i < N - 2; ++i)
 				{
-					if (isSquare1(r + i, c - i) &&
-						Map[r + i - 2][c - i + 1] != Map[r + i][c - i - 1] && Map[r + i - 2][c - i + 1] != Map[r + i + 1][c - i] &&
-						Map[r + i - 1][c - i + 2] != Map[r + i][c - i - 1] && Map[r + i - 1][c - i + 2] != Map[r + i + 1][c - i])
+					if (isSquare1(r + i, c - i))
 					{
-						cout << "LeftDown (" << r + i << ", " << c - i << ")" << endl;
-						LeftDown += 2;
+						for (int j = i; j > 0; --j)
+						{
+							if (Map[r+i-j-1][c-i+j] != Map[r+i+1][c-i] &&
+								Map[r+i-j-1][c-i+j] != Map[r+i][c-i-1] &&
+								Map[r+i-j][c-i+j+1] != Map[r+i+1][c-i] &&
+								Map[r+i-j][c-i+j+1] != Map[r+i][c-i-1])
+							{
+								cout << "LeftDown (" << r + i << ", " << c - i << ")" << endl;
+									LeftDown += 2;
+							}
+							else
+								break;
+						}
 					}
 					else
 						break;
 				}
+
 				temp += max(RightDown, LeftDown);
 				cout << temp << endl;
 			}
