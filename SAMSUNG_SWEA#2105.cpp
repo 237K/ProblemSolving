@@ -11,6 +11,8 @@
 #include <cstdio>
 #include <queue>
 #include <stack>
+#include <algorithm>
+#include <iostream>
 using namespace std;
 typedef pair<int, int> coor;
 const static int MAP_SIZE = 20;
@@ -21,107 +23,74 @@ static vector<int> Route;				//경로에서 같은 숫자가 있었는지 확인하기 위함
 static stack<coor> Stack;
 static int Result;
 
-void DFS(int SProw, int SPcol, int r, int c)
+bool isSquare1(int r, int c)
 {
-	Route.push_back(Map[r][c]);
-	if (r == SProw + 1 && c == SPcol - 1)
-	{
-		int temp = 0;
-		while (!Route.size() == 1)
-		{
-			temp += Route.back();
-			Route.pop_back();
-		}
-
-		if (Result < temp)
-			Result = temp;
-
-		return;
-	}
+	if (r-1 >= 0 &&
+		c+1 < N &&
+		r+1 < N &&
+		c-1 >= 0 &&
+		Map[r - 1][c] != Map[r][c + 1] &&
+		Map[r - 1][c] != Map[r + 1][c] &&
+		Map[r - 1][c] != Map[r][c - 1] &&
+		Map[r][c + 1] != Map[r + 1][c] &&
+		Map[r][c + 1] != Map[r][c - 1] &&
+		Map[r + 1][c] != Map[r][c - 1])
+		return true;
 	else
+		return false;
+}
+
+void Square1()
+{
+	for (int r = 1; r < N - 1; ++r)
 	{
-		if (r + 1 < N && c + 1 < N && Check[r + 1][c + 1] == false)
+		for (int c = 1; c < N - 1; ++c)
 		{
-			bool chk = true;
-			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
+			cout << "For (" << r << ", " << c << ")" << endl;
+			int temp = -2147000000;
+			int RightDown = 0;
+			int LeftDown = 0;
+			if (isSquare1(r, c))
 			{
-				if (Route[i] == Map[r + 1][c + 1])
+				temp = 4;
+				cout << "(" << r << ", " << c << ")" << endl;
+				for (int i = 1; i <= N - 2; ++i)
 				{
-					chk = false;
-					break;
+					if (isSquare1(r + i, c + i) &&
+						Map[r - 1][c] != Map[r + i][c + i + 1] && Map[r - 1][c] != Map[r + i + 1][c + i] &&
+						Map[r][c - 1] != Map[r + i][c + i + 1] && Map[r][c - 1] != Map[r + i + 1][c + i])
+					{
+						cout << "RightDown" << endl;
+						RightDown += 2;
+					}
+					if (isSquare1(r + i, c - i) &&
+						Map[r - 1][c] != Map[r + i][c - i - 1] && Map[r - 1][c] != Map[r + i + 1][c - i] &&
+						Map[r][c + 1] != Map[r + i][c - i - 1] && Map[r][c + 1] != Map[r + i + 1][c - i])
+					{
+						cout << "LeftDown" << endl;
+						LeftDown += 2;
+					}
 				}
+				temp += max(RightDown, LeftDown);
+				cout << temp << endl;
 			}
-			if (chk)
-			{
-				Check[r + 1][c + 1] = true;
-				Route.push_back(Map[r + 1][c + 1]);
-				DFS(r + 1, c + 1);
-				Route.pop_back();
-				Check[r + 1][c + 1] = false;
-			}
-		}
-		else if (r + 1 < N && c - 1 >= 0 && Check[r + 1][c - 1] == false)
-		{
-			bool chk = true;
-			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
-			{
-				if (Route[i] == Map[r + 1][c - 1])
-				{
-					chk = false;
-					break;
-				}
-			}
-			if (chk)
-			{
-				Check[r + 1][c - 1] = true;
-				Route.push_back(Map[r + 1][c - 1]);
-				DFS(r + 1, c - 1);
-				Route.pop_back();
-				Check[r + 1][c - 1] = false;
-			}
-		}
-		else if (r - 1 >= 0 && c - 1 >= 0 && Check[r - 1][c - 1] == false)
-		{
-			bool chk = true;
-			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
-			{
-				if (Route[i] == Map[r - 1][c - 1])
-				{
-					chk = false;
-					break;
-				}
-			}
-			if (chk)
-			{
-				Check[r - 1][c - 1] = true;
-				Route.push_back(Map[r - 1][c - 1]);
-				DFS(r - 1, c - 1);
-				Route.pop_back();
-				Check[r - 1][c - 1] = false;
-			}
-		}
-		else if (r - 1 >= 0 && c + 1 < N && Check[r - 1][c + 1] == false)
-		{
-			bool chk = true;
-			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
-			{
-				if (Route[i] == Map[r - 1][c + 1])
-				{
-					chk = false;
-					break;
-				}
-			}
-			if (chk)
-			{
-				Check[r - 1][c + 1] = true;
-				Route.push_back(Map[r - 1][c + 1]);
-				DFS(r - 1, c + 1);
-				Route.pop_back();
-				Check[r - 1][c + 1] = false;
-			}
+
+			if (temp > Result)
+				Result = temp;
 		}
 	}
+}
 
+void Square2over()
+{
+	int temp = 0;
+	for (int r = 1; r < N - 2; ++r)
+	{
+		for (int c = 1; c < N - 1; ++c)
+		{
+		
+		}
+	}
 }
 
 int main(int argc, char** argv)
@@ -154,20 +123,14 @@ int main(int argc, char** argv)
 			}
 		}
 
-		for (int row = 0; row < N; ++row)
-		{
-			for (int col = 0; col < N; ++col)
-			{
-				if (row + 1 < N && col - 1 >= 0)
-				{
-					int StartPointRow = row;
-					int StartPointCol = col;
-					DFS(StartPointRow, StartPointCol, row, col);
-				}
-			}
-		}
+		Square1();
 
-		printf("#%d %d\n", test_case, Result);
+		if (Result == -2147000000)
+			printf("#%d -1\n", test_case);
+		else
+			printf("#%d %d\n", test_case, Result);
+
+		cout << endl << endl;
 	}
 	return 0;
 }
