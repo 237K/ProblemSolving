@@ -21,10 +21,10 @@ static vector<int> Route;				//경로에서 같은 숫자가 있었는지 확인하기 위함
 static stack<coor> Stack;
 static int Result;
 
-void DFS(int r, int c)
+void DFS(int SProw, int SPcol, int r, int c)
 {
 	Route.push_back(Map[r][c]);
-	if (r == r + 1 && c == c - 1)
+	if (r == SProw + 1 && c == SPcol - 1)
 	{
 		int temp = 0;
 		while (!Route.size() == 1)
@@ -43,7 +43,7 @@ void DFS(int r, int c)
 		if (r + 1 < N && c + 1 < N && Check[r + 1][c + 1] == false)
 		{
 			bool chk = true;
-			for (int i = 0; i < Route.size(); ++i)
+			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
 			{
 				if (Route[i] == Map[r + 1][c + 1])
 				{
@@ -62,15 +62,63 @@ void DFS(int r, int c)
 		}
 		else if (r + 1 < N && c - 1 >= 0 && Check[r + 1][c - 1] == false)
 		{
-
+			bool chk = true;
+			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
+			{
+				if (Route[i] == Map[r + 1][c - 1])
+				{
+					chk = false;
+					break;
+				}
+			}
+			if (chk)
+			{
+				Check[r + 1][c - 1] = true;
+				Route.push_back(Map[r + 1][c - 1]);
+				DFS(r + 1, c - 1);
+				Route.pop_back();
+				Check[r + 1][c - 1] = false;
+			}
 		}
 		else if (r - 1 >= 0 && c - 1 >= 0 && Check[r - 1][c - 1] == false)
 		{
-
+			bool chk = true;
+			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
+			{
+				if (Route[i] == Map[r - 1][c - 1])
+				{
+					chk = false;
+					break;
+				}
+			}
+			if (chk)
+			{
+				Check[r - 1][c - 1] = true;
+				Route.push_back(Map[r - 1][c - 1]);
+				DFS(r - 1, c - 1);
+				Route.pop_back();
+				Check[r - 1][c - 1] = false;
+			}
 		}
 		else if (r - 1 >= 0 && c + 1 < N && Check[r - 1][c + 1] == false)
 		{
-
+			bool chk = true;
+			for (vector<int>::size_type i = 0; i < Route.size(); ++i)
+			{
+				if (Route[i] == Map[r - 1][c + 1])
+				{
+					chk = false;
+					break;
+				}
+			}
+			if (chk)
+			{
+				Check[r - 1][c + 1] = true;
+				Route.push_back(Map[r - 1][c + 1]);
+				DFS(r - 1, c + 1);
+				Route.pop_back();
+				Check[r - 1][c + 1] = false;
+			}
 		}
 	}
 
@@ -105,6 +153,21 @@ int main(int argc, char** argv)
 				scanf("%d", &Map[row][col]);
 			}
 		}
+
+		for (int row = 0; row < N; ++row)
+		{
+			for (int col = 0; col < N; ++col)
+			{
+				if (row + 1 < N && col - 1 >= 0)
+				{
+					int StartPointRow = row;
+					int StartPointCol = col;
+					DFS(StartPointRow, StartPointCol, row, col);
+				}
+			}
+		}
+
+		printf("#%d %d\n", test_case, Result);
 	}
 	return 0;
 }
