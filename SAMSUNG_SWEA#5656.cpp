@@ -32,7 +32,6 @@ static int Result;
 static int Min_cnt;
 static int Min_cnt_value;
 
-
 void MapCopy()
 {
 	for (int r = 0; r < Row; ++r)
@@ -115,7 +114,6 @@ void Drop()
 			}
 		}
 	}
-
 }
 
 void Bomb(int shot_row, int shot_col)
@@ -253,90 +251,6 @@ void Shot(int n)
 		}
 	}
 }
-
-/*
-void Shot(int n)
-{
-	int temp_cnt = 0;
-
-	temp_cnt = Count();
-
-	Print();
-
-	if (temp_cnt > 0)
-	{
-		if (n <= 0)
-		{
-			Result = Result > temp_cnt ? temp_cnt : Result;
-			return;
-		}
-		else if (n > 0 && !FindTarget(n))
-		{
-			if (temp_cnt - n <= 0)
-			{
-				Result = 0;
-				return;
-			}
-			else
-			{
-				temp_cnt -= n;
-				Result = Result > temp_cnt ? temp_cnt : Result;
-				return;
-			}
-		}
-		else if (n > 0 && FindTarget(n))
-		{
-			for (int c = 0; c < Col; ++c)
-			{
-				for (int r = 0; r < Row; ++r)
-				{
-					if (Break[r][c] == Min_cnt && Break[r][c] <= n)
-					{
-						if (Min_cnt == 0)
-						{
-							MapCopy();
-							Bomb(r, c);
-							Shot(n - 1);
-							MapInit();
-							break;
-						}
-						else
-						{
-							for (int j = r - 1; j >= r - Break[r][c]; --j)
-							{
-								Map[j][c] = 0;
-							}
-							MapCopy();
-							Bomb(r, c);
-							Shot(n - Break[r][c] - 1);
-							MapInit();
-						}
-					}
-					
-					if (Break[r][c] != -1 && Break[r][c] <= n)
-					{
-						for (int j = r - 1; j >= r - Break[r][c]; --j)
-						{
-							Map[j][c] = 0;
-						}
-
-						MapCopy();
-						Bomb(r, c);
-						Shot(n - Break[r][c] - 1);
-						MapInit();
-					}
-					
-				}
-			}
-		}
-		else if(temp_cnt == 0)
-		{
-			Result = 0;
-			return;
-		}
-	}
-}
-*/
 
 int main(int argv, char** argc)
 {
