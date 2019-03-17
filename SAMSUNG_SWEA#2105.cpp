@@ -55,7 +55,7 @@ void Square1()
 
 				int rdidx = 1;
 				bool isrd = true;
-				while (rdidx < N - 2)
+				while (1)
 				{
 					if (isSquare1(r + rdidx, c + rdidx))
 					{
@@ -66,9 +66,7 @@ void Square1()
 								Map[r + rdidx - j][c + rdidx - j - 1] != Map[r + rdidx][c + rdidx + 1] &&
 								Map[r + rdidx - j][c + rdidx - j - 1] != Map[r + rdidx + 1][c + rdidx])
 							{
-								cout << "RightDown (" << r + rdidx << ", " << c + rdidx << ")" << endl;
-								RightDown += 2;
-								rdidx++;
+
 							}
 							else
 							{
@@ -76,8 +74,15 @@ void Square1()
 								break;
 							}
 						}
-						if (!isrd)
+						if (isrd)
+						{
+							cout << "RightDown (" << r + rdidx << ", " << c + rdidx << ")" << endl;
+							RightDown += 2;
+						}
+						else
 							break;
+
+						rdidx++;
 					}
 					else
 						break;
@@ -85,20 +90,18 @@ void Square1()
 
 				int ldidx = 1;
 				bool isld = true;
-				while(ldidx < N - 2)
+				while(1)
 				{
 					if (isSquare1(r + ldidx, c - ldidx))
 					{
 						for (int j = ldidx; j > 0; --j)
 						{
-							if (Map[r+ ldidx -j-1][c- ldidx +j] != Map[r+ ldidx +1][c- ldidx] &&
-								Map[r+ ldidx -j-1][c- ldidx +j] != Map[r+ ldidx][c- ldidx -1] &&
-								Map[r+ ldidx -j][c- ldidx +j+1] != Map[r+ ldidx +1][c- ldidx] &&
-								Map[r+ ldidx -j][c- ldidx +j+1] != Map[r+ ldidx][c- ldidx -1])
+							if (Map[r + ldidx - j - 1][c - ldidx + j] != Map[r+ ldidx +1][c- ldidx] &&
+								Map[r + ldidx - j - 1][c - ldidx + j] != Map[r+ ldidx][c- ldidx -1] &&
+								Map[r + ldidx - j][c- ldidx + j + 1] != Map[r+ ldidx +1][c- ldidx] &&
+								Map[r + ldidx - j][c- ldidx + j + 1] != Map[r+ ldidx][c- ldidx -1])
 							{
-								cout << "LeftDown (" << r + ldidx << ", " << c - ldidx << ")" << endl;
-								LeftDown += 2;
-								ldidx++;
+								
 							}
 							else
 							{
@@ -106,8 +109,15 @@ void Square1()
 								break;
 							}
 						}
-						if (!isld)
+						if (isld)
+						{
+							cout << "LeftDown (" << r + ldidx << ", " << c - ldidx << ")" << endl;
+							LeftDown += 2;
+						}
+						else
 							break;
+
+						ldidx++;
 					}
 					else
 						break;
