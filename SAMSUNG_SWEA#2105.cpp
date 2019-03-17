@@ -53,51 +53,61 @@ void Square1()
 				temp = 4;
 				cout << "(" << r << ", " << c << ")" << endl;
 
-				for (int i = 1; i <= N - 2; ++i)
+				int rdidx = 1;
+				bool isrd = true;
+				while (rdidx < N - 2)
 				{
-					if (isSquare1(r + i, c + i))
+					if (isSquare1(r + rdidx, c + rdidx))
 					{
-						for (int j = i; j > 0; --j)
+						for (int j = rdidx; j > 0; --j)
 						{
-							if (Map[r + i - j - 1][c + i - j] != Map[r + i][c + i + 1] &&
-								Map[r + i - j - 1][c + i - j] != Map[r + i + 1][c + i] &&
-								Map[r + i - j][c + i - j - 1] != Map[r + i][c + i + 1] &&
-								Map[r + i - j][c + i - j - 1] != Map[r + i + 1][c + i])
+							if (Map[r + rdidx - j - 1][c + rdidx - j] != Map[r + rdidx][c + rdidx + 1] &&
+								Map[r + rdidx - j - 1][c + rdidx - j] != Map[r + rdidx + 1][c + rdidx] &&
+								Map[r + rdidx - j][c + rdidx - j - 1] != Map[r + rdidx][c + rdidx + 1] &&
+								Map[r + rdidx - j][c + rdidx - j - 1] != Map[r + rdidx + 1][c + rdidx])
 							{
-								cout << "RightDown (" << r + i << ", " << c + i << ")" << endl;
+								cout << "RightDown (" << r + rdidx << ", " << c + rdidx << ")" << endl;
 								RightDown += 2;
+								rdidx++;
 							}
 							else
 							{
-								i = N - 2;
+								isrd = false;
 								break;
 							}
 						}
+						if (!isrd)
+							break;
 					}
 					else
 						break;
 				}
 
-				for (int i = 1; i < N - 2; ++i)
+				int ldidx = 1;
+				bool isld = true;
+				while(ldidx < N - 2)
 				{
-					if (isSquare1(r + i, c - i))
+					if (isSquare1(r + ldidx, c - ldidx))
 					{
-						for (int j = i; j > 0; --j)
+						for (int j = ldidx; j > 0; --j)
 						{
-							if (Map[r+i-j-1][c-i+j] != Map[r+i+1][c-i] &&
-								Map[r+i-j-1][c-i+j] != Map[r+i][c-i-1] &&
-								Map[r+i-j][c-i+j+1] != Map[r+i+1][c-i] &&
-								Map[r+i-j][c-i+j+1] != Map[r+i][c-i-1])
+							if (Map[r+ ldidx -j-1][c- ldidx +j] != Map[r+ ldidx +1][c- ldidx] &&
+								Map[r+ ldidx -j-1][c- ldidx +j] != Map[r+ ldidx][c- ldidx -1] &&
+								Map[r+ ldidx -j][c- ldidx +j+1] != Map[r+ ldidx +1][c- ldidx] &&
+								Map[r+ ldidx -j][c- ldidx +j+1] != Map[r+ ldidx][c- ldidx -1])
 							{
-								cout << "LeftDown (" << r + i << ", " << c - i << ")" << endl;
+								cout << "LeftDown (" << r + ldidx << ", " << c - ldidx << ")" << endl;
 								LeftDown += 2;
+								ldidx++;
 							}
 							else
 							{
-								i = N - 2;
+								isld = false;
 								break;
 							}
 						}
+						if (!isld)
+							break;
 					}
 					else
 						break;
