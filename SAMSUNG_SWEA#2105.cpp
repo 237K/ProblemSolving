@@ -19,8 +19,6 @@ const static int MAP_SIZE = 20;
 static int N;
 static int Map[MAP_SIZE][MAP_SIZE];
 static bool Check[MAP_SIZE][MAP_SIZE];
-static vector<int> Route;				//경로에서 같은 숫자가 있었는지 확인하기 위함
-static stack<coor> Stack;
 static int Result;
 
 bool isSquare1(int r, int c)
@@ -61,8 +59,8 @@ void Square1()
 					{
 						for (int j = i; j > 0; --j)
 						{
-							if (Map[r + i - j + 1][c + i - j] != Map[r + i][c + i + 1] &&
-								Map[r + i - j + 1][c + i - j] != Map[r + i + 1][c + i] &&
+							if (Map[r + i - j - 1][c + i - j] != Map[r + i][c + i + 1] &&
+								Map[r + i - j - 1][c + i - j] != Map[r + i + 1][c + i] &&
 								Map[r + i - j][c + i - j - 1] != Map[r + i][c + i + 1] &&
 								Map[r + i - j][c + i - j - 1] != Map[r + i + 1][c + i])
 							{
@@ -70,7 +68,10 @@ void Square1()
 								RightDown += 2;
 							}
 							else
+							{
+								i = N - 2;
 								break;
+							}
 						}
 					}
 					else
@@ -89,10 +90,13 @@ void Square1()
 								Map[r+i-j][c-i+j+1] != Map[r+i][c-i-1])
 							{
 								cout << "LeftDown (" << r + i << ", " << c - i << ")" << endl;
-									LeftDown += 2;
+								LeftDown += 2;
 							}
 							else
+							{
+								i = N - 2;
 								break;
+							}
 						}
 					}
 					else
@@ -109,18 +113,6 @@ void Square1()
 	}
 }
 
-void Square2over()
-{
-	int temp = 0;
-	for (int r = 1; r < N - 2; ++r)
-	{
-		for (int c = 1; c < N - 1; ++c)
-		{
-		
-		}
-	}
-}
-
 int main(int argc, char** argv)
 {
 	int T;
@@ -131,8 +123,6 @@ int main(int argc, char** argv)
 	{
 		N = 0;
 		Result = -2147000000;
-		Route.clear();
-		while (!Stack.empty()) { Stack.pop(); }
 		for (int row = 0; row < N; ++row)
 		{
 			for (int col = 0; col < N; ++col)
