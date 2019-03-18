@@ -48,6 +48,7 @@ void Square1()
 			int temp = -2147000000;
 			int RightDown = 0;
 			int LeftDown = 0;
+			int RLDown = 0;
 			if (isSquare1(r, c))
 			{
 				temp = 4;
@@ -123,7 +124,45 @@ void Square1()
 						break;
 				}
 
-				temp += max(RightDown, LeftDown);
+				int RLidx = 1;
+				bool isRLD = true;
+				while (1)
+				{
+					if (isSquare1(r+RLidx, c+RLidx) && isSquare1(r + RLidx, c - RLidx))
+					{
+						for (int j = RLidx; j > 0; --j)
+						{
+							if (Map[r + RLidx - j - 1][c + RLidx - j] != Map[r + RLidx][c + RLidx + 1] &&
+								Map[r + RLidx - j - 1][c + RLidx - j] != Map[r + RLidx + 1][c + RLidx] &&
+								Map[r + RLidx - j][c + RLidx - j - 1] != Map[r + RLidx][c + RLidx + 1] &&
+								Map[r + RLidx - j][c + RLidx - j - 1] != Map[r + RLidx + 1][c + RLidx] &&
+								Map[r + RLidx - j][r + RLidx - j - 1] != Map[r + RLidx + 1][c + RLidx] &&
+								Map[r + RLidx - j][r + RLidx - j - 1] != Map[r + RLidx][c + RLidx + 1])
+							{
+
+							}
+							else
+							{
+								isRLD = false;
+								break;
+							}
+						}
+						if (isRLD)
+						{
+							cout << "Right & Left Down (" << r + RLidx << ", " << c + RLidx << ") (" << r + RLidx << ", " << c - RLidx << ")" << endl;
+							RLDown += 4;
+						}
+						else
+							break;
+
+						RLidx++;
+
+					}
+					else
+						break;
+				}
+
+				temp += max(max(RightDown, LeftDown), RLDown);
 				cout << temp << endl;
 			}
 
