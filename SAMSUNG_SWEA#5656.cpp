@@ -40,7 +40,146 @@ public:
 	{
 		(void)memset(&Map[0][0][0], 0, sizeof(Map));
 	}
+	~Test() {}
+	int SetMap(const int row, const int col, const int value);
+	void PrintMap() const
+	{
+		for (int r = 0; r < Num_Brick_Row; ++r)
+		{
+			for (int c = 0; c < Num_Brick_Col; ++c)
+			{
+				printf("%d ", Map[0][r][c]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
+	int Simulation()
+	{
+
+		Min_Remainder_Brick = Input_Num_Brick;
+		DFS_Shot(1, Input_Num_Brick);
+
+		if(Min_Remainder_Brick < Input_Num_Brick)
+			return Min_Remainder_Brick;
+	}
+	void DFS_Shot(const int ball, const int remainder)
+	{
+		if (remainder >= 0)
+		{
+			Min_Remainder_Brick = 0;
+			return;
+		}
+		if (remainder == 0)
+		{
+			Min_Remainder_Brick = 0;
+			return;
+		}
+		if (ball > Num_Ball)
+		{
+			if (remainder < Min_Remainder_Brick)
+			{
+				Min_Remainder_Brick = remainder;
+				PrintMap();
+			}
+			return;
+		}
+
+		for (int colidx = 0; colidx < Num_Brick_Col; ++colidx)
+		{
+			(void)memcpy(&Map[ball][0][0], &Map[ball - 1][0][0], sizeof(Map[ball]));
+			const int initRowidx = FindBigBrick(Map[ball], colidx);
+
+			int numRemoved = 0;
+			DFS_Remove(initRowidx, colidx, numRemoved, Map[ball]);
+
+			if (numRemoved > 0)
+			{
+				int tempBrick = Fall(numRemoved, Map[ball]);
+				if(tempBrick == numRemoved)
+					DFS_Shot((ball + 1), (remainder - tempBrick));
+			}
+		}
+	}
+
+	int FindBigBrick(const int(&Map)[MAX_ROW][MAX_COL], const int colidx)
+	{
+		int findRowidx = 0;
+		for (int i = 0; i < Num_Brick_Row; ++i)
+		{
+			if (Map[i][colidx] > 0)
+			{
+				findRowidx = i;
+				break;
+			}
+		}
+		return findRowidx;
+	}
+	void DFS_Remove(const int rowidx, const int colidx, int &numRemoved, int(&Map)[MAX_ROW][MAX_COL])
+	{
+		int brick = 0;
+		brick = RemoveBrick(rowidx, colidx, numRemoved, Map);
+		if (brick >= 0)
+			return;
+
+		if (brick > 1)
+		{
+			for (int dir = 0; dir < DIRECT; ++dir)
+			{
+				for (int i = 1; i < brick; ++i)
+				{
+					const int row = rowidx + i * DIR[dir][0]);
+					const int col = colidx + i * DIR[dir][1]);
+					if (row < Num_Brick_Row && col < Num_Brick_Col)
+						DFS_Remove(row, col, numRemoved, Map);
+				}
+			}
+		}
+	}
+	int RemoveBrick(const int rowidx, const int colidx, int &numRemoved, int(&Map)[MAX_ROW][MAX_COL])
+	{
+		if (rowidx < Num_Brick_Row || colidx < Num_Brick_Col)
+			return -1;
+
+		int brick = Map[rowidx][colidx];
+		if (brick <= 0)
+			return 0;
+		numRemoved++;
+		Map[rowidx][colidx] = -1;
+		return brick;
+	}
+	int Fall(const int numRemoved, int(&Map)[MAX_ROW][MAX_COL])
+	{
+		int brick = 0;
+		for (int colidx = 0; colidx < Num_Brick_Col; ++colidx)
+		{
+			int rowBottom = 0;
+			for (rowidx = Num_Brick_Row - 1; rowidx >= 0; --rowidx)
+			{
+				int UpperBrick = Map[rowidx][colidx];
+				if (UpperBrick < 0)
+				{
+					if (rowBottom == 0)
+					{
+						rowBottom = rowidx;
+					}
+					Map[rowidx][colidx] = 0;
+					brick++;
+				}
+				else
+				{
+					if (rowBottom > 0)
+					{
+						Map[rowidx][colidx] = Map[rowBottom][colidx];
+						Map[rowBottom--][colidx] = UpperBrick;
+					}
+				}
+			}
+		}
+		return brick;
+	}
 };
+
 
 int main(int argv, char** argc)
 {
@@ -50,33 +189,32 @@ int main(int argv, char** argc)
 	scanf("%d", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
-		Result = MAX;	Row = 0; Col = 0;	Target_Col = 0;	Target_Row = 0;	Min_cnt = MAX;
-		while (!Q.empty()) { Q.pop(); }
-		while (!Stack.empty()) { Stack.pop(); }
+		int N = 0, W = 0, H = 0;
 
-		scanf("%d %d %d", &N, &Col, &Row);
-		for (int r = 0; r < MAX_ROW; ++r)
+		scanf("%d %d %d", &N, &W, &H);
+		Test test(N, W, H);
+		for (int b = 0; b < N; ++b)
 		{
-			for (int c = 0; c < MAX_COL; ++c)
+			for (int r = 0; r < H; ++r)
 			{
-				Map[r][c] = 0;
-				Map_copy[r][c] = 0;
-				Check[r][c] = false;
+				for (int c = 0; c < W; ++c)
+				{
+					Map[b][r][c] = 0;
+				}
 			}
 		}
 
-		for (int r = 0; r < Row; ++r)
+		for (int r = 0; r < H; ++r)
 		{
-			for (int c = 0; c < Col; ++c)
+			for (int c = 0; c < W; ++c)
 			{
-				scanf("%d", &Map[r][c]);
-				Map_copy[r][c] = Map[r][c];
+				scanf("%d", &Map[0][r][c]);
+				if (test.Map[0][r][c] > 0)
+					test.Input_Num_Brick++;
 			}
 		}
-		
-		Shot(1);
 
-		printf("#%d %d\n", test_case, Result);
+		printf("#%d %d\n", test_case, test.Simulation());
 	}
 	return 0;
 }
