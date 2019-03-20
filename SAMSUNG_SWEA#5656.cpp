@@ -7,13 +7,10 @@
 //	SAMSUNG SW Expert Academy [#5656] <벽돌 깨기> (모의 SW 역량테스트)
 //	
 #define _CRT_SECURE_NO_WARNINGS
-//#pragma GCC optimize("O3")
 #include <cstdio>
 #include <iostream>
 #include <cstring>
 using namespace std;
-
-typedef pair<int, int> PII;
 
 const static int MAX_BALL = 5;
 const static int MAX_ROW = 16;
@@ -48,7 +45,7 @@ public:
 		{
 			for (int c = 0; c < Num_Brick_Col; ++c)
 			{
-				cout<<Map[0][r][c]<<' ';
+				cout<<Map[Num_Ball-1][r][c]<<' ';
 			}
 			cout << '\n';
 		}
@@ -57,8 +54,14 @@ public:
 
 	int Simulation()
 	{
+		if (Num_Brick_Col < 0 || Num_Brick_Row < 0)
+			return -1;
+
 		Min_Remainder_Brick = Input_Num_Brick;
 		DFS_Shot(1, Input_Num_Brick);
+
+		if (Min_Remainder_Brick > Input_Num_Brick)
+			return 0;
 
 		return Min_Remainder_Brick;
 	}
@@ -94,9 +97,8 @@ public:
 
 			if (numRemoved > 0)
 			{
-				int tempBrick = Fall(Map[ball]);
-				if(tempBrick == numRemoved)
-					DFS_Shot((ball + 1), (remainder - tempBrick));
+				Fall(Map[ball]);
+				DFS_Shot((ball + 1), (remainder - numRemoved));
 			}
 		}
 	}
@@ -149,9 +151,8 @@ public:
 		return brick;
 	}
 
-	int Fall(int(&Map)[MAX_ROW][MAX_COL])
+	void Fall(int(&Map)[MAX_ROW][MAX_COL])
 	{
-		int brick = 0;
 		for (int colidx = 0; colidx < Num_Brick_Col; ++colidx)
 		{
 			int rowBottom = 0;
@@ -165,7 +166,6 @@ public:
 						rowBottom = rowidx;
 					}
 					Map[rowidx][colidx] = 0;
-					brick++;
 				}
 				else
 				{
@@ -177,7 +177,6 @@ public:
 				}
 			}
 		}
-		return brick;
 	}
 };
 
@@ -191,10 +190,12 @@ int main(int argv, char** argc)
 	int test_case;
 	int N, W, H;
 	cin >> T;
+	//scanf("%d", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		N = 0, W = 0, H = 0;
 		cin >> N >> W >> H;
+		//scanf("%d %d %d", &N, &W, &H);
 		Test test(N, W, H);
 
 		for (int r = 0; r < H; ++r)
@@ -202,11 +203,13 @@ int main(int argv, char** argc)
 			for (int c = 0; c < W; ++c)
 			{
 				cin>>test.Map[0][r][c];
+				//scanf("%d", &test.Map[0][r][c]);
 				if (test.Map[0][r][c] > 0)
 					test.Input_Num_Brick++;
 			}
 		}
 		cout << "#" << test_case << ' ' << test.Simulation() << '\n';
+		//printf("#%d %d\n", test_case, test.Simulation());
 	}
 	return 0;
 }
