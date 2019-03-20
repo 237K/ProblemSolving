@@ -9,205 +9,93 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
-#include <queue>
-#include <stack>
-#include <algorithm>
+#include <string>
 #include <iostream>
 using namespace std;
-typedef pair<int, int> coor;
 const static int MAP_SIZE = 20;
+const static int MAX_KIND = 101;
+
 static int N;
 static int Map[MAP_SIZE][MAP_SIZE];
-static bool Check[MAP_SIZE][MAP_SIZE];
-static int Result;
+static int DirRow[4] = { 1, 1, -1, -1 };
+static int DirCol[4] = { -1, 1, 1, -1 };
+bool Check[MAX_KIND];
 
-bool isSquare1(int r, int c)
+int Go()
 {
-	if (r-1 >= 0 &&
-		c+1 < N &&
-		r+1 < N &&
-		c-1 >= 0 &&
-		Map[r - 1][c] != Map[r][c + 1] &&
-		Map[r - 1][c] != Map[r + 1][c] &&
-		Map[r - 1][c] != Map[r][c - 1] &&
-		Map[r][c + 1] != Map[r + 1][c] &&
-		Map[r][c + 1] != Map[r][c - 1] &&
-		Map[r + 1][c] != Map[r][c - 1])
-		return true;
-	else
-		return false;
-}
-
-void Square1()
-{
-	for (int r = 1; r < N - 1; ++r)
+	int Result = -1;
+	for (int Path = N - 1; Path > 1; --Path)
 	{
-		for (int c = 1; c < N - 1; ++c)
+		for (int Start_row = 0; Start_row < N - Path; ++Start_row)
 		{
-			cout << "For (" << r << ", " << c << ")" << endl;
-			int temp = -2147000000;
-			int RightDown = 0;
-			int LeftDown = 0;
-			int RLDown = 0;
-			if (isSquare1(r, c))
+			for (int Start_col = 0; Start_col < N - Path; ++Start_col)
 			{
-				temp = 4;
-				cout << "(" << r << ", " << c << ")" << endl;
-
-				int rdidx = 1;
-				bool isrd = true;
-				while (1)
+				for (int Check_next_col = Start_col + 1; Check_next_col < Start_col + Path; ++Check_next_col)
 				{
-					if (isSquare1(r + rdidx, c + rdidx))
+					int dir = 0;
+					int row = Start_row;
+					int col = Check_next_col;
+					(void)memset(&Check[0], false, sizeof(Check));
+					while (1)
 					{
-						for (int j = rdidx; j > 0; --j)
+						if (dir == 3 && row == Start_row && col == Check_next_col)
 						{
-							if (Map[r + rdidx - j - 1][c + rdidx - j] != Map[r + rdidx][c + rdidx + 1] &&
-								Map[r + rdidx - j - 1][c + rdidx - j] != Map[r + rdidx + 1][c + rdidx] &&
-								Map[r + rdidx - j][c + rdidx - j - 1] != Map[r + rdidx][c + rdidx + 1] &&
-								Map[r + rdidx - j][c + rdidx - j - 1] != Map[r + rdidx + 1][c + rdidx])
+							Result = Path * 2;
+							return Result;
+						}
+						else if (row + DirRow[dir] >= Start_row
+							&& row + DirRow[dir] <= Start_row + Path 
+							&& col + DirCol[dir] >= Start_col 
+							&& col + DirCol[dir] <= Start_col + Path)
+						{
+							row += DirRow[dir];
+							col += DirCol[dir];
+							if (!Check[Map[row][col]])
 							{
-
+								Check[Map[row][col]] = true;
 							}
 							else
-							{
-								isrd = false;
 								break;
-							}
-						}
-						if (isrd)
-						{
-							cout << "RightDown (" << r + rdidx << ", " << c + rdidx << ")" << endl;
-							RightDown += 2;
 						}
 						else
-							break;
-
-						rdidx++;
+						{
+							dir++;
+						}
 					}
-					else
-						break;
 				}
-
-				int ldidx = 1;
-				bool isld = true;
-				while(1)
-				{
-					if (isSquare1(r + ldidx, c - ldidx))
-					{
-						for (int j = ldidx; j > 0; --j)
-						{
-							if (Map[r + ldidx - j - 1][c - ldidx + j] != Map[r+ ldidx +1][c- ldidx] &&
-								Map[r + ldidx - j - 1][c - ldidx + j] != Map[r+ ldidx][c- ldidx -1] &&
-								Map[r + ldidx - j][c- ldidx + j + 1] != Map[r+ ldidx +1][c- ldidx] &&
-								Map[r + ldidx - j][c- ldidx + j + 1] != Map[r+ ldidx][c- ldidx -1])
-							{
-								
-							}
-							else
-							{
-								isld = false;
-								break;
-							}
-						}
-						if (isld)
-						{
-							cout << "LeftDown (" << r + ldidx << ", " << c - ldidx << ")" << endl;
-							LeftDown += 2;
-						}
-						else
-							break;
-
-						ldidx++;
-					}
-					else
-						break;
-				}
-
-				int RLidx = 1;
-				bool isRLD = true;
-				while (1)
-				{
-					if (isSquare1(r+RLidx, c+RLidx) && isSquare1(r + RLidx, c - RLidx))
-					{
-						for (int j = RLidx; j > 0; --j)
-						{
-							if (Map[r + RLidx - j - 1][c + RLidx - j] != Map[r + RLidx][c + RLidx + 1] &&
-								Map[r + RLidx - j - 1][c + RLidx - j] != Map[r + RLidx + 1][c + RLidx] &&
-								Map[r + RLidx - j][c + RLidx - j - 1] != Map[r + RLidx][c + RLidx + 1] &&
-								Map[r + RLidx - j][c + RLidx - j - 1] != Map[r + RLidx + 1][c + RLidx] &&
-								Map[r + RLidx - j][r + RLidx - j - 1] != Map[r + RLidx + 1][c + RLidx] &&
-								Map[r + RLidx - j][r + RLidx - j - 1] != Map[r + RLidx][c + RLidx + 1])
-							{
-
-							}
-							else
-							{
-								isRLD = false;
-								break;
-							}
-						}
-						if (isRLD)
-						{
-							cout << "Right & Left Down (" << r + RLidx << ", " << c + RLidx << ") (" << r + RLidx << ", " << c - RLidx << ")" << endl;
-							RLDown += 4;
-						}
-						else
-							break;
-
-						RLidx++;
-
-					}
-					else
-						break;
-				}
-
-				temp += max(max(RightDown, LeftDown), RLDown);
-				cout << temp << endl;
 			}
-
-			if (temp > Result)
-				Result = temp;
 		}
 	}
+	return Result;
 }
 
 int main(int argc, char** argv)
 {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	freopen("s_input2105.txt", "r", stdin);
 	int T;
 	int test_case;
-	freopen("s_input2105.txt", "r", stdin);
-	scanf("%d", &T);
+	//scanf("%d", &T);
+	cin >> T;
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		N = 0;
-		Result = -2147000000;
+		(void)memset(&Map[0][0], 0, sizeof(Map));
+
+		//scanf("%d", &N);
+		cin >> N;
 		for (int row = 0; row < N; ++row)
 		{
 			for (int col = 0; col < N; ++col)
 			{
-				Map[row][col] = 0;
-				Check[row][col] = false;
+				//scanf("%d", &Map[row][col]);
+				cin >> Map[row][col];
 			}
 		}
 
-		scanf("%d", &N);
-		for (int row = 0; row < N; ++row)
-		{
-			for (int col = 0; col < N; ++col)
-			{
-				scanf("%d", &Map[row][col]);
-			}
-		}
+		cout << "#" << test_case << ' ' << Go() << '\n';
 
-		Square1();
-
-		if (Result == -2147000000)
-			printf("#%d -1\n", test_case);
-		else
-			printf("#%d %d\n", test_case, Result);
-
-		cout << endl << endl;
 	}
 	return 0;
 }
