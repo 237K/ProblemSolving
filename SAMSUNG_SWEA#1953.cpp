@@ -21,28 +21,23 @@ const static int PIPE_KIND = 8;
 
 static int dir[DIRECT][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };	//悼 辑 巢 合
 static int map[MAX_SIZE][MAX_SIZE];
-static bool check[MAX_SIZE][MAX_SIZE];
+static int check[MAX_SIZE][MAX_SIZE];
 static int N, M, R, C, L;
 static queue<coor> Q;
 static int result;
 
 void Arrest()
 {
-	int startQsize, endQsize;
-	int count = 1;
 	result = 1;
-	check[R][C] = true;
+	check[R][C] = 1;
 	while (!Q.empty())
 	{
-		if (count > L)
-			return;
-		else
 		{
-			
 			coor cur = Q.front();
 			Q.pop();
-			startQsize = Q.size();
-			cout << "(" << cur.first << ", " << cur.second << ")" << endl;
+			if (check[cur.first][cur.second] >= L)
+				break;
+
 			int cur_pipe = map[cur.first][cur.second];
 			switch (cur_pipe)
 			{
@@ -51,40 +46,40 @@ void Arrest()
 				{
 					int x = cur.first + dir[d][0];
 					int y = cur.second + dir[d][1];
-					if (x < 0 || y < 0 || x >= N || y >= M || check[x][y])
+					if (x < 0 || y < 0 || x >= N || y >= M || !map[x][y] || check[x][y])
 						continue;
 					else
 					{
 						switch (d)
 						{
 						case 0:	//悼率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 1:	//辑率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 2:	//巢率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 3:	//合率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
@@ -92,29 +87,30 @@ void Arrest()
 						}
 					}
 				}
+				break;
 			case 2:	//巢合
 				for (int d = 2; d < DIRECT; ++d)
 				{
 					int x = cur.first + dir[d][0];
 					int y = cur.second + dir[d][1];
-					if (x < 0 || y < 0 || x >= N || y >= M || check[x][y])
+					if (x < 0 || y < 0 || x >= N || y >= M || !map[x][y] || check[x][y])
 						continue;
 					else
 					{
 						switch (d)
 						{
 						case 2:	//巢率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 3:	//合率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
@@ -122,29 +118,30 @@ void Arrest()
 						}
 					}
 				}
+				break;
 			case 3:	//悼辑
 				for (int d = 0; d < 2; ++d)
 				{
 					int x = cur.first + dir[d][0];
 					int y = cur.second + dir[d][1];
-					if (x < 0 || y < 0 || x >= N || y >= M || check[x][y])
+					if (x < 0 || y < 0 || x >= N || y >= M || !map[x][y] || check[x][y])
 						continue;
 					else
 					{
 						switch (d)
 						{
 						case 0:	//悼率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 1:	//辑率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
@@ -152,29 +149,30 @@ void Arrest()
 						}
 					}
 				}
+				break;
 			case 4:	//悼合
 				for (int d = 0; d < DIRECT; d+=3)
 				{
 					int x = cur.first + dir[d][0];
 					int y = cur.second + dir[d][1];
-					if (x < 0 || y < 0 || x >= N || y >= M || check[x][y])
+					if (x < 0 || y < 0 || x >= N || y >= M || !map[x][y] || check[x][y])
 						continue;
 					else
 					{
 						switch (d)
 						{
 						case 0:	//悼率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 3:	//合率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
@@ -182,29 +180,30 @@ void Arrest()
 						}
 					}
 				}
+				break;
 			case 5:	//悼巢
 				for (int d = 0; d < DIRECT; d+=2)
 				{
 					int x = cur.first + dir[d][0];
 					int y = cur.second + dir[d][1];
-					if (x < 0 || y < 0 || x >= N || y >= M || check[x][y])
+					if (x < 0 || y < 0 || x >= N || y >= M || !map[x][y] || check[x][y])
 						continue;
 					else
 					{
 						switch (d)
 						{
 						case 0:	//悼率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 6 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 2:	//巢率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
@@ -212,29 +211,30 @@ void Arrest()
 						}
 					}
 				}
+				break;
 			case 6:	//辑巢
 				for (int d = 1; d < 3; ++d)
 				{
 					int x = cur.first + dir[d][0];
 					int y = cur.second + dir[d][1];
-					if (x < 0 || y < 0 || x >= N || y >= M || check[x][y])
+					if (x < 0 || y < 0 || x >= N || y >= M || !map[x][y] || check[x][y])
 						continue;
 					else
 					{
 						switch (d)
 						{
 						case 1:	//辑率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 2:	//巢率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 4 || map[x][y] == 7) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
@@ -242,29 +242,30 @@ void Arrest()
 						}
 					}
 				}
+				break;
 			case 7:	//辑合
 				for (int d = 1; d < DIRECT; d+=2)
 				{
 					int x = cur.first + dir[d][0];
 					int y = cur.second + dir[d][1];
-					if (x < 0 || y < 0 || x >= N || y >= M || check[x][y])
+					if (x < 0 || y < 0 || x >= N || y >= M || !map[x][y] || check[x][y])
 						continue;
 					else
 					{
 						switch (d)
 						{
 						case 1:	//辑率
-							if (map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5)
+							if ((map[x][y] == 1 || map[x][y] == 3 || map[x][y] == 4 || map[x][y] == 5) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
 							break;
 						case 3:	//合率
-							if (map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6)
+							if ((map[x][y] == 1 || map[x][y] == 2 || map[x][y] == 5 || map[x][y] == 6) && check[x][y] < L)
 							{
-								check[x][y] = true;
+								check[x][y] = check[cur.first][cur.second] + 1;
 								Q.push(coor(x, y));
 								result++;
 							}
@@ -272,13 +273,9 @@ void Arrest()
 						}
 					}
 				}
+				break;
 			}
 		}
-		endQsize = Q.size();
-		int addtime = (endQsize - startQsize);
-		if (addtime > 1)
-			L += addtime;
-		count++;
 	}
 }
 
@@ -294,7 +291,7 @@ int main(int argc, char** argv)
 	{
 		result = 0;
 		(void)memset(&map[0][0], 0, sizeof(map));
-		(void)memset(&check[0][0], false, sizeof(check));
+		(void)memset(&check[0][0], 0, sizeof(check));
 		while (!Q.empty()) { Q.pop(); }
 
 		cin >> N >> M >> R >> C >> L;
