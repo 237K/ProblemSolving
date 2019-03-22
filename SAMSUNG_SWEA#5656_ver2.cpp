@@ -8,7 +8,6 @@
 //	ver1. 시간초과	
 //	ver2. Pass
 //
-#pragma GCC optimize("O3")
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <algorithm>
@@ -42,7 +41,7 @@ inline void PrintMap()							//제대로 작동하는지 확인해보기 위함
 
 inline int Shot(int ball)		//DFS (재귀)
 {
-	if (ball > N)				//재귀 탈출 조건
+	if (ball > N)				//탈출 조건
 		return 0;
 	
 	else
