@@ -28,6 +28,7 @@ static int result;
 
 void Arrest()
 {
+	int startQsize, endQsize;
 	int count = 1;
 	result = 1;
 	check[R][C] = true;
@@ -37,9 +38,10 @@ void Arrest()
 			return;
 		else
 		{
+			
 			coor cur = Q.front();
 			Q.pop();
-			count++;
+			startQsize = Q.size();
 			cout << "(" << cur.first << ", " << cur.second << ")" << endl;
 			int cur_pipe = map[cur.first][cur.second];
 			switch (cur_pipe)
@@ -272,6 +274,11 @@ void Arrest()
 				}
 			}
 		}
+		endQsize = Q.size();
+		int addtime = (endQsize - startQsize);
+		if (addtime > 1)
+			L += addtime;
+		count++;
 	}
 }
 
