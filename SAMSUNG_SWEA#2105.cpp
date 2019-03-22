@@ -9,7 +9,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
-#include <string>
+#include <string.h>
 #include <iostream>
 using namespace std;
 const static int MAP_SIZE = 20;
@@ -76,26 +76,21 @@ int main(int argc, char** argv)
 	freopen("s_input2105.txt", "r", stdin);
 	int T;
 	int test_case;
-	//scanf("%d", &T);
 	cin >> T;
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		N = 0;
 		(void)memset(&Map[0][0], 0, sizeof(Map));
 
-		//scanf("%d", &N);
 		cin >> N;
 		for (int row = 0; row < N; ++row)
 		{
 			for (int col = 0; col < N; ++col)
 			{
-				//scanf("%d", &Map[row][col]);
 				cin >> Map[row][col];
 			}
 		}
-
 		cout << "#" << test_case << ' ' << Go() << '\n';
-
 	}
 	return 0;
 }
