@@ -23,7 +23,7 @@ static int map[MAP_SIZE][MAP_SIZE];
 static int check[MAP_SIZE][MAP_SIZE];
 static queue<coor> Top;
 static int N, K;
-static int dir[DIRECT][2] = { {0, 1}, {1, 0}, {0, -1}, {1, 0} };	//µ¿³²¼­ºÏ
+static int dir[DIRECT][2] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };	//µ¿³²¼­ºÏ
 static int result;
 
 void FindTop(int top)
@@ -39,8 +39,7 @@ void FindTop(int top)
 }
 
 void Make_Trail(int curx, int cury, int length)
-{	
-	int endcnt = 0;
+{
 	for (int d = 0; d < DIRECT; ++d)
 	{
 		int nextx = curx + dir[d][0];
@@ -48,30 +47,29 @@ void Make_Trail(int curx, int cury, int length)
 
 		if (nextx < 0 || nexty < 0 || nextx >= N || nexty >= N || check[nextx][nexty])
 		{
-			endcnt++;
 			continue;
 		}
 		else
 		{
 			if (map[nextx][nexty] < map[curx][cury])
 			{
-				cout << "(" << curx << ", " << cury << ") Length : " << length << endl;
+				
 				check[nextx][nexty] = 1;
 				Make_Trail(nextx, nexty, length + 1);
-				result = max(result, length);
+				result = max(result, length+1);
 				check[nextx][nexty] = 0;
 			}
 
 			else if (map[nextx][nexty] >= map[curx][cury] && K >= map[nextx][nexty] - map[curx][cury] + 1)
 			{
-				cout << "(" << curx << ", " << cury << ") Length : " << length << endl;
+				
 				int temp = map[nextx][nexty];
 				int tempK = K;
 				map[nextx][nexty] = map[curx][cury] - 1;
 				check[nextx][nexty] = 1;
 				K = 0;
 				Make_Trail(nextx, nexty, length + 1);
-				result = max(result, length);
+				result = max(result, length+1);
 				map[nextx][nexty] = temp;
 				check[nextx][nexty] = 0;
 				K = tempK;
@@ -88,9 +86,7 @@ void Simulation()
 		int x = Top.front().first;
 		int y = Top.front().second;
 		Top.pop();
-		cout << "Start (" << x << ", " << y << ")" << endl;
 		Make_Trail(x, y, 1);
-		cout << endl;
 	}
 }
 
@@ -119,13 +115,10 @@ int main(int argc, char** argv)
 				top_height = max(top_height, map[r][c]);
 			}
 		}
-
 		FindTop(top_height);
-		
 		Simulation();
 
 		cout << "#" << test_case << ' ' << result << '\n';
 	}
-
 	return 0;
 }
