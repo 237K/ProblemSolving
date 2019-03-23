@@ -55,6 +55,7 @@ void Make_Trail(int curx, int cury, int length)
 		{
 			if (map[nextx][nexty] < map[curx][cury])
 			{
+				cout << "(" << curx << ", " << cury << ") Length : " << length << endl;
 				check[nextx][nexty] = 1;
 				Make_Trail(nextx, nexty, length + 1);
 				result = max(result, length);
@@ -63,6 +64,7 @@ void Make_Trail(int curx, int cury, int length)
 
 			else if (map[nextx][nexty] >= map[curx][cury] && K >= map[nextx][nexty] - map[curx][cury] + 1)
 			{
+				cout << "(" << curx << ", " << cury << ") Length : " << length << endl;
 				int temp = map[nextx][nexty];
 				int tempK = K;
 				map[nextx][nexty] = map[curx][cury] - 1;
@@ -86,7 +88,9 @@ void Simulation()
 		int x = Top.front().first;
 		int y = Top.front().second;
 		Top.pop();
+		cout << "Start (" << x << ", " << y << ")" << endl;
 		Make_Trail(x, y, 1);
+		cout << endl;
 	}
 }
 
@@ -104,7 +108,7 @@ int main(int argc, char** argv)
 		(void)memset(&map[0][0], 0, sizeof(map));
 		(void)memset(&check[0][0], 0, sizeof(check));
 
-		cin >> N, K;
+		cin >> N >> K;
 
 		int top_height = 0;
 		for (int r = 0; r < N; ++r)
