@@ -15,6 +15,13 @@
 #include <algorithm>
 using namespace std;
 
+void leftshift(string& str, int x)
+{
+	int l = str.length();
+	for (int i = x; i < l-1; ++i)
+		str[i] = str[i + 1];
+}
+
 int main(int argc, char** argv)
 {
 	ios::sync_with_stdio(false);
@@ -28,12 +35,20 @@ int main(int argc, char** argv)
 		string in;
 		cin >> in;
 		int len = in.length();
-		string::iterator iter_end;
-		iter_end = in.begin() + len;
-		while (adjacent_find(in.begin(), in.end()) != iter_end)
+		while (1)
 		{
-			unique(in.begin(), in.end());
-			iter_end = in.begin() + in.length();
+			int cnt = 0;
+			for (int i = 0; i < len - 1; ++i)
+			{
+				if (in[i] == in[i + 1])
+				{
+					in = in.substr(0, i) + in.substr(i + 2, len - 1);
+					len -= 2;
+					cnt++;
+				}
+			}
+			if (cnt == 0 || len <= 1)
+				break;
 		}
 		cout << "#" << test_case << ' ' << in << '\n';
 	}
