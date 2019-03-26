@@ -16,6 +16,7 @@
 #include <queue>
 #include <algorithm>
 #include <memory.h>
+#include <time.h>
 using namespace std;
 
 typedef pair<int, int> coor;
@@ -75,6 +76,9 @@ int main(int argc, char** argv)
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
 	freopen("testcase_Cluster.txt", "r", stdin);
+	double timer;
+	clock_t time_start, time_end;
+	time_start = clock();
 	int T;
 	int test_case;
 	cin >> T;
@@ -101,5 +105,8 @@ int main(int argc, char** argv)
 		}
 		cout << '\n';
 	}
+	time_end = clock();
+	timer = (double)(time_end - time_start);
+	cout << "Execution time : " << timer << "ms\n\n";
 	return 0;
 }
