@@ -15,13 +15,6 @@
 #include <algorithm>
 using namespace std;
 
-void leftshift(string& str, int x)
-{
-	int l = str.length();
-	for (int i = x; i < l-1; ++i)
-		str[i] = str[i + 1];
-}
-
 int main(int argc, char** argv)
 {
 	ios::sync_with_stdio(false);
