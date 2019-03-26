@@ -14,6 +14,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <queue>
+#include <algorithm>
 #include <memory.h>
 using namespace std;
 
@@ -27,7 +28,7 @@ static bool check[MAX][MAX];
 static int N;
 static queue<coor> Q;
 static int num_cluster;
-static int num_paddyfield;
+static int num_paddyfield[MAX * MAX];
 static int dir[DIRECT][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
 
 void Search()
@@ -36,21 +37,33 @@ void Search()
 	{
 		coor cur = Q.front();
 		Q.pop();
-
+		for (int d = 0; d < DIRECT; ++d)
+		{
+			int x = cur.first + dir[d][0];
+			int y = cur.second + dir[d][1];
+			if (x < 0 || y < 0 || x >= N || y >= N || check[x][y])
+				continue;
+			else if (map[x][y] == 1)
+			{
+				Q.push(coor(x, y));
+				check[x][y] = true;
+				num_paddyfield[num_cluster]++;
+			}
+		}
 	}
 }
 
-void Cluster()
+void Clustering()
 {
 	for (int r = 0; r < N; ++r)
 	{
 		for (int c = 0; c < N; ++c)
 		{
-			if (map[r][c] == 1 && check[r][c] == false)
+			if (map[r][c] == 1 && !check[r][c])
 			{
 				Q.push(coor(r, c));
 				check[r][c] = true;
-				num_cluster++;
+				num_paddyfield[++num_cluster]++;
 				Search();
 			}
 		}
@@ -70,8 +83,8 @@ int main(int argc, char** argv)
 		cin >> N;
 		(void)memset(map, 0, sizeof(map));
 		(void)memset(check, false, sizeof(check));
+		(void)memset(num_paddyfield, 0, sizeof(num_paddyfield));
 		num_cluster = 0;
-		num_paddyfield = 0;
 		for (int r = 0; r < N; ++r)
 		{
 			for (int c = 0; c < N; ++c)
@@ -79,6 +92,14 @@ int main(int argc, char** argv)
 				cin >> map[r][c];
 			}
 		}
+		
+		Clustering();
+		cout << "#" << test_case << ' '<< num_cluster << ' ';
+		for (int i = 1; i <= num_cluster; ++i)
+		{
+			cout << num_paddyfield[i] << ' ';
+		}
+		cout << '\n';
 	}
 	return 0;
 }
