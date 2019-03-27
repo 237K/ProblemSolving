@@ -218,10 +218,9 @@ int main(int argc, char** argv)
 {
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
-	freopen("testcase_sudoku.txt". "r", stdin);
+	freopen("testcase_sudoku.txt", "r", stdin);
 	
 	(void)memset(map, 0, sizeof(map));
-	(void)memset(error, pair<coor, int>(coor(0, 0, 0)), sizeof(error));
 	e = 0;
 
 	for (int r = 1; r < SIZE; ++r)
@@ -232,7 +231,6 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	cout << "#" << test_case << '\n';
 	cout << "error : " << e << '\n';
 	PrintError();
 	PrintMap();
