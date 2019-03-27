@@ -32,10 +32,10 @@ bool RowCheck(int row)
 
 bool ColCheck(int col)
 {
-	for (int r = 0; r < SIZE; ++r)
+	for (int r = 1; r < SIZE; ++r)
 	{
 		if (!check_col[map[r][col]])
-			check_col[map[r][col]];
+			check_col[map[r][col]]++;
 		else
 			return false;
 	}
@@ -92,8 +92,6 @@ int main(int argc, char** argv)
 	{
 		(void)memset(&map[0][0], 0, sizeof(map));
 		
-		
-
 		for (int r = 1; r < SIZE; ++r)
 		{
 			for (int c = 1; c < SIZE; ++c)
