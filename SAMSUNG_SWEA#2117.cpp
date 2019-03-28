@@ -6,6 +6,8 @@
 //
 //	SAMSUNG SW Expert Academy <#2117> (모의)
 //	
+//	범위가 거리에 비례해서 증가함. 예를 들어 k = 2일 때는 출발점으로부터 거리( abs(end_x - start_x) + abs(end_y - start_y) )가 2인 곳들을 커버함
+//
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -13,14 +15,17 @@
 #include <algorithm>
 using namespace std;
 
+typedef pair<int, int> coor;
+
 const static int SIZE = 20;
-const static int DIRECT1 = 4;
-const static int DIRECT2 = 4;
+const static int COVERAGE = SIZE * 2;
 
 static int map[SIZE][SIZE];
-static bool check[SIZE][SIZE];
+static int cover[COVERAGE];
+static coor house[SIZE*SIZE];
 static int N, M;
 static int Result;
+static int house_count;
 
 void Simulation()
 {
@@ -28,30 +33,24 @@ void Simulation()
 	{
 		for (int c = 0; c < N; ++c)
 		{
-			for (int k = 1; k < N; ++k)
+			(void)memset(&cover[0], 0, sizeof(cover));
+			int distance = 0;
+			for(int i = 0 ; i <= house_count ; ++i)
 			{
-				int operating_cost = (k * k) + ((k - 1) * (k - 1));
-				int house_cnt = 0;
-				int leverage = 0;
-				for (int rc = r - (k - 1); rc <= r + (k - 1); ++rc)
+				coor cur = house[i];
+				distance = abs(cur.first - r) + abs(cur.second - c);
+				cover[distance]++;
+			}
+			int cnt = 0;
+			for (int k = 1; k <= COVERAGE; ++k)
+			{
+				cnt += cover[k];
+				int leverage = cnt * M;
+				int cost = (k*k) + ((k - 1)*(k - 1));
+				if (leverage >= cost)
 				{
-					for (int cc = c - ((k - 1) - abs(rc)) ; cc <= c + ((k - 1) - abs(rc)) ; ++cc)
-					{
-						//cout << "(" << rc << ", " << cc << ")";
-						if (rc < 0 || cc < 0 || rc >= N || cc >= N)
-							continue;
-						else
-						{
-							if (map[rc][cc] == 1)
-								house_cnt++;
-							//cout << "count : " << house_cnt << endl << endl;
-						}
-					}
+					Result = max(Result, cnt);
 				}
-				leverage = house_cnt * M;
-
-				if (leverage >= operating_cost)
-					Result = max(Result, house_cnt);
 			}
 		}
 	}
@@ -68,14 +67,13 @@ int main(int argc, char** argv)
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		(void)memset(&map[0][0], 0, sizeof(map));
-		(void)memset(&check[0][0], 0, sizeof(check));
-		Result = 0;
+		(void)memset(house, 0, sizeof(house));
+		Result = 0;	house_count = 0;
 
 		cin >> N >> M;
 
-		int count = 0;
-		int cost = 0;
-		int max_size = N - 1;
+		int max_coverage = N - 3;
+		int cost = (max_coverage * max_coverage) + ((max_coverage - 1) * (max_coverage - 1));
 
 		for (int r = 0; r < N; ++r)
 		{
@@ -83,12 +81,13 @@ int main(int argc, char** argv)
 			{
 				cin >> map[r][c];
 				if (map[r][c])
-					count++;
+				{
+					house[house_count++] = coor(r, c);
+				}
 			}
 		}
-
-		if ((count * M) > ((max_size * max_size) + ((max_size - 1) * (max_size - 1))))
-			Result = count;
+		if ((house_count * M) > cost)
+			Result = house_count;
 		else
 			Simulation();
 
