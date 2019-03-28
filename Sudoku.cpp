@@ -60,6 +60,7 @@ void RowCheck(int row)
 {
 	int e_start = e;
 	int e_end = 0;
+	bool flag = false;
 	for (int c = 1; c < SIZE; ++c)
 	{
 		if (!check_row[map[row][c]])
@@ -67,10 +68,14 @@ void RowCheck(int row)
 		else
 		{
 			error[e++] = pair<coor, int>(coor(row, c), map[row][c]);
+			flag = true;
 		}
 	}
-	e_end = e;
-	RowChange(e_start, e_end);
+	if (flag)
+	{
+		e_end = e;
+		RowChange(e_start, e_end);
+	}
 }
 
 void ColChange(int es, int ee)
@@ -105,6 +110,7 @@ void ColCheck(int col)
 {
 	int e_start = e;
 	int e_end = 0;
+	bool flag = false;
 	for (int r = 1; r < SIZE; ++r)
 	{
 		if (!check_col[map[r][col]])
@@ -112,10 +118,14 @@ void ColCheck(int col)
 		else
 		{
 			error[e++] = pair<coor, int>(coor(r, col), map[r][col]);
+			flag = true;
 		}
 	}
-	e_end = e;
-	ColChange(e_start, e_end);
+	if (flag)
+	{
+		e_end = e;
+		ColChange(e_start, e_end);
+	}
 }
 
 void SmallChange(int es, int ee)
@@ -150,6 +160,7 @@ void SmallCheck(int row, int col)
 {
 	int e_start = e;
 	int e_end = 0;
+	bool flag = false;
 	for (int r = row; r < row + 3; ++r)
 	{
 		for (int c = col; c < col + 3; ++c)
@@ -162,12 +173,32 @@ void SmallCheck(int row, int col)
 			}
 		}
 	}
-	e_end = e;
-	SmallChange(e_start, e_end);
+	if (flag)
+	{
+		e_end = e;
+		SmallChange(e_start, e_end);
+	}
 }
 
 void sudoku()
 {
+	for (int r = 1; r < SIZE; ++r)
+	{
+		for (int c = 1; c < SIZE; ++c)
+		{
+			(void)memset(check_row, 0, sizeof(check_row));
+			(void)memset(check_col, 0, sizeof(check_col));
+			RowCheck(r);
+			ColCheck(c);
+
+			if (r % 3 == 1 && c % 3 == 1)
+			{
+				(void)memset(check_smallbox, 0, sizeof(check_smallbox));
+				SmallCheck(r, c);
+			}
+		}
+	}
+	/*
 	for (int i = 1; i < SIZE; ++i)
 	{
 		(void)memset(check_row, 0, sizeof(check_row));
@@ -185,6 +216,7 @@ void sudoku()
 			SmallCheck(r, c);
 		}
 	}
+	*/
 }
 
 void PrintError()
@@ -230,7 +262,7 @@ int main(int argc, char** argv)
 			cin >> map[r][c];
 		}
 	}
-	
+	sudoku();
 	cout << "error : " << e << '\n';
 	PrintError();
 	PrintMap();
