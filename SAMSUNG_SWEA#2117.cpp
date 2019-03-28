@@ -35,7 +35,7 @@ void Simulation()
 		{
 			(void)memset(&cover[0], 0, sizeof(cover));
 			int distance = 0;
-			for(int i = 0 ; i <= house_count ; ++i)
+			for(int i = 0 ; i < house_count ; ++i)
 			{
 				coor cur = house[i];
 				distance = abs(cur.first - r) + abs(cur.second - c);
@@ -44,13 +44,15 @@ void Simulation()
 			int cnt = 0;
 			for (int k = 1; k <= COVERAGE; ++k)
 			{
-				cnt += cover[k];
+				cnt += cover[k-1];
 				int leverage = cnt * M;
 				int cost = (k*k) + ((k - 1)*(k - 1));
 				if (leverage >= cost)
 				{
 					Result = max(Result, cnt);
 				}
+				if (house_count * M < cost)			//else if(house_cnt == cnt) break;
+					break;
 			}
 		}
 	}
@@ -72,7 +74,7 @@ int main(int argc, char** argv)
 
 		cin >> N >> M;
 
-		int max_coverage = N - 3;
+		int max_coverage = N - 1;
 		int cost = (max_coverage * max_coverage) + ((max_coverage - 1) * (max_coverage - 1));
 
 		for (int r = 0; r < N; ++r)
