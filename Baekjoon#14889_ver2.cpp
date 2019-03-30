@@ -78,7 +78,7 @@ inline void pick(int member)
 	}
 }
 
-int main(int argc, char** argv)
+int main(void)
 {
 	freopen("s_input#14889.txt", "r", stdin);
 	ios::sync_with_stdio(false);
