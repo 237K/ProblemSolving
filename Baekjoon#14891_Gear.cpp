@@ -219,7 +219,7 @@ public:
 	}
 };
 
-int main(void)		//메인함수
+int main(void)
 {
 	GearClass *gear[100];
 	int testcase = 0;
