@@ -20,22 +20,22 @@ int main(int argc, char** argv)
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
 	int test_case;
-	int DeadLock;
+	int size;
 
 	for (test_case = 1; test_case <= 10; ++test_case)
 	{
+		cin >> size;
 		int map[MAX][MAX] = { 0, };
 		int N[MAX] = { 0, }, S[MAX] = { 0, };
-		DeadLock = 0;
-		for (int r = 0; r < MAX; ++r)
+		int DeadLock = 0;
+		for (int r = 0; r < size; ++r)
 		{
-			for (int c = 0; c < MAX; ++c)
+			for (int c = 0; c < size; ++c)
 			{
 				cin >> map[r][c];
-				if (map[r][c] == 1)
+				if (map[r][c] == 1 && !N[c])
 				{
-					if(!N[c])
-						N[c] = 1;
+					N[c] = 1;
 				}
 				if (map[r][c] == 2)
 				{
