@@ -25,7 +25,7 @@ bool Test(int cast)
 {
 	int A, B;
 	bool Flag;
-	if (cast)
+	if (!cast)
 	{
 		for (int c = 0; c < W; ++c)
 		{
@@ -63,15 +63,15 @@ bool Test(int cast)
 			Flag = false;
 			for (int r = 0; r < D; ++r)
 			{
-				if (!film[r][c] || check[r])
-				{
-					A++;
-					B = 0;
-				}
-				else if (film[r][c] || check[r])
+				if (film[r][c] || check[r])
 				{
 					B++;
 					A = 0;
+				}
+				else if (!film[r][c] || check[r])
+				{
+					A++;
+					B = 0;
 				}
 				if (A == K || B == K)
 				{
@@ -88,21 +88,23 @@ bool Test(int cast)
 
 void Casting(int row, int cast)
 {
-	if (row > D || cast > Result)
+	if (cast > K)
 		return;
 	else
 	{
-		check[row] = true;
+		if(row >= 0)
+			check[row] = true;
 		if (Test(0) || Test(1))
 			Result = min(Result, cast);
 		else
 		{
-			for (int r = row + 1; r < D; ++r)
+			for (int r = row+1; r < D; ++r)
 			{
 				Casting(r, cast + 1);
 			}
-			check[row] = false;
 		}
+		if(row >= 0)
+			check[row] = false;
 	}
 }
 
@@ -127,7 +129,7 @@ int main(int argc, char** argv)
 				cin >> film[r][c];
 			}
 		}
-		Casting(0, 0);
+		Casting(-1, 0);
 		cout << "#" << test_case << ' ' << Result << '\n';
 	}
 	return 0;
