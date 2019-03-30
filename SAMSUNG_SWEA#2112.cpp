@@ -10,109 +10,100 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <memory.h>
+#include <algorithm>
 using namespace std;
 
 const static int MAX_THICK = 13;
 const static int MAX_CELL = 20;
 
-static int film[MAX_THICK][MAX_THICK][MAX_CELL];
-static int check[MAX_CELL];				//각 열에서 같은 특성이 몇 개인지 저장
-static bool check_row[MAX_THICK];
+static int film[MAX_THICK][MAX_CELL];
+static bool check[MAX_THICK];
 static int D, W, K;
+static int Result;
 
-inline void Print()
+bool Test(int cast)
 {
-	for (int r = 0; r < D; ++r)
+	int A, B;
+	bool Flag;
+	if (cast)
 	{
 		for (int c = 0; c < W; ++c)
 		{
-			cout << film[0][r][c] << ' ';
-		}
-		cout << endl<<endl;
-	}
-}
-
-inline bool Test(int cast)
-{
-	(void)memset(check, 0, sizeof(check));
-	int check_count = 0;
-	for (int c = 0; c < W; ++c)
-	{
-		int cnt = 1;
-		for (int r = 1; r < D; ++r)
-		{
-			if (film[cast][r][c] == film[cast][r - 1][c])
+			A = 0;
+			B = 0;
+			Flag = false;
+			for (int r = 0; r < D; ++r)
 			{
-				cnt++;
-				if (cnt >= K)
+				if (!film[r][c] || check[r])
 				{
-					check[c]++;
-					check_count++;
+					A++;
+					B = 0;
+				}
+				else if (film[r][c])
+				{
+					B++;
+					A = 0;
+				}
+				if (A == K || B == K)
+				{
+					Flag = true;
 					break;
 				}
 			}
-			else
-				cnt = 1;
+			if (!Flag)
+				return false;
 		}
 	}
-	if (check_count == W)
-		return true;
-	else
-		return false;
-}
-
-inline void A_casting(int cast, int row)
-{
-	for (int c = 0; c < W; ++c)
-	{
-		film[cast][row][c] = 0;
-	}
-}
-
-inline void B_casting(int cast, int row)
-{
-	for (int c = 0; c < W; ++c)
-	{
-		film[cast][row][c] = 1;
-	}
-}
-
-inline int Simulation(int cast)
-{
-	//cout << "cast : " << cast << endl;
-	//Print();
-	(void)memcpy(&film[cast][0][0], &film[cast - 1][0][0], sizeof(film));
-
-	if (cast > D)
-		return D;
-	if (Test(cast))
-		return cast;
 	else
 	{
-
-			for (int a = 0; a <= cast; ++a)
+		for (int c = 0; c < W; ++c)
+		{
+			A = 0;
+			B = 0;
+			Flag = false;
+			for (int r = 0; r < D; ++r)
 			{
-				int b = cast - a;
-				for (int r = 0; r < D; ++r)
+				if (!film[r][c] || check[r])
 				{
-					if (a)
-					{
-						if (!check_row[r])
-						{
-							A_casting(cast, r);
-							check_row[r] = true;
-							a--;
-						}
-					}
-					if (b)
-					{
-
-					}
+					A++;
+					B = 0;
+				}
+				else if (film[r][c] || check[r])
+				{
+					B++;
+					A = 0;
+				}
+				if (A == K || B == K)
+				{
+					Flag = true;
+					break;
 				}
 			}
-
+			if (!Flag)
+				return false;
+		}
 	}
+	return true;
+}
 
+void Casting(int row, int cast)
+{
+	if (row > D || cast > Result)
+		return;
+	else
+	{
+		check[row] = true;
+		if (Test(0) || Test(1))
+			Result = min(Result, cast);
+		else
+		{
+			for (int r = row + 1; r < D; ++r)
+			{
+				Casting(r, cast + 1);
+			}
+			check[row] = false;
+		}
+	}
 }
 
 int main(int argc, char** argv)
@@ -126,18 +117,18 @@ int main(int argc, char** argv)
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		(void)memset(film, 0, sizeof(film));
+		(void)memset(check, false, sizeof(check));
 		cin >> D >> W >> K;
+		Result = D;
 		for (int r = 0; r < D; ++r)
 		{
 			for (int c = 0; c < W; ++c)
 			{
-				cin >> film[0][r][c];
+				cin >> film[r][c];
 			}
 		}
-		if(Test())
-			cout << "#" << test_case << " 0" << '\n';
-		else
-			cout << "#" << test_case << ' ' << Simulation(1) << '\n';
+		Casting(0, 0);
+		cout << "#" << test_case << ' ' << Result << '\n';
 	}
 	return 0;
 }
