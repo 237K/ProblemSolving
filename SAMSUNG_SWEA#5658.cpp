@@ -28,14 +28,12 @@ inline void Transform10(const string& str)
 		char ch_partial[MAX_NUM_LEN];
 		string str_partial;
 		str_partial = str.substr(start_idx, num_len);
-		//cout << i + 1 << " " << str << "  " << str_partial << endl;
 		start_idx = num_len * i;
 
 		//잘라낸 문자열을 10진수로 바꾸고 벡터에 넣음 (strtol 사용하려면 string을 char로 바꿔야 함)
 		strcpy(ch_partial, str_partial.c_str());
 		int num10 = (int)strtol(ch_partial, NULL, 16);
 		Numbers.push_back(num10);
-		//cout << num10 << endl;
 	}
 }
 
@@ -55,7 +53,7 @@ inline int Hacking(string& str)
 	Transform10(str);
 
 	//K-2번 만큼 회전시키면서 10진수로 바꿔서 벡터에 넣음
-	for (int i = 0; i < K-2; ++i)
+	for (int i = 0; i < N/4-1; ++i)
 	{
 		Rotate(str);
 		Transform10(str);
@@ -64,10 +62,6 @@ inline int Hacking(string& str)
 	//내림차순 정렬하고 중복된 원소를 제거
 	sort(Numbers.begin(), Numbers.end(), greater<int>());
 	unique(Numbers.begin(), Numbers.end());
-	
-	//for (vector<int>::iterator iter = Numbers.begin(); iter != Numbers.end(); ++iter)
-		//cout << *iter << ' ';
-	//cout << endl;
 
 	//K번째 원소를 반환
 	return Numbers[K - 1];
@@ -78,14 +72,12 @@ int main(int argc, char** argv)
 	freopen("s_input5658.txt", "r", stdin);
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
-
 	int T;
 	int test_case;
 	cin >> T;
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		Numbers.clear();
-
 		cin >> N >> K;
 		string input;
 		cin >> input;
