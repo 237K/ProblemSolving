@@ -16,100 +16,58 @@ using namespace std;
 typedef pair<int, int> coor;
 typedef pair<coor, int> cell;
 
-const static int MAP_SIZE = 650;
-const static int TIME = 300;
+const static int MAP_SIZE = 300;
 const static int DIRECT = 4;
-const static int COSMOLOGICAL_CONSTATNT = 237;
-const static int DEATH_CONSTANT = -237;
 
 static int N, M, K;
-static int map[MAP_SIZE][MAP_SIZE];
-static int death[MAP_SIZE][MAP_SIZE];
+static int map[MAP_SIZE * 2 + 51][MAP_SIZE * 2 + 51];
 static int dir[DIRECT][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
+static priority_queue<cell> PQ;
 static queue<cell> Q;
 
-inline void Print()
+inline int tiktok()
 {
-	for (int r = 150; r < 450; ++r)
-	{
-		for (int c = 150; c < 450; ++c)
-		{
-			cout << map[r][c] << ' ';
-		}
-		cout << "\n\n";
-	}
-}
+	int sleep = 0;
+	int wakeup = 0;
 
-inline void tiktok()
-{
-	for (int r = 0; r < MAP_SIZE; ++r)
+	while (!PQ.empty())
 	{
-		for (int c = 0; c < MAP_SIZE; ++c)
+		Q.push(PQ.top());
+		PQ.pop();
+	}
+	while (K--)
+	{
+		int tik = Q.size();
+		while (tik--)
 		{
-			if (map[r][c] > 0)
+			cell cur_cell = Q.front();
+			Q.pop();
+			int life = cur_cell.second;
+
+			if (life-- == 0)
 			{
-				map[r][c]--;
-				if (map[r][c] == COSMOLOGICAL_CONSTATNT)
+				if (cur_cell.second - 1 > K)
+					sleep++;
+				for (register int d = 0; d < DIRECT; ++d)
 				{
-					Q.push({ {r, c}, map[r][c] + 1 });
-				}
-				if (map[r][c] == death[r][c])
-				{
-					map[r][c] = DEATH_CONSTANT;
+					int x = cur_cell.first.first + dir[d][0];
+					int y = cur_cell.first.second + dir[d][1];
+
+					if (map[x][y])
+						continue;
+					else if(!map[x][y])
+					{
+						map[x][y] = cur_cell.second;
+						Q.push({ {x, y}, map[x][y] });
+					}
 				}
 			}
+			else if(life >= 0)
+				Q.push({ {cur_cell.first.first, cur_cell.first.second}, life });
 		}
 	}
-}
-
-inline void rise()
-{
-	while (!Q.empty())
-	{
-		cell cur_cell = Q.front();
-		Q.pop();
-		for (int d = 0; d < DIRECT; ++d)
-		{
-			int x = cur_cell.first.first + dir[d][0];
-			int y = cur_cell.first.second + dir[d][1];
-			int energy = cur_cell.second;
-			int life = energy - COSMOLOGICAL_CONSTATNT;
-
-			if (!map[x][y])
-			{
-				map[x][y] = energy;
-				death[x][y] = energy - (life * 2);
-			}
-		}
-	}
-}
-
-inline int check()
-{
-	int live_cell = 0;
-	int death_cell = 0;
-	for (int r = 0; r < MAP_SIZE; ++r)
-	{
-		for (int c = 0; c < MAP_SIZE; ++c)
-		{
-			if (map[r][c] > 0)
-				live_cell++;
-			if (map[r][c] == DEATH_CONSTANT)
-				death_cell++;
-		}
-	}
-	return live_cell;
-}
-
-inline int Execution()
-{
-	while (K)
-	{
-		tiktok();
-		rise();
-		K--;
-	}
-	return check();
+	wakeup = Q.size();
+	return sleep + wakeup;
 }
 
 int main(int argc, char** argv)
@@ -123,22 +81,17 @@ int main(int argc, char** argv)
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		(void)memset(map, 0, sizeof(map));
-		(void)memset(death, 0, sizeof(death));
 		cin >> N >> M >> K;
-		for (int r = 300; r < 300 + N; ++r)
+		for (register int r = MAP_SIZE; r < MAP_SIZE + N; ++r)
 		{
-			for (int c = 300; c < 300 + M; ++c)
+			for (register int c = MAP_SIZE; c < MAP_SIZE + M; ++c)
 			{
 				cin >> map[r][c];
 				if (map[r][c])
-				{
-					int life = map[r][c];
-					map[r][c] += COSMOLOGICAL_CONSTATNT;
-					death[r][c] = map[r][c] - (life * 2);
-				}
+					PQ.push({ {r, c}, map[r][c] });
 			}
 		}
-		cout << "#" << test_case << ' ' << Execution() << '\n';
+		cout << "#" << test_case << ' ' << tiktok()<<'\n';
 	}
 	return 0;
 }
