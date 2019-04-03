@@ -40,16 +40,18 @@ static int shortest_dist = INF;
 
 inline void cal_dist(int x, int y, int cnt)
 {
-	if (cnt > shortest_dist || cnt > MAX * 2)
+	if (cnt > MAX * 2 || cnt > shortest_dist)
 		return;
 	if (x == baby_shark.x && y == baby_shark.y)
 	{
 		shortest_dist = min(shortest_dist, cnt);
-		cout << cnt << ' ';
 		return;
 	}
 	else
 	{
+		int temp_cont = INF;
+		int xxx = -1;
+		int yyy = -1;
 		for (register int d = 0; d < DIRECT; ++d)
 		{
 			int nx = x + dir[d][0];
@@ -119,7 +121,6 @@ inline fish find_fish()
 
 inline int move_and_eat(int cnt)
 {
-	cout << "(" << baby_shark.x << ", " << baby_shark.y << ") time : " << cnt << endl;
 	fish cur_fish = find_fish();
 	if (cur_fish.x == INF)
 	{
@@ -158,6 +159,7 @@ int main(int argc, char** argv)
 				baby_shark.y = c;
 				baby_shark.size = 2;
 				baby_shark.eat = 0;
+				map[r][c] = 0;
 			}
 			else if (map[r][c] > 0 && map[r][c] <= 6)
 			{
@@ -165,6 +167,6 @@ int main(int argc, char** argv)
 			}
 		}
 	}
-	cout << move_and_eat(0) << '\n';
+	cout << move_and_eat(0);
 	return 0;
 }
