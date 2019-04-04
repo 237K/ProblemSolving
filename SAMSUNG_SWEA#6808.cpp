@@ -20,7 +20,7 @@ static vector<int> Gyu0Card;
 static int Win;
 static int Lose;
 
-void CardClear()
+inline void CardClear()
 {
 	IN0Card.clear();
 	Gyu0Card.clear();
@@ -34,7 +34,7 @@ void CardClear()
 	Lose = 0;
 }
 
-void Gyu0()
+inline void Gyu0()
 {
 	for (int i = 0; i < 9; ++i)
 	{
@@ -50,7 +50,7 @@ void Gyu0()
 	}
 }
 
-void Game()
+inline void Game()
 {
 	while (next_permutation(Gyu0Card.begin(), Gyu0Card.end()))
 	{
@@ -58,16 +58,15 @@ void Game()
 		int Gyu0Score = 0;
 		for (int i = 0; i < 9; ++i)
 		{
-			if (Gyu0Card[i] >= IN0Card[i])
+			if (Gyu0Card[i] > IN0Card[i])
 				Gyu0Score += Gyu0Card[i] + IN0Card[i];
-			else
+			else if (Gyu0Card[i] < IN0Card[i])
 				IN0Score += Gyu0Card[i] + IN0Card[i];
 		}
-		if (Gyu0Score <= IN0Score)
+		if (Gyu0Score < IN0Score)
 			Win++;
-		else
-			Lose++;
 	}
+	Lose = 362880 - Win;
 }
 
 int main(int argc, char** argv)
@@ -91,6 +90,5 @@ int main(int argc, char** argv)
 		Game();
 		printf("#%d %d %d\n", test_case, Win, Lose);
 	}
-
 	return 0;
 }
