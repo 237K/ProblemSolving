@@ -6,6 +6,8 @@
 //
 //	SAMSUNG SW Expert Academy [#6808] <규영이와 인영이의 카드게임> (D3)
 //	
+//	ver1. STL next_permutation으로 규영카드 조합해서 풀어봄 -> 결과가 1씩 잘못나옴
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
 #include <iostream>
