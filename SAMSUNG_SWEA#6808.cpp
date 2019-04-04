@@ -1,6 +1,6 @@
 //
 //	OS Windows
-//	2019.02.19
+//	2019.03.30
 //
 //	[Algorithm Problem Solving]
 //
@@ -14,6 +14,7 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
+
 const static int MAX = 19;
 
 static bool CheckIN0Card[MAX];
@@ -35,7 +36,6 @@ inline void CardClear()
 	Win = 0;
 	Lose = 0;
 }
-
 inline void Gyu0()
 {
 	for (int i = 0; i < 9; ++i)
@@ -51,7 +51,6 @@ inline void Gyu0()
 		}
 	}
 }
-
 inline void Game()
 {
 	while (next_permutation(Gyu0Card.begin(), Gyu0Card.end()))
@@ -70,7 +69,6 @@ inline void Game()
 	}
 	Lose = 362880 - Win;
 }
-
 int main(int argc, char** argv)
 {
 	int T;
