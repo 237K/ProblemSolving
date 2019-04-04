@@ -29,6 +29,10 @@ inline int plan()
 	while (front < rear)
 	{
 		front++;
+		if (front == rear)
+		{
+			break;
+		}
 		if (box[front] >= 50)
 		{
 			answer++;
