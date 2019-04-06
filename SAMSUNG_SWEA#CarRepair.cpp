@@ -20,13 +20,25 @@ const static int MAX_CUSTOMER = 1001;
 
 struct CUSTOMER
 {
-	int num, arrival_time, num_reception, num_repair;
+	int num, arrival_time, num_reception, reception_end_time, num_repair;
 	bool operator< (const CUSTOMER& c) const
 	{
-		if (arrival_time == c.arrival_time)
-			return c.num < num;
+		//리셉션 대기열 우선순위 조건
+		if (num_reception == 0 && c.num_reception == 0)
+		{
+			if (arrival_time == c.arrival_time)
+				return c.num < num;
+			else
+				return c.arrival_time < arrival_time;
+		}
+		//정비 대기열 우선순위 조건
 		else
-			return c.arrival_time < arrival_time;
+		{
+			if (reception_end_time == c.reception_end_time)
+				return c.num_reception < num_reception;
+			else
+				return c.reception_end_time < reception_end_time;
+		}
 	}
 };
 
@@ -49,6 +61,7 @@ static REPAIR repair[SIZE];
 static priority_queue<CUSTOMER> reception_PQ;
 static priority_queue<CUSTOMER> repair_PQ;
 static vector<CUSTOMER> end_customer;
+static int timer;
 
 inline void Init()
 {
@@ -64,6 +77,7 @@ inline void Init()
 		customer[k].arrival_time = 0;
 		customer[k].num_reception = 0;
 		customer[k].num_repair = 0;
+		customer[k].reception_end_time = 0;
 	}
 	for (register int n = 1; n <= N; ++n)
 	{
@@ -91,6 +105,7 @@ inline int is_there_ready_customer()
 	{
 		if (!customer[c].arrival_time)
 		{
+			//customer[c].arrival_time = 10000;
 			customer[c].arrival_time--;
 			//cout << c << "번 손님 도착하셨습니다." << endl;
 			return c;
@@ -103,7 +118,8 @@ inline void customer_tiktok()
 {
 	for (register int c = 1; c <= K; ++c)
 	{
-		customer[c].arrival_time--;
+		if(customer[c].arrival_time)
+			customer[c].arrival_time--;
 	}
 }
 
@@ -126,11 +142,13 @@ inline void reception_tiktok()
 		if (reception[r].work_or_wait)
 		{
 			reception[r].work_or_wait++;
+			//customer[reception[r].customer_info.num].arrival_time++;
 		}
 		if (reception[r].time + 1 == reception[r].work_or_wait)
 		{
 			reception[r].work_or_wait = 0;
 			customer[reception[r].customer_info.num].num_reception = r;
+			customer[reception[r].customer_info.num].reception_end_time = timer;
 			repair_PQ.push(customer[reception[r].customer_info.num]);
 			//cout << reception[r].customer_info.num << "번 손님 리셉션 끝나고 정비대기열로 갑니다." << endl;
 		}
@@ -187,10 +205,9 @@ inline int find_wallet()
 		return result;
 }
 
-int tiktok = 0;
 inline int car_repair()
 {
-	//cout << "time : " << tiktok << "h" << endl;
+	timer = 0;
 	while (1)
 	{
 		if (end_customer.size() == K)
@@ -245,9 +262,8 @@ inline int car_repair()
 			}
 			repair_tiktok();
 		}
-		tiktok++;
+		timer++;
 	}
-
 	return find_wallet();
 }
 
