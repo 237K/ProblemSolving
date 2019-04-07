@@ -6,12 +6,8 @@
 //
 //	SAMSUNG SW Expert Academy <#2383> 점심 식사시간(모의)
 
-//
-//	테스트케이스 50개 중 48개만 맞았던 사람들에게 이 코드를 바칩니다..
-//
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <queue>
 #include <vector>
 #include <memory.h>
 #include <algorithm>
@@ -50,6 +46,7 @@ inline void init()
 	num_human = 0;
 }
 
+/*
 inline void print_vector(vector<int> stair1, vector<int> stair2)
 {
 	cout << "1번 계단으로 내려가는 사람 : ";
@@ -60,6 +57,7 @@ inline void print_vector(vector<int> stair1, vector<int> stair2)
 		cout << *iter+1 << ' ';
 	cout << '\n';
 }
+*/
 
 inline int get_distance(int human_number, int stair_number)
 {
@@ -114,6 +112,19 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 					//지상까지 내려간 사람이 아닌 경우
 					if (!h[*iter].end_check)
 					{
+						//계단 앞에 도착한 후 1분 기다렸다 바로 출발해서 계단을 내려가는 중인 경우
+						if (h[*iter].time_to_ground)
+						{
+							//한 칸씩 내려감
+							//지상에 도착했으면 체크
+							if (h[*iter].time_to_ground++ == s[0].height)
+							{
+								//cout << *iter + 1 << "번 사람 지상에 도착함" << '\n';
+								s[0].people_in_stair--;
+								h[*iter].end_check = 1;
+								end_count_stair1++;
+							}
+						}
 						//계단 앞에서 기다리는 중인 경우
 						if (!h[*iter].time_to_ground && h[*iter].wait_stair)
 						{
@@ -147,76 +158,31 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 							else
 								continue;
 						}
-						//계단 앞에 도착한 후 1분 기다렸다 바로 출발해서 계단을 내려가는 중인 경우
-						if (h[*iter].wait_stair == 1 && h[*iter].time_to_ground)
+					}
+				}
+				//*****************************************************************************************//
+				//*******한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....*******//
+				//*****************************************************************************************//
+				if (s[0].people_in_stair < 3)
+				{
+					for (vector<int>::iterator wait_push = stair1.begin(); wait_push != stair1.end(); ++wait_push)
+					{
+						if (!h[*wait_push].end_check &&
+							!h[*wait_push].time_to_ground &&
+							h[*wait_push].distance_to_stair < -1 &&
+							h[*wait_push].wait_stair &&
+							s[0].people_in_stair < 3)
 						{
-							//한 칸씩 내려감
-							//지상에 도착했으면 체크
-							if (h[*iter].time_to_ground++ == s[0].height)
-							{
-								//cout << *iter + 1 << "번 사람 지상에 도착함" << '\n';
-								s[0].people_in_stair--;
-								h[*iter].end_check = 1;
-								end_count_stair1++;
-								//*****************************************************************************************//
-								//*******한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....*******//
-								//*****************************************************************************************//
-								for (vector<int>::iterator wait_push = stair1.begin(); wait_push != stair1.end(); ++wait_push)
-								{
-									if (!h[*wait_push].end_check &&
-										!h[*wait_push].time_to_ground &&
-										h[*wait_push].distance_to_stair < -1 &&
-										h[*wait_push].wait_stair &&
-										s[0].people_in_stair < 3)
-									{
-										//cout << *wait_push + 1 << "번 사람 계단 내려가기 시작함" << '\n';
-										h[*wait_push].time_to_ground++;
-										s[0].people_in_stair++;
-										break;
-									}
-								}
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-							}
-						}
-						//*************************************************************************************************************************//
-						//계단 앞에 도착했는데 계단에 사람이 다차서 더 기다렸다 출발한 경우에는 본 코드에서 time_to_ground가 한 번 중복++ 되므로 반영해줘야 함
-						//*************************************************************************************************************************//
-						else if (h[*iter].wait_stair > 1 && h[*iter].time_to_ground)
-						{
-							//한 칸씩 내려감
-							//지상에 도착했으면 체크
-							if (h[*iter].time_to_ground++ == s[0].height + 1)
-							{
-								//cout << *iter + 1 << "번 사람 지상에 도착함" << '\n';
-								s[0].people_in_stair--;
-								h[*iter].end_check = 1;
-								end_count_stair1++;
-								//*****************************************************************************************//
-								//*******한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....*******//
-								//*****************************************************************************************//
-								for (vector<int>::iterator wait_push = stair1.begin(); wait_push != stair1.end(); ++wait_push)
-								{
-									if (!h[*wait_push].end_check &&
-										!h[*wait_push].time_to_ground &&
-										h[*wait_push].distance_to_stair < -1 &&
-										h[*wait_push].wait_stair &&
-										s[0].people_in_stair < 3)
-									{
-										//cout << *wait_push + 1 << "번 사람 계단 내려가기 시작함" << '\n';
-										h[*wait_push].time_to_ground++;
-										s[0].people_in_stair++;
-										break;
-									}
-								}
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-							}
+							//cout << *wait_push + 1 << "번 사람 계단 내려가기 시작함" << '\n';
+							h[*wait_push].time_to_ground++;
+							s[0].people_in_stair++;
+							break;
 						}
 					}
 				}
+				//*****************************************************************************************//
+				//*****************************************************************************************//
+				//*****************************************************************************************//
 				if (end_count_stair1 == stair1.size())
 					s[0].end_flag = 1;
 			}
@@ -229,6 +195,19 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 					//지상까지 내려간 사람이 아닌 경우
 					if (!h[*iter].end_check)
 					{
+						//계단 앞에 도착한 후 1분 기다렸다 바로 계단을 내려가는 중인 경우
+						if (h[*iter].time_to_ground)
+						{
+							//한 칸씩 내려감
+							//지상에 도착했으면 체크
+							if (h[*iter].time_to_ground++ == s[1].height)
+							{
+								//cout << *iter + 1 << "번 사람 지상에 도착함" << '\n';
+								s[1].people_in_stair--;
+								h[*iter].end_check = 1;
+								end_count_stair2++;
+							}
+						}
 						//계단 앞에서 기다리는 중인 경우
 						if (!h[*iter].time_to_ground && h[*iter].wait_stair)
 						{
@@ -262,76 +241,31 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 							else
 								continue;
 						}
-						//계단 앞에 도착한 후 1분 기다렸다 바로 계단을 내려가는 중인 경우
-						if (h[*iter].wait_stair == 1 && h[*iter].time_to_ground)
+					}
+				}
+				//*****************************************************************************************//
+				//*******한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....*********//
+				//*****************************************************************************************//
+				if (s[1].people_in_stair < 3)
+				{
+					for (vector<int>::iterator wait_push = stair2.begin(); wait_push != stair2.end(); ++wait_push)
+					{
+						if (!h[*wait_push].end_check &&
+							!h[*wait_push].time_to_ground &&
+							h[*wait_push].distance_to_stair < -1 &&
+							h[*wait_push].wait_stair &&
+							s[1].people_in_stair < 3)
 						{
-							//한 칸씩 내려감
-							//지상에 도착했으면 체크
-							if (h[*iter].time_to_ground++ == s[1].height)
-							{
-								//cout << *iter + 1 << "번 사람 지상에 도착함" << '\n';
-								s[1].people_in_stair--;
-								h[*iter].end_check = 1;
-								end_count_stair2++;
-								//*****************************************************************************************//
-								//*******한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....*******//
-								//*****************************************************************************************//
-								for (vector<int>::iterator wait_push = stair2.begin(); wait_push != stair2.end(); ++wait_push)
-								{
-									if (!h[*wait_push].end_check &&
-										!h[*wait_push].time_to_ground &&
-										h[*wait_push].distance_to_stair < -1 &&
-										h[*wait_push].wait_stair &&
-										s[1].people_in_stair < 3)
-									{
-										//cout << *wait_push + 1 << "번 사람 계단 내려가기 시작함" << '\n';
-										h[*wait_push].time_to_ground++;
-										s[1].people_in_stair++;
-										break;
-									}
-								}
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-							}
-						}
-						//*************************************************************************************************************************//
-						//계단 앞에 도착했는데 계단에 사람이 다차서 더 기다렸다 출발한 경우에는 본 코드에서 time_to_ground가 한 번 중복++ 되므로 반영해줘야 함
-						//*************************************************************************************************************************//
-						else if (h[*iter].wait_stair > 1 && h[*iter].time_to_ground)
-						{
-							//한 칸씩 내려감
-							//지상에 도착했으면 체크
-							if (h[*iter].time_to_ground++ == s[1].height+1)
-							{
-								//cout << *iter + 1 << "번 사람 지상에 도착함" << '\n';
-								s[1].people_in_stair--;
-								h[*iter].end_check = 1;
-								end_count_stair2++;
-								//*****************************************************************************************//
-								//*******한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....*******//
-								//*****************************************************************************************//
-								for (vector<int>::iterator wait_push = stair2.begin(); wait_push != stair2.end(); ++wait_push)
-								{
-									if (!h[*wait_push].end_check &&
-										!h[*wait_push].time_to_ground &&
-										h[*wait_push].distance_to_stair < -1 &&
-										h[*wait_push].wait_stair &&
-										s[1].people_in_stair < 3)
-									{
-										//cout << *wait_push + 1 << "번 사람 계단 내려가기 시작함" << '\n';
-										h[*wait_push].time_to_ground++;
-										s[1].people_in_stair++;
-										break;
-									}
-								}
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-								//*****************************************************************************************//
-							}
+							//cout << *wait_push + 1 << "번 사람 계단 내려가기 시작함" << '\n';
+							h[*wait_push].time_to_ground++;
+							s[1].people_in_stair++;
+							break;
 						}
 					}
 				}
+				//*****************************************************************************************//
+				//*****************************************************************************************//
+				//*****************************************************************************************//
 				if (end_count_stair2 == stair2.size())
 					s[1].end_flag = 1;
 			}
@@ -347,8 +281,11 @@ inline void dfs(int count, vector<int> stair1, vector<int> stair2)
 		int temp_timer = timer(stair1, stair2);
 		shortest_time = min(shortest_time, temp_timer);
 
-		//print_vector(stair1, stair2);
-		//cout << "소요 시간 : " << temp_timer << "\n\n";
+		//if (temp_timer == 13)
+		//{
+			//print_vector(stair1, stair2);
+			//cout << "소요 시간 : " << temp_timer << "\n\n";
+		//}
 		//////////초기화가 필요한 부분//////////
 		for (register int i = 0; i < MAX_HUMAN; ++i)
 		{
@@ -412,7 +349,6 @@ int main(int argc, char** argv)
 		vector<int> first_stair, second_stair;
 		dfs(0, first_stair, second_stair);
 		cout << "#" << test_case <<' '<<shortest_time<< '\n';
-		//cout << "=============================================================\n\n";
 	}
 	return 0;
 }
