@@ -112,7 +112,7 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 					//지상까지 내려간 사람이 아닌 경우
 					if (!h[*iter].end_check)
 					{
-						//계단 앞에 도착한 후 1분 기다렸다 바로 출발해서 계단을 내려가는 중인 경우
+						//계단을 내려가는 중인 경우
 						if (h[*iter].time_to_ground)
 						{
 							//한 칸씩 내려감
@@ -161,7 +161,7 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 					}
 				}
 				//*****************************************************************************************//
-				//*******한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....*******//
+				//********한 명이 계단을 빠져나감과 동시에 기다리고 있던 사람이 내려가기 시작해야 함.....********//
 				//*****************************************************************************************//
 				if (s[0].people_in_stair < 3)
 				{
@@ -195,7 +195,7 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 					//지상까지 내려간 사람이 아닌 경우
 					if (!h[*iter].end_check)
 					{
-						//계단 앞에 도착한 후 1분 기다렸다 바로 계단을 내려가는 중인 경우
+						//계단을 내려가는 중인 경우
 						if (h[*iter].time_to_ground)
 						{
 							//한 칸씩 내려감
@@ -272,7 +272,6 @@ inline int timer(vector<int> stair1, vector<int> stair2)
 		}
 	}
 }
-
 inline void dfs(int count, vector<int> stair1, vector<int> stair2)
 {
 	//재귀 종료 조건
@@ -280,12 +279,8 @@ inline void dfs(int count, vector<int> stair1, vector<int> stair2)
 	{
 		int temp_timer = timer(stair1, stair2);
 		shortest_time = min(shortest_time, temp_timer);
-
-		//if (temp_timer == 13)
-		//{
-			//print_vector(stair1, stair2);
-			//cout << "소요 시간 : " << temp_timer << "\n\n";
-		//}
+		//print_vector(stair1, stair2);
+		//cout << "소요 시간 : " << temp_timer << "\n\n";
 		//////////초기화가 필요한 부분//////////
 		for (register int i = 0; i < MAX_HUMAN; ++i)
 		{
@@ -299,7 +294,6 @@ inline void dfs(int count, vector<int> stair1, vector<int> stair2)
 			s[i].people_in_stair = 0;
 		}
 		//////////초기화가 필요한 부분//////////
-
 		return;
 	}
 	//재귀 실행 부분
@@ -314,8 +308,6 @@ inline void dfs(int count, vector<int> stair1, vector<int> stair2)
 		stair2.pop_back();
 	}
 }
-
-
 int main(int argc, char** argv)
 {
 	freopen("s_input#lunch.txt", "r", stdin);
