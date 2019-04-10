@@ -14,706 +14,201 @@
 using namespace std;
 
 typedef pair<int, int> coor;
+typedef pair<coor, int> flags;
+
 const static int SIZE = 10;
 const static int DIRECT = 4;
 const static int INF = 11;
 
-static int dir[DIRECT][2] = { {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
-static char map[SIZE][SIZE];
+//	동 : 0, 남 : 1, 서 : 2, 북 : 3
+static int dir[DIRECT][2] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+static char map[SIZE][SIZE][SIZE];
 static int N, M;
-static vector<coor> R_bead;
-static vector<coor> B_bead;
 static coor hole;
 static int result;
+static int answer;
+static bool flag_program_end;
+static bool red_terminate;
+static bool blue_terminate;
 
-inline void init()
+inline void print_vector(vector<int> v)
 {
-	result = INF;
+	for (auto iter = v.begin(); iter != v.end(); ++iter)
+		cout << *iter << ' ';
+	cout << '\n';
 }
-//	구슬이 같은 행 혹은 같은 열에 있는지, 그렇다면 어떻게 위치해있는지 확인
-//	return 0 : 같은 행/열에 있지 않음
-//	return 1 : 같은 행/열에 있고 R이 앞서있음. 앞서있다는 것은 움직이는 방향을 기준으로 앞서있다는 것.
-//	return 2 : 같은 행/열에 있고 B가 앞서있음
-inline int east_near_RB(int cnt)
+inline void print_map(int cnt)
 {
-	if (R_bead[cnt].first == B_bead[cnt].first)
+	for (register int r = 0; r < N; ++r)
 	{
-		if (R_bead[cnt].second > B_bead[cnt].second)
-			return 1;
-		else
-			return 2;
+		for (register int c = 0; c < M; ++c)
+		{
+			cout << map[cnt][r][c] << ' ';
+		}
+		cout << "\n\n";
 	}
+}
+inline flags move_bead(int cnt, vector<int> v)
+{
+	//이전 회차에서 변경된 구슬들의 위치를 복사해옴
+	if (cnt)
+	{
+		for (register int r = 0; r < N; ++r)
+		{
+			//for (register int c = 0; c < M; ++c)
+			//{
+				(void)memcpy(&map[cnt][r][0], &map[cnt - 1][r][0], sizeof(char)*M);
+			//}
+		}
+	}
+	/*
+	cout << "====================================\n";
+	cout << "count : " << cnt << endl;
+	print_vector(v);
+	print_map(cnt);
+	cout << "====================================\n\n";
+	*/
+	coor red_loc, blue_loc;
+	for (register int r = 0; r < N; ++r)
+	{
+		for (register int c = 0; c < M; ++c)
+		{
+			if (map[cnt][r][c] == 'R')
+				red_loc = { r, c };
+			else if (map[cnt][r][c] == 'B')
+				blue_loc = { r, c };
+		}
+	}
+	//더 이상 공이 움직이지 않을 때까지 굴러감
+	bool red_stop = false, blue_stop = false;
+	bool red_end = false, blue_end = false;
+	bool flag_move = false;
+	int rr = 0, rc = 0, br = 0, bc = 0;
+	while (1)
+	{
+		if ((red_stop || red_end) && (blue_stop || blue_end))
+			break;
+		int cur_direct = v[cnt];
+		rr = red_loc.first + dir[cur_direct][0];
+		rc = red_loc.second + dir[cur_direct][1];
+		br = blue_loc.first + dir[cur_direct][0];
+		bc = blue_loc.second + dir[cur_direct][1];
+
+		//	빨간구슬
+			if (rr == hole.first && rc == hole.second)
+			{
+				red_end = true;
+				map[cnt][red_loc.first][red_loc.second] = '.';
+				flag_move = true;
+				red_stop = true;
+			}
+			if (map[cnt][rr][rc] == '#' || map[cnt][rr][rc] == 'B')
+			{
+				red_stop = true;
+			}
+			if (map[cnt][rr][rc] == '.')
+			{
+				swap(map[cnt][rr][rc], map[cnt][red_loc.first][red_loc.second]);
+				red_loc = { rr, rc };
+				flag_move = true;
+			}
+			if (!flag_move && !red_stop)
+				red_stop = true;
+		//	파란구슬
+			if (br == hole.first && bc == hole.second)
+			{
+				blue_end = true;
+				map[cnt][blue_loc.first][blue_loc.second] = '.';
+				flag_move = true;
+				blue_stop = true;
+			}
+			if (map[cnt][br][bc] == '#' || map[cnt][br][bc] == 'R')
+			{
+				blue_stop = true;
+			}
+			if (map[cnt][br][bc] == '.')
+			{
+				swap(map[cnt][br][bc], map[cnt][blue_loc.first][blue_loc.second]);
+				blue_loc = { br, bc };
+				flag_move = true;
+			}
+			if (!flag_move && !blue_stop)
+				blue_stop = true;
+	}
+	return { {red_end, blue_end}, flag_move };
+}
+inline bool valid(int cnt, int d, vector<int> v)
+{
+	if (!v.size())
+		return true;
 	else
-		return 0;
+	{
+		if (v[cnt - 1] == d || v[cnt - 1] == (d + 2) % 4)
+			return false;
+	}
+	return true;
 }
-inline int west_near_RB(int cnt)
+inline void recur(int count, bool red_end, bool blue_end, bool flag_move, vector<int>& v)
 {
-	if (R_bead[cnt].first == B_bead[cnt].first)
+	if (count >= 10)
 	{
-		if (R_bead[cnt].second < B_bead[cnt].second)
-			return 1;
-		else
-			return 2;
-	}
-	else
-		return 0;
-}
-inline int south_near_RB(int cnt)
-{
-	if (R_bead[cnt].second == B_bead[cnt].second)
-	{
-		if (R_bead[cnt].second > B_bead[cnt].second)
-			return 1;
-		else
-			return 2;
-	}
-	else
-		return 0;
-}
-inline int north_near_RB(int cnt)
-{
-	if (R_bead[cnt].second == B_bead[cnt].second)
-	{
-		if (R_bead[cnt].second < B_bead[cnt].second)
-			return 1;
-		else
-			return 2;
-	}
-	else
-		return 0;
-}
-//	구슬 이동
-//	오른쪽에 구멍이 있으면 구멍 좌표로 이동 -> 재귀함수로 돌아가면 종료조건에 의해 끝남
-//	벽이 있으면 벽 뒤에서 멈춤
-//	앞서있는 구슬이 있으면 구슬 뒤에 멈춤
-inline void go_east(int cnt)
-{
-	int temp = east_near_RB(cnt);
-	int R_row = R_bead[cnt].first;
-	int B_row = B_bead[cnt].first;
-	int flag_hole = 0;
-	int flag_wall = 0;
-	//	구슬들이 같은 행/열에 있지 않은 경우
-	if (!temp)
-	{
-		//	빨간구슬 이동
-		for (register int i = R_bead[cnt].second; i < N; ++i)
-		{
-			if (map[R_row][i] == '.')
-				continue;
-			if (map[R_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[R_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		//구멍에 들어가면 끝나므로, 파란구슬은 움직일 필요 없으니 리턴
-		if (flag_hole)
-		{
-			R_bead.push_back({ R_row, flag_hole });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ R_row, flag_wall - 1 });
-		}
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].second; i < N; ++i)
-		{
-			if (map[B_row][i] == '.')
-				continue;
-			if (map[B_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[B_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ B_row, flag_hole });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ B_row, flag_wall - 1 });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 R이 앞서있는 경우 -> R이 먼저 움직임
-	if (temp == 1)
-	{
-		//	빨간구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = R_bead[cnt].second; i < N; ++i)
-		{
-			if (map[R_row][i] == '.')
-				continue;
-			if (map[R_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[R_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			R_bead.push_back({ R_row, flag_hole });
-			//	파란구슬 이동
-			B_bead.push_back({ B_row, flag_hole - 1 });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ R_row, flag_wall - 1 });
-			//	파란구슬 이동
-			B_bead.push_back({ B_row, flag_wall - 1 });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 B가 앞서있는 경우 -> B가 먼저 움직임
-	if (temp == 2)
-	{
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].second; i < N; ++i)
-		{
-			if (map[B_row][i] == '.')
-				continue;
-			if (map[B_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[B_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ B_row, flag_hole });
-			//	빨간구슬 이동
-			R_bead.push_back({ R_row, flag_hole - 1 });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ B_row, flag_wall - 1 });
-			//	빨간구슬 이동
-			R_bead.push_back({ R_row, flag_wall - 1 });
-		}
-	}
-}
-
-inline void go_west(int cnt)
-{
-	int temp = west_near_RB(cnt);
-	int R_row = R_bead[cnt].first;
-	int B_row = B_bead[cnt].first;
-	int flag_hole = 0;
-	int flag_wall = 0;
-	//	구슬들이 같은 행/열에 있지 않은 경우
-	if (!temp)
-	{
-		//	빨간구슬 이동
-		for (register int i = R_bead[cnt].second; i >= 0; --i)
-		{
-			if (map[R_row][i] == '.')
-				continue;
-			if (map[R_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[R_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		//구멍에 들어가면 끝나므로, 파란구슬은 움직일 필요 없으니 리턴
-		if (flag_hole)
-		{
-			R_bead.push_back({ R_row, flag_hole });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ R_row, flag_wall + 1 });
-		}
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].second; i >= 0; --i)
-		{
-			if (map[B_row][i] == '.')
-				continue;
-			if (map[B_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[B_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ B_row, flag_hole });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ B_row, flag_wall + 1 });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 R이 앞서있는 경우 -> R이 먼저 움직임
-	if (temp == 1)
-	{
-		//	빨간구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = R_bead[cnt].second; i >= 0; --i)
-		{
-			if (map[R_row][i] == '.')
-				continue;
-			if (map[R_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[R_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			R_bead.push_back({ R_row, flag_hole });
-			//	파란구슬 이동
-			B_bead.push_back({ B_row, flag_hole + 1 });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ R_row, flag_wall + 1 });
-			//	파란구슬 이동
-			B_bead.push_back({ B_row, flag_wall + 2 });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 B가 앞서있는 경우 -> B가 먼저 움직임
-	if (temp == 2)
-	{
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].second; i >= 0; --i)
-		{
-			if (map[B_row][i] == '.')
-				continue;
-			if (map[B_row][i] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[B_row][i] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ B_row, flag_hole });
-			//	빨간구슬 이동
-			R_bead.push_back({ R_row, flag_hole + 1 });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ B_row, flag_wall + 1 });
-			//	빨간구슬 이동
-			R_bead.push_back({ R_row, flag_wall + 2 });
-		}
-	}
-}
-
-inline void go_south(int cnt)
-{
-	int temp = south_near_RB(cnt);
-	int R_col = R_bead[cnt].second;
-	int B_col = B_bead[cnt].second;
-	int flag_hole = 0;
-	int flag_wall = 0;
-	//	구슬들이 같은 행/열에 있지 않은 경우
-	if (!temp)
-	{
-		//	빨간구슬 이동
-		for (register int i = R_bead[cnt].first; i < N; ++i)
-		{
-			if (map[i][R_col] == '.')
-				continue;
-			if (map[i][R_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][R_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		//구멍에 들어가면 끝나므로, 파란구슬은 움직일 필요 없으니 리턴
-		if (flag_hole)
-		{
-			R_bead.push_back({ flag_hole, R_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ flag_wall - 1, R_col });
-		}
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].first; i < N; ++i)
-		{
-			if (map[i][B_col] == '.')
-				continue;
-			if (map[i][B_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][B_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ flag_hole, B_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ flag_wall - 1 , B_col });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 R이 앞서있는 경우 -> R이 먼저 움직임
-	if (temp == 1)
-	{
-		//	빨간구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = R_bead[cnt].first; i < N; ++i)
-		{
-			if (map[i][R_col] == '.')
-				continue;
-			if (map[i][R_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][R_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			R_bead.push_back({ flag_hole, R_col });
-			//	파란구슬 이동
-			B_bead.push_back({ flag_hole-1, B_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ flag_wall - 1, R_col });
-			//	파란구슬 이동
-			B_bead.push_back({ flag_wall - 2, B_col });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 B가 앞서있는 경우 -> B가 먼저 움직임
-	if (temp == 2)
-	{
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].first; i < N; ++i)
-		{
-			if (map[i][B_col] == '.')
-				continue;
-			if (map[i][B_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][B_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ flag_hole, B_col });
-			//	빨간구슬 이동
-			R_bead.push_back({ flag_hole - 1, R_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ flag_wall - 1, B_col });
-			//	빨간구슬 이동
-			R_bead.push_back({ flag_wall - 2, R_col });
-		}
-	}
-}
-
-inline void go_north(int cnt)
-{
-	int temp = north_near_RB(cnt);
-	int R_col = R_bead[cnt].second;
-	int B_col = B_bead[cnt].second;
-	int flag_hole = 0;
-	int flag_wall = 0;
-	//	구슬들이 같은 행/열에 있지 않은 경우
-	if (!temp)
-	{
-		//	빨간구슬 이동
-		for (register int i = R_bead[cnt].first; i >= 0; --i)
-		{
-			if (map[i][R_col] == '.')
-				continue;
-			if (map[i][R_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][R_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		//구멍에 들어가면 끝나므로, 파란구슬은 움직일 필요 없으니 리턴
-		if (flag_hole)
-		{
-			R_bead.push_back({ flag_hole, R_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ flag_wall + 1, R_col });
-		}
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].first; i >= 0; --i)
-		{
-			if (map[i][B_col] == '.')
-				continue;
-			if (map[i][B_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][B_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ flag_hole, B_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ flag_wall + 1 , B_col });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 R이 앞서있는 경우 -> R이 먼저 움직임
-	if (temp == 1)
-	{
-		//	빨간구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = R_bead[cnt].first; i >= 0; --i)
-		{
-			if (map[i][R_col] == '.')
-				continue;
-			if (map[i][R_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][R_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			R_bead.push_back({ flag_hole, R_col });
-			//	파란구슬 이동
-			B_bead.push_back({ flag_hole + 1, B_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			R_bead.push_back({ flag_wall + 1, R_col });
-			//	파란구슬 이동
-			B_bead.push_back({ flag_wall + 2, B_col });
-		}
-	}
-	//	구슬들이 같은 행에 있는데 B가 앞서있는 경우 -> B가 먼저 움직임
-	if (temp == 2)
-	{
-		//	파란구슬 이동
-		flag_hole = 0;
-		flag_wall = 0;
-		for (register int i = B_bead[cnt].first; i >= 0; --i)
-		{
-			if (map[i][B_col] == '.')
-				continue;
-			if (map[i][B_col] == 'O')
-			{
-				flag_hole = i;
-				break;
-			}
-			if (map[i][B_col] == '#')
-			{
-				flag_wall = i;
-				break;
-			}
-		}
-		if (flag_hole)
-		{
-			B_bead.push_back({ flag_hole, B_col });
-			//	빨간구슬 이동
-			R_bead.push_back({ flag_hole + 1, R_col });
-			return;
-		}
-		else if (flag_wall)
-		{
-			B_bead.push_back({ flag_wall + 1, B_col });
-			//	빨간구슬 이동
-			R_bead.push_back({ flag_wall + 2, R_col });
-		}
-	}
-}
-
-inline void go(int cnt, int d)
-{
-	switch (d)
-	{
-	case 0:
-		go_east(cnt);
-		break;
-	case 1:
-		go_west(cnt);
-		break;
-	case 2:
-		go_south(cnt);
-		break;
-	case 3:
-		go_north(cnt);
-		break;
-	default:
-		break;
-	}
-}
-inline void dfs(int cnt)
-{
-	//	종료조건
-	if (R_bead[cnt].first == hole.first && R_bead[cnt].second == hole.second)
-	{
-		result = min(result, cnt);
 		return;
 	}
-	if (cnt > 10)
+	if (!flag_move)
 	{
-		result = -1;
 		return;
 	}
-	if (B_bead[cnt].first == hole.first && B_bead[cnt].second == hole.second)
+	if (red_end && blue_end)
 	{
-		result = -1;
 		return;
 	}
-	if (cnt > 0)
+	if (!red_end && blue_end)
 	{
-		if(R_bead[cnt].first == R_bead[cnt - 1].first && R_bead[cnt].second == R_bead[cnt - 1].second)
-		{
-			dfs(cnt);
-		}
+		return;
 	}
-	int check[DIRECT] = { 0, 0, 0, 0 };
-	//	실행부분
-	for (register int d = 0; d < DIRECT; ++d)
+	if (red_end && !blue_end)
 	{
-		if (result == INF && !check[d])
+		answer = min(answer, count);
+		return;
+	}
+	else
+	{
+		for (register int d = 0; d < DIRECT; ++d)
 		{
-			check[d]++;
-			go(cnt, d);
-			dfs(cnt + 1);
-			R_bead.pop_back();
-			B_bead.pop_back();
-			check[d] = 0;
+			if (!valid(count, d, v))
+				continue;
+			else
+			{
+				v.push_back(d);
+				flags cur_end = move_bead(count, v);
+				recur(count + 1, cur_end.first.first, cur_end.first.second, cur_end.second, v);
+				v.pop_back();
+			}
 		}
-		else
-			return;
 	}
 }
-
 int main(int argc, char** argv)
 {
 	freopen("input13460.txt", "r", stdin);
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);	cout.tie(NULL);
+	result = -1;
+	answer = 11;
+	flag_program_end = false;
 	cin >> N >> M;
-	init();
 	for (register int r = 0; r < N; ++r)
 	{
 		for (register int c = 0; c < M; ++c)
 		{
-			cin >> map[r][c];
-			if (map[r][c] == 'O')
+			cin >> map[0][r][c];
+			if (map[0][r][c] == 'O')
 				hole = { r, c };
-			else if (map[r][c] == 'R')
-				R_bead.push_back({ r, c });
-			else if (map[r][c] == 'B')
-				B_bead.push_back({ r, c });
 		}
 	}
-	dfs(0);
-	cout << result;
+	vector<int> order;
+	recur(0, false, false, true, order);
+	if (answer >= 10)
+		answer = -1;
+	cout << answer;
 	return 0;
 }
