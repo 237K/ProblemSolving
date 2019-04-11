@@ -6,7 +6,6 @@
 //
 //	BAEKJOON #9019	DSLR
 //
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <queue>
@@ -14,14 +13,18 @@
 #include <memory.h>
 #include <string>
 using namespace std;
+
 typedef pair<int, int> pii;
+
 const static int MAX = 10000;
+
 static queue<pii> Q;
 static stack<char> S;
 static int check[MAX];
 static int route[MAX];
 static char dslr[MAX];
 static int A, B;
+
 inline void init()
 {
 	while (!Q.empty()) { Q.pop(); }
