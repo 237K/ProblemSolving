@@ -5,7 +5,6 @@
 //	[Algorithm Problem Solving]
 //
 //	BAEKJOON #14889	스타트와 링크
-//	ver2
 //
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -24,6 +23,14 @@ static int t_start[MAX / 2];
 static int t_link[MAX / 2];
 static int Result;
 
+inline void init()
+{
+	(void)memset(table, 0, sizeof(table));
+	(void)memset(check, 0, sizeof(check));
+	(void)memset(t_start, 0, sizeof(t_start));
+	(void)memset(t_link, 0, sizeof(t_link));
+	Result = INF;
+}
 inline int Score()
 {
 	int s_start = 0;
@@ -56,7 +63,6 @@ inline void pick(int member)
 			}
 		}
 		Result = min(Result, Score());
-
 		for (int i = 0; i < N/2; ++i)
 		{
 			check[t_link[i]] = false;
@@ -83,12 +89,7 @@ int main(void)
 	freopen("s_input#14889.txt", "r", stdin);
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
-
-	(void)memset(table, 0, sizeof(table));
-	(void)memset(check, 0, sizeof(check));
-	(void)memset(t_start, 0, sizeof(t_start));
-	(void)memset(t_link, 0, sizeof(t_link));
-	Result = INF;
+	init();
 	cin >> N;
 	for (int r = 1; r <= N; ++r)
 	{
