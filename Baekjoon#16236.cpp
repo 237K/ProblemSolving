@@ -15,6 +15,7 @@
 using namespace std;
 
 typedef pair<int, int> coor;
+typedef pair<coor, int> coor_and_distance;
 
 const static int MAX = 21;
 const static int INF = 2147000000;
@@ -32,37 +33,41 @@ struct shark
 
 static int map[MAX][MAX];
 static bool check[MAX][MAX];
+static int map_distance[MAX][MAX];
 static int N;
 static shark baby_shark;
 static queue<coor> Q;
 static int dir[DIRECT][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
 static int shortest_dist = INF;
+static queue<coor_and_distance> CDQ;
 
-inline void cal_dist(int x, int y, int cnt)
+inline int cal_dist(int x, int y)
 {
-	if (cnt > MAX * 2 || cnt > shortest_dist)
-		return;
-	if (x == baby_shark.x && y == baby_shark.y)
+	CDQ.push({ {baby_shark.x, baby_shark.y}, 0 });
+	check[baby_shark.x][baby_shark.y] = true;
+	while (!CDQ.empty())
 	{
-		shortest_dist = min(shortest_dist, cnt);
-		return;
-	}
-	else
-	{
-		int temp_cont = INF;
-		int xxx = -1;
-		int yyy = -1;
+		coor_and_distance cur = CDQ.front();
+		CDQ.pop();
+		int xx = cur.first.first;
+		int yy = cur.first.second;
+		int dd = cur.second;
+		if (xx == x && yy == y)
+		{
+			while (!CDQ.empty()) { CDQ.pop(); }
+			return dd;
+		}
+
 		for (register int d = 0; d < DIRECT; ++d)
 		{
-			int nx = x + dir[d][0];
-			int ny = y + dir[d][1];
+			int nx = xx + dir[d][0];
+			int ny = yy + dir[d][0];
 			if (nx < 0 || ny < 0 || nx >= N || ny >= N || check[nx][ny] || map[nx][ny] > baby_shark.size)
 				continue;
 			else
 			{
 				check[nx][ny] = true;
-				cal_dist(nx, ny, cnt + 1);
-				check[nx][ny] = false;
+				CDQ.push({ {nx, ny}, d + 1 });
 			}
 		}
 	}
@@ -84,10 +89,10 @@ inline fish find_fish()
 			if (map[cur_fish.first][cur_fish.second] < baby_shark.size)
 			{
 				(void)memset(check, false, sizeof(check));
-				check[cur_fish.first][cur_fish.second] = true;
-				shortest_dist = INF;
-				cal_dist(cur_fish.first, cur_fish.second, 0);
-				int cur_fish_dist = shortest_dist;
+				(void)memset(map_distance, 0, sizeof(map_distance));
+				//shortest_dist = INF;
+				//cal_dist(cur_fish.first, cur_fish.second);
+				int cur_fish_dist = cal_dist(cur_fish.first, cur_fish.second);
 				if (f.distance > cur_fish_dist)
 				{
 					if (f.x != INF && f.y != INF)
