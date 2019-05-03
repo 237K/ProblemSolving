@@ -4,7 +4,7 @@
 //
 //	[Algorithm Problem Solving]
 //
-//	BAEKJOON #17144	공기청정기 (2019상반기 삼성전자 SW역량테스트 1번문제)
+//	BAEKJOON #17144	공기청정기 (2019상반기 1번 문제)
 //
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -14,7 +14,6 @@
 #include <queue>
 using namespace std;
 typedef pair<int, int> coor;
-typedef pair<coor, int> coor_and_dust;
 const static int DIRECT = 4;
 const static int SIZE = 51;
 
