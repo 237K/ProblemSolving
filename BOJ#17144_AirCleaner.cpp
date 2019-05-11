@@ -4,7 +4,7 @@
 //
 //	[Algorithm Problem Solving]
 //
-//	BAEKJOON #17144	공기청정기 (2019상반기 1번 문제)
+//	BAEKJOON #17144	공기청정기
 //
 
 #define _CRT_SECURE_NO_WARNINGS
