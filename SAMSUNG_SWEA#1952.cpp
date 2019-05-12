@@ -12,6 +12,7 @@
 #include <memory.h>
 #include <algorithm>
 using namespace std;
+
 const static int YEAR = 13;
 const static int INF = 2147000000;
 static int plan[YEAR];
@@ -52,7 +53,6 @@ inline void simulation(int i, int count, int day, int o_month, int t_month)
 		cout << "**price : " << temp << '\n';
 		cout << "===========================\n";
 		*/
-
 		(void)memcpy(plan, cal, sizeof(plan));
 		(void)memset(check, 0, sizeof(check));
 		return;
@@ -61,7 +61,7 @@ inline void simulation(int i, int count, int day, int o_month, int t_month)
 		simulation(i + 1, count, day, o_month, t_month);
 	else
 	{
-		//	세 달 이용권
+		//	3달 이용권
 		if (plan[i] && !check[i])
 		{
 			if (i < YEAR - 2)
@@ -106,7 +106,7 @@ inline void simulation(int i, int count, int day, int o_month, int t_month)
 				check[i] = 0;
 			}
 		}
-		//	한 달 이용권
+		//	1달 이용권
 		if (plan[i] && price_one_month < price_three_month && !check[i])
 		{
 			int temp_usage = plan[i];
