@@ -6,7 +6,7 @@
 //
 //	SAMSUNG SW Expert Academy [#6808] <규영이와 인영이의 카드게임> (D3)
 //	
-//	ver2. 재귀로 풀어봄 ->
+//	ver2. 재귀로 풀어봄
 //
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -15,7 +15,7 @@
 using namespace std;
 
 const static int MAX = 19;
-const static int IRREVERSIBLE_SCORE = 171 / 2;		//결과를 뒤집을 수 없는 점수
+const static int IRREVERSIBLE_SCORE = 171 / 2;		//	결과를 뒤집을 수 없는 점수
 
 static bool Deck[MAX];
 static int In0Card[MAX / 2];
@@ -34,9 +34,9 @@ inline void Play(int game, int gyu0score, int in0score)
 	}
 	if (in0score > IRREVERSIBLE_SCORE || gyu0score > IRREVERSIBLE_SCORE)
 	{
-		//*****가장 핵심 부분*****//
-		//비가역적인 점수가 되서 승부를 결정할 때, 이후의 게임에 대한 승수 혹은 패배수를 더해줘야 함
-		//예를들어 5번째 게임에서 승부가 결정되면 남은 3번의 게임에서 나올 수 있는 경우의 수(3 * 2 * 1) 만큼 결과에 더해야 함
+		//	*****가장 핵심 부분*****	//
+		//	비가역적인 점수가 되서 승부를 결정할 때, 이후의 게임에 대한 승수 혹은 패배수를 더해줘야 함
+		//	예를들어 5번째 게임에서 승부가 결정되면 남은 3번의 게임에서 나올 수 있는 경우의 수(3 * 2 * 1) 만큼 결과에 더해야 함
 		int left_case = 1;
 		for (register int i = game; i < MAX / 2; ++i)
 		{
@@ -97,4 +97,3 @@ int main(int argc, char** argv)
 	}
 	return 0;
 }
-
