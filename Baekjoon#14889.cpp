@@ -8,21 +8,21 @@
 //
 
 #define _CRT_SECURE_NO_WARNINGS
-#include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 const static int MAX = 20;
 const static int INF = 2147000000;
 
-int Chart[MAX][MAX];
-bool Check[MAX];
-int N;
-int StartMember[MAX/2];
-int LinkMember[MAX/2];
-int Difference;
+static int Chart[MAX][MAX];
+static bool Check[MAX];
+static int N;
+static int StartMember[MAX/2];
+static int LinkMember[MAX/2];
+static int Difference;
 
-void ClearChart()
+inline void ClearChart()
 {
 	for (int r = 0; r < MAX; ++r)
 	{
@@ -36,7 +36,7 @@ void ClearChart()
 	}
 }
 
-void Pick(int cnt)
+inline void Pick(int cnt)
 {
 	if (cnt == N/2)
 	{
@@ -48,7 +48,7 @@ void Pick(int cnt)
 			if (Check[i] == false)
 			{
 				Check[i] = true;
-				LinkMember[idx] = i;			//Start팀 멤버가 아닌사람을 Link팀으로
+				LinkMember[idx] = i;			//	Start팀 멤버가 아닌사람을 Link팀으로
 				idx++;
 				continue;
 			}
@@ -66,28 +66,12 @@ void Pick(int cnt)
 			}
 		}
 
-		cout << "Start team : ";
-		for (int r = 0; r < N / 2; ++r)
-		{
-			cout << StartMember[r] << ' ';
-		}
-		cout << endl;
-		cout << "Start team Score : " << StartScore << endl;
-		cout << "Link team : ";
-		for (int r = 0; r < N / 2; ++r)
-		{
-			cout << LinkMember[r] << ' ';
-		}
-		cout << endl;
-		cout << "Link team Score : " << LinkScore << endl << endl;
-
 		int tempScore = abs(StartScore - LinkScore);
-		if (Difference > tempScore)
-			Difference = tempScore;
+		Difference = min(Difference, tempScore);
 
 		for (int init = 0; init < idx; ++init)
 		{
-			Check[LinkMember[init]] = false;	//Link팀 멤버로 넣었던 사람들 체크 해제
+			Check[LinkMember[init]] = false;	//	*Link팀 멤버로 넣었던 사람들 체크 해제
 		}
 		return;
 	}
@@ -98,7 +82,7 @@ void Pick(int cnt)
 			if (Check[i] == false)
 			{
 				Check[i] = true;
-				StartMember[cnt] = i;			//DFS로 Start팀 구성을 조합함
+				StartMember[cnt] = i;			//	Start팀 구성을 조합함
 				Pick(cnt + 1);
 				Check[i] = false;
 			}
@@ -108,24 +92,26 @@ void Pick(int cnt)
 
 int main(int argc, char** argv)
 {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
 	int T;
 	int test_case;
 	freopen("testcase_Baekjoon#14889.txt", "r", stdin);
-	scanf("%d", &T);
+	cin >> T;
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
 		ClearChart();
 		Difference = INF;
-		scanf("%d", &N);
+		cin >> N;
 		for (int r = 0; r < N; ++r)
 		{
 			for (int c = 0; c < N; ++c)
 			{
-				scanf("%d", &Chart[r][c]);
+				cin>>Chart[r][c];
 			}
 		}
 		Pick(0);
-		printf("#%d %d\n\n", test_case, Difference);
+		cout << "#" << test_case << ' ' << Difference << '\n';
 	}
 	return 0;
 }
