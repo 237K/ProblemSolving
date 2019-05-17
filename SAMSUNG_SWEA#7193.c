@@ -6,28 +6,28 @@
 //
 //	SAMSUNG SW Expert Academy [#7193] <승현이의 수학공부> (D3)
 //
-#define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
-#include <stdlib.h>
-#include <string.h>
-using namespace std;
 
-int main(int argc, char** argv)
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+int main(void)
 {
 	freopen("s_input7193.txt", "r", stdin);
-	int T;
-	register int test_case;
-	cin >> T;
+	setbuf(stdout, NULL);
+	int T, N;
+	register int test_case, X;
+	char in;
+	scanf("%d\n", &T);
 	for (test_case = 1; test_case <= T; ++test_case)
 	{
-		int N;
-		string X;
-		cin >> N >> X;
-		int X_size = X.length();
-		char X_char[X_size+1];
-		char *p_end;
-		strcpy(X_char, X, c_str());
-		int transform = (int)strtol(X_char, &p_end, N);
-		printf("#%d %d\n", test_case, transform % N);
+		scanf("%d ", &N);
+		X = 0;
+		while (1)
+		{
+			scanf("%c", &in);
+			if (in - '0' < 0) break;
+			else X += in - '0';
+		}
+		printf("#%d %d\n", test_case, X % (N-1));
 	}
+	return 0;
 }
