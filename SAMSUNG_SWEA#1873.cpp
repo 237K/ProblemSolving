@@ -19,6 +19,16 @@ static int dir[DIR][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
 static string order;
 static TANK tank;
 static int tank_dir;
+inline void init()
+{
+	register int r, c;
+	for (r = 0; r < SZ; ++r)
+		for (c = 0; c < SZ; ++c)
+			map[r][c] = ' ';
+	order.clear();
+	tank = { 0, 0 };
+	tank_dir = 0;
+}
 inline void find_tank()
 {
 	register int r, c;
@@ -108,7 +118,8 @@ int main(int argc, char** argv)
 	cin >> T;
 	for (tc = 1; tc <= T; ++tc)
 	{
-		cin >> H>> W;
+		init();
+		cin >> H >> W;
 		for (r = 0; r < H; ++r) cin >> map[r];
 		cin >> N;
 		cin >> order;
