@@ -40,9 +40,14 @@ inline void find_tank()
 		}
 		if (flag) break;
 	}
+	map[tank.first][tank.second] = '.';
 }
 inline void print()
 {
+	if (tank_dir == 0) map[tank.first][tank.second] = '^';
+	else if (tank_dir == 1) map[tank.first][tank.second] = 'v';
+	else if (tank_dir == 2) map[tank.first][tank.second] = '<';
+	else map[tank.first][tank.second] = '>';
 	register int r, c;
 	for (r = 0; r < H; ++r)
 	{
@@ -75,10 +80,10 @@ inline void simulation()
 		else if (order[i] == 'R') move(3);
 		else
 		{
+			cr = tank.first;
+			cc = tank.second;
 			while (1)
 			{
-				cr = tank.first;
-				cc = tank.second;
 				nr = cr + dir[tank_dir][0];
 				nc = cc + dir[tank_dir][1];
 				if (nr < 0 || nc < 0 || nr >= N || nc >= N || map[nr][nc] == '#') break;
@@ -87,8 +92,8 @@ inline void simulation()
 					map[nr][nc] = '.';
 					break;
 				}
-				tank.first = nr;
-				tank.second = nc;
+				cr = nr;
+				cc = nc;
 			}
 		}
 	}
@@ -103,7 +108,7 @@ int main(int argc, char** argv)
 	cin >> T;
 	for (tc = 1; tc <= T; ++tc)
 	{
-		cin >> H, W;
+		cin >> H>> W;
 		for (r = 0; r < H; ++r) cin >> map[r];
 		cin >> N;
 		cin >> order;
