@@ -14,6 +14,7 @@ using namespace std;
 static string inorder, postorder;
 static int N;
 static stack<char> S;
+static stack<int> SI;
 inline void change_to_postorder()
 {
 	while (!S.empty()) { S.pop(); }
@@ -97,6 +98,33 @@ inline void change_to_postorder()
 		S.pop();
 	}
 }
+inline int cal()
+{
+	while (!SI.empty()) { SI.pop(); }
+	register int ret, len, i, left, right;
+	len = postorder.length();
+	for (i = 0; i < len; ++i)
+	{
+		char cur = postorder[i];
+		if (cur == '+' || cur == '*')
+		{
+			right = SI.top();
+			SI.pop();
+			left = SI.top();
+			SI.pop();
+			if (cur == '+') ret = left + right;
+			else ret = left * right;
+			SI.push(ret);
+		}
+		else
+		{
+			SI.push(cur - '0');
+		}
+	}
+	ret = SI.top();
+	SI.pop();
+	return ret;
+}
 int main(int argc, char** argv)
 {
 	freopen("s_input1224.txt", "r", stdin);
@@ -108,7 +136,7 @@ int main(int argc, char** argv)
 		cin >> N;
 		cin >> inorder;
 		change_to_postorder();
-		cout << "#" << tc << ' ' << postorder << '\n';
+		cout << "#" << tc << ' ' << cal() << '\n';
 	}
 	return 0;
 }
