@@ -48,38 +48,33 @@ inline void init()
 }
 inline int simul()
 {
-	register int time = 0, cr, cc, nr, nc, order_idx = 0, a;
-	bool apple_flag;
+	register int time = 0, cr, cc, nr, nc, order_idx = 0, a, len = 1;
 	map[snake_loc.first][snake_loc.second] = 1;
 	while (1)
 	{
 		time++;
-		cout << "time : " << time << "\n\n";
-		print();
 		cr = snake_loc.first;
 		cc = snake_loc.second;
+		nr = cr + dir[snake_dir][0];
+		nc = cc + dir[snake_dir][1];
+		if (nr < 1 || nc < 1 || nr > N || nc > N || (len >= 3 && map[nr][nc] && map[nr][nc] > map[cr][cc] - len)) break;
+		for (a = 0; a < K; ++a)
+		{
+			if (apple[a].first == nr && apple[a].second == nc)
+			{
+				apple[a] = { -1, -1 };
+				len++;
+				break;
+			}
+		}
+		map[nr][nc] = time;
+		snake_loc = { nr, nc };
 		if (order_time[order_idx] == time)
 		{
 			if (order[order_idx] == 'L') snake_dir = (snake_dir + 3) % 4;
 			else snake_dir = (snake_dir + 1) % 4;
 			order_idx++;
 		}
-		nr = cr + dir[snake_dir][0];
-		nc = cc + dir[snake_dir][1];
-		if (nr < 1 || nc < 1 || nr > N || nc > N || map[nr][nc]) break;
-		apple_flag = false;
-		for (a = 0; a < K; ++a)
-		{
-			if (apple[a].first == nr && apple[a].second == nc)
-			{
-				apple_flag = true;
-				apple[a] = { -1, -1 };
-				break;
-			}
-		}
-		if (!apple_flag) map[cr][cc] = 0;
-		map[nr][nc] = 1;
-		snake_loc = { nr, nc };
 	}
 	return time;
 }
