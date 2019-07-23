@@ -22,19 +22,19 @@ static pii robot_loc;
 static int robot_dir;
 static int N, M, init_r, init_c, init_d;
 
-inline void print()
-{
-	register int r, c;
-	for (r = 0; r < N; ++r)
-	{
-		for (c = 0; c < M; ++c)
-		{
-			cout << map[r][c] << ' ';
-		}
-		cout << "\n\n";
-	}
-	cout << "====================================\n\n";
-}
+//inline void print()
+//{
+//	register int r, c;
+//	for (r = 0; r < N; ++r)
+//	{
+//		for (c = 0; c < M; ++c)
+//		{
+//			cout << map[r][c] << ' ';
+//		}
+//		cout << "\n\n";
+//	}
+//	cout << "====================================\n\n";
+//}
 inline int simul()
 {
 	register int cr, cc, nr, nc, nd, ret = 0, cnt;
