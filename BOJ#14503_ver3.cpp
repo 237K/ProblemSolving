@@ -22,10 +22,23 @@ static pii robot_loc;
 static int robot_dir;
 static int N, M, init_r, init_c, init_d;
 
+inline void print()
+{
+	register int r, c;
+	for (r = 0; r < N; ++r)
+	{
+		for (c = 0; c < M; ++c)
+		{
+			cout << map[r][c] << ' ';
+		}
+		cout << "\n\n";
+	}
+	cout << "====================================\n\n";
+}
 inline int simul()
 {
-	register int cr, cc, nr, nc, d, nd, ret = 0, cnt;
-	bool back_flag;
+	register int cr, cc, nr, nc, nd, ret = 0, cnt;
+	bool back_flag, end_flag;
 	while (1)
 	{
 		cr = robot_loc.first;
@@ -36,15 +49,17 @@ inline int simul()
 			ret++;
 		}
 		cnt = back_flag = end_flag = 0;
-		for (d = 0; d < DIR; ++d)
+		while (1)
 		{
-			nd = (d + 3) % 4;
+			cr = robot_loc.first;
+			cc = robot_loc.second;
+			nd = (robot_dir + 3) % 4;
+			robot_dir = nd;
 			nr = cr + dir[nd][0];
-			nc = cc + dir[nc][1];
+			nc = cc + dir[nd][1];
 			if (nr < 1 || nc < 1 || nr > N - 2 || nc > N - 2 || map[nr][nc])
 			{
-				cnt++;
-				if (cnt == 4)
+				if (++cnt == 4)
 				{
 					back_flag = true;
 					break;
@@ -52,15 +67,17 @@ inline int simul()
 				else continue;
 			}
 			robot_loc = { nr, nc };
-			robot_dir = nd;
 			break;
 		}
+		print();
 		if (back_flag)
 		{
 			nd = (robot_dir + 2) % 4;
-			nr = robot_loc.first + dir[nd][0];
-			nc = robot_loc.second + dir[nd][1];
-			if (nr < 1 || nc < 1 || nr > N - 2 || nc > N - 2 || map[nr][nc] == 1) break;
+			cr = robot_loc.first;
+			cc = robot_loc.second;
+			nr = cr + dir[nd][0];
+			nc = cc + dir[nd][1];
+			if (map[nr][nc] == 1) break;
 			robot_loc = { nr, nc };
 		}
 	}
@@ -72,14 +89,14 @@ int main(int argc, char** argv)
 	freopen("input14503.txt", "r", stdin);
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
-	(void)memset(map, 1, sizeof(map));
+	(void)memset(map, 0, sizeof(map));
 	register int r, c;
 	cin >> N >> M >> init_r >> init_c >> init_d;
 	robot_loc = { init_r, init_c };
 	robot_dir = init_d;
-	for (r = 1; r < N-1; ++r)
-		for (c = 1; c < M-1; ++c)
+	for (r = 0; r < N; ++r)
+		for (c = 0; c < M; ++c)
 			cin >> map[r][c];
-	
+	cout << simul();
 	return 0;
 }
