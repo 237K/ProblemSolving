@@ -14,7 +14,7 @@
 #include <vector>
 using namespace std;
 typedef pair<int, int> pii;
-const static int SZ = 100;
+const static int SZ = 101;
 const static int DIR = 4;
 const static int DIR_CHECK = 3;
 static int dir_check[DIR_CHECK][2] = { {0, 1}, {1, 0}, {1, 1} };
@@ -34,8 +34,6 @@ inline void dragon_curve(int r, int c, int d, int g)
 			dc.push_back((dc[i] + 1) % 4);
 	}
 	sz = dc.size();
-	for (i = 0; i < sz; ++i) cout << dc[i] << ' ';
-	cout << "\n\n";
 	map[r][c] = 1;
 	for (i = 0; i < sz; ++i)
 	{
