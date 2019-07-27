@@ -47,11 +47,13 @@ inline int simul()
 		if (cnt != M) continue;
 		for (flag = 0; flag < K; ++flag)
 		{
+			cout << flag << ' ';
 			if (mask & (1 << flag))
 			{
 				dist += cal_dist(chicken[flag].first, chicken[flag].second);
 			}
 		}
+		cout << "\n\n";
 		if (ret > dist) ret = dist;
 	}
 	return ret;
@@ -62,7 +64,7 @@ int main(int argc, char** argv)
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
 	cin >> N >> M;
-	register int r, c, K = 0;
+	register int r, c;
 	for (r = 0; r < N; ++r)
 	{
 		for (c = 0; c < N; ++c)
@@ -72,6 +74,6 @@ int main(int argc, char** argv)
 			else if (map[r][c] == 2) chicken[K++] = { r, c };
 		}
 	}
-	cout << simul();
+	cout << simul()<<"\n\n";
 	return 0;
 }
