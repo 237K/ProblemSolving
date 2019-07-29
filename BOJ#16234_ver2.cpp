@@ -22,17 +22,6 @@ static int N, L, R;
 static int map[SZ][SZ];
 static int check[SZ][SZ];
 static vector<pii> V[SZ * SZ];
-inline void print()
-{
-	register int r, c;
-	for (r = 0; r < N; ++r)
-	{
-		for (c = 0; c < N; ++c)
-			cout << map[r][c] << ' ';
-		cout << "\n\n";
-	}
-	cout << "\n\n";
-}
 inline int simul()
 {
 	register int i, r, c, cr, cc, nr, nc, d, tmp, num_group = 1, ret = 0;
@@ -40,7 +29,6 @@ inline int simul()
 	queue<pii> Q;
 	while (1)
 	{
-		print();
 		for (i = 0; i < N * N; ++i) V[i].clear();
 		(void)memset(check, 0, sizeof(check));
 		flag = false;
@@ -85,15 +73,9 @@ inline int simul()
 			if (V[i].size() > 1)
 			{
 				int sum = 0, sz = V[i].size(), tmp;
-				for (register int s = 0; s < sz; ++s)
-				{
-					sum += map[V[i][s].first][V[i][s].second];
-				}
+				for (register int s = 0; s < sz; ++s) sum += map[V[i][s].first][V[i][s].second];
 				tmp = sum / sz;
-				for (register int s = 0; s < sz; ++s)
-				{
-					map[V[i][s].first][V[i][s].second] = tmp;
-				}
+				for (register int s = 0; s < sz; ++s) map[V[i][s].first][V[i][s].second] = tmp;
 			}
 		}
 	}
