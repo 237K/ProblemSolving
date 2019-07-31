@@ -13,7 +13,7 @@
 #include <memory.h>
 using namespace std;
 typedef pair<int, int> pii;
-
+typedef pair<pii, int> loc_and_dist;
 const static int SZ = 21;
 const static int DIR = 4;
 static int dir[DIR][2] = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} };
@@ -30,7 +30,7 @@ private:
 public:
 	int size;
 public:
-	SHARK(int r = 0, int c = 0, int s = 1, int f = 0);
+	SHARK(int r = 0, int c = 0, int s = 2, int f = 0);
 	pii get_shark_loc();
 	void move(int r, int c);
 	void print();
@@ -40,10 +40,10 @@ pii SHARK::get_shark_loc() { return { rpos, cpos }; }
 void SHARK::move(int r, int c)
 {
 	rpos = r; cpos = c;
-	if (map[rpos][cpos] && map[rpos][cpos] < size)
+	if (map[r][c] && map[r][c] < size)
 	{
 		feed++;
-		map[rpos][cpos] = 0;
+		map[r][c] = 0;
 	}
 	if (feed == size)
 	{
@@ -63,34 +63,36 @@ void SHARK::print()
 		}
 		cout << "\n\n";
 	}
+	cout << "============================\n\n";
 }
-SHARK shark(0, 0, 1, 0);
+SHARK shark(0, 0, 2, 0);
 /////////////////////////////////////////////////////////////////////////////////////////
 inline int find_fish()
 {
 	(void)memset(check, 0, sizeof(check));
-	register int dist = 0, d, nr, nc;
-	queue<pii> Q;
+	register int d, nr, nc;
+	queue<loc_and_dist> Q;
 	pii start_loc = shark.get_shark_loc();
-	Q.push(start_loc);
-	map[start_loc.first][start_loc.second] = 1;
+	Q.push({ start_loc, 0 });
+	check[start_loc.first][start_loc.second] = 1;
 	while (!Q.empty())
 	{
-		pii cur = Q.front();
+		loc_and_dist cur = Q.front();
+		pii cur_loc = cur.first;
+		int cur_dist = cur.second;
 		Q.pop();
-		if (map[cur.first][cur.second] && map[cur.first][cur.second] < shark.size)
+		if (map[cur_loc.first][cur_loc.second] && map[cur_loc.first][cur_loc.second] < shark.size)
 		{
-			shark.move(cur.first, cur.second);
-			return dist;
+			shark.move(cur_loc.first, cur_loc.second);
+			return cur_dist;
 		}
-		dist++;
 		for (d = 0; d < DIR; ++d)
 		{
-			nr = cur.first + dir[d][0];
-			nc = cur.second + dir[d][1];
+			nr = cur_loc.first + dir[d][0];
+			nc = cur_loc.second + dir[d][1];
 			if (nr < 0 || nc < 0 || nr >= N || nc >= N || check[nr][nc] || map[nr][nc] > shark.size) continue;
 			check[nr][nc] = 1;
-			Q.push({ nr, nc });
+			Q.push({ {nr, nc}, cur_dist+1 });
 		}
 	}
 	while (!Q.empty()) { Q.pop(); }
@@ -98,13 +100,14 @@ inline int find_fish()
 }
 inline int simul()
 {
-	register int r, c, ret = 0, tmp;
+	register int ret = 0, tmp;
 	while (1)
 	{
 		shark.print();
 		tmp = find_fish();
 		if (tmp == -1) break;
 		ret += tmp;
+		cout << "time : " << ret << "\n=========================================\n\n";
 	}
 	return ret;
 }
