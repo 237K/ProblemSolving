@@ -12,12 +12,12 @@
 #include <stdio.h>
 int num[12];
 char fix[11];
-int N, plus, minus, mul, div, max_value, min_value;
+int N, max_value, min_value;
 void print()
 {
 	register int i;
-	printf("%d", num[0]);
-	for (i = 1; i < N; ++i) printf(" %d %c ", num[i], fix[i - 1]);
+	for (i = 0; i < N - 1; ++i) printf("%d %c ", num[i], fix[i]);
+	printf("%d = ", num[N-1]);
 }
 int operation(int left, char op, int right)
 {
@@ -37,8 +37,8 @@ void simul(int cnt, int plus, int minus, int mul, int div)
 {
 	if (cnt == N - 1)
 	{
-		print();
 		int tmp = cal();
+		//print(); printf("%d\n\n", tmp);
 		if (max_value < tmp) max_value = tmp;
 		if (min_value > tmp) min_value = tmp;
 		return;
@@ -67,11 +67,12 @@ void simul(int cnt, int plus, int minus, int mul, int div)
 int main(void)
 {
 	freopen("input14888.txt", "r", stdin);
-	register int i, j;
+	int i, plus, minus, mul, div;
 	max_value = 0; min_value = 2147000000;
 	scanf("%d", &N);
 	for (i = 0; i < N; ++i) scanf("%d", &num[i]);
 	scanf("%d %d %d %d", &plus, &minus, &mul, &div);
 	simul(0, plus, minus, mul, div);
+	printf("%d\n%d", max_value, min_value);
 	return 0;
 }
