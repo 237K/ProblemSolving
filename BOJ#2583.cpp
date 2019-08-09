@@ -27,7 +27,7 @@ inline void sep()
 	for (k = 0; k < K; ++k)
 		for (r = 0; r < M; ++r)
 			for (c = 0; c < N; ++c)
-				if (r >= ld_row[k] && r <= ru_row[k] && c >= ld_col[k] && c <= ru_col[k])
+				if (r >= ld_row[k] && r < ru_row[k] && c >= ld_col[k] && c < ru_col[k])
 					map[r][c] = 1;
 }
 inline void find()
@@ -43,6 +43,7 @@ inline void find()
 				num_area++;
 				size_area = 1;
 				ST.push({ r, c });
+				map[r][c] = num_area;
 				while (!ST.empty())
 				{
 					pii cur = ST.top();
@@ -70,7 +71,7 @@ int main(int argc, char** argv)
 	cin.tie(NULL);
 	register int k;
 	(void)memset(map, 0, sizeof(map)); area.clear(); num_area = 0;
-	cin >> N >> M >> K;
+	cin >> M >> N >> K;
 	for (k = 0; k < K; ++k)	cin >> ld_col[k] >> ld_row[k] >> ru_col[k] >> ru_row[k];
 	sep(); find();
 	cout << num_area << '\n';
