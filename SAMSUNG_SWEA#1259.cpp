@@ -23,8 +23,8 @@ inline void comb(int cnt, int len)
 	}
 	if (cnt == len)
 	{
-		for (register int p = 0; p < cnt; ++p) cout << comb_idx[p] << ' ';
-		cout << "\n\n";
+		//for (register int p = 0; p < cnt; ++p) cout << comb_idx[p] << ' ';
+		//cout << "\n\n";
 		flag = 1;
 		for (register int c = 0; c < cnt-1; ++c)
 		{
