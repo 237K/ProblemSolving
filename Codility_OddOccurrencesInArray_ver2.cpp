@@ -9,9 +9,9 @@
 //	ver.2
 //
 
-
 #include <algorithm>
-int solution(vector<int>& A) {
+int solution(vector<int>& A)
+{
 	register int i, sz, cnt, ret;
 	sz = A.size();
 	sort(A.begin(), A.end());
