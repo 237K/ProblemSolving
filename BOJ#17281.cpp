@@ -6,6 +6,8 @@
 //
 //	BAEKJOON #17281 야구
 //
+//	ver.1 완전탐색
+//
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -42,7 +44,7 @@ inline int cal_score()
 					}
 				}
 				if (cur == 4) score++;
-				base[cur] = 1;
+				else base[cur] = 1;
 			}
 			j++;
 			if (out == 3) break;
