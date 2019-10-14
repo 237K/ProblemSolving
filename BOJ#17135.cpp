@@ -6,6 +6,18 @@
 //
 //	BAEKJOON #17135 캐슬 디펜스
 //
+//
+//	<반례>
+//	5 5 2
+//	1 0 1 1 1
+//	0 1 1 1 1
+//	1 0 1 0 1
+//	1 1 0 1 0
+//	1 0 1 0 1
+//	정답 14
+//	**한 턴에 다른 궁수가 같은 표적을 향해 쏠 수 있음
+//	**한 턴에 거리가 같은 표적이 여러개일 경우 왼쪽에 있는 표적을 쏨
+//	
 
 #include <iostream>
 #include <memory.h>
@@ -58,7 +70,7 @@ inline int simul()
 						d = dr + dc;
 						if (d <= D && d <= target_dist[a])
 						{
-							if (target_c[a] >= 0 && target_c[a] < c) continue;
+							if (d == target_dist[a] && target_c[a] >= 0 && target_c[a] < c) continue;
 							target_dist[a] = d;
 							target_r[a] = r;
 							target_c[a] = c;
@@ -78,6 +90,7 @@ inline int simul()
 				cnt++;
 			}
 		}
+		//print();
 	}
 	return cnt;
 }
