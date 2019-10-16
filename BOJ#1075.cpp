@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 {
 	freopen("input1075.txt", "r", stdin);
 	ios::sync_with_stdio(false);
-	cin.tie(NULL);
+	cin.tie(NULL);20
 	cin >> N;
 	cin >> F;
 	simul();
