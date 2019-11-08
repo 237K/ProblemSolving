@@ -22,12 +22,12 @@ inline void dfs(int cnt, int idx, int n)
 	{
 		for (register int i = 0; i < cnt; ++i)
 		{
-			int cur = upper[i];
+			int cur = upper[i]-1;
 			lower[i] = arr[cur];
 		}
 		sort(lower.begin(), lower.end());
 		flag = 1;
-		for (register int i = 1; i <= n; ++i)
+		for (register int i = 0; i < n; ++i)
 		{
 			if (upper[i] != lower[i])
 			{
@@ -38,7 +38,7 @@ inline void dfs(int cnt, int idx, int n)
 		if (flag)
 		{
 			ret_num = n;
-			for (register int i = 1; i <= n; ++i)
+			for (register int i = 0; i < n; ++i)
 			{
 				ret[i] = lower[i];
 			}
@@ -57,7 +57,10 @@ inline void simul()
 	for (i = N; i > 0; --i)
 	{
 		dfs(0, 1, i);
+		if (ret_num) break;
 	}
+	cout << ret_num << '\n';
+	for (i = 0; i < ret_num; ++i) cout << ret[i] << '\n';
 }
 int main(int argc, char** argv)
 {
@@ -65,12 +68,14 @@ int main(int argc, char** argv)
 	ios::sync_with_stdio(false);
 	cin.tie(NULL);
 	register int n;
+	ret_num = 0;
 	cin >> N;
-	upper.resize(N+1, 0);
-	lower.resize(N+1, 0);
-	for (n = 1; n <= N; ++n)
+	upper.resize(N, 0);
+	lower.resize(N, 0);
+	for (n = 0; n < N; ++n)
 	{
 		cin >> arr[n];
 	}
+	simul();
 	return 0;
 }
