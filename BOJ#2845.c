@@ -6,7 +6,6 @@
 //
 //	BAEKJOON #2845	파티가 끝나고 난 뒤
 //
-//
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
