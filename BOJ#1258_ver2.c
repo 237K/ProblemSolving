@@ -7,8 +7,7 @@
 //	[브루트포스]	<BOJ #1258>	문제 할당
 //
 //	ver.2
-//	
-
+//
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <memory.h>
