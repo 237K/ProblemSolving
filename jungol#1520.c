@@ -18,12 +18,12 @@ void recur(int cur, int flag, int sum)
 			ret = sum;
 		return;
 	}
-	if (flag < 3)
+	if (flag < 2)
 	{
-		recur(cur + 1, flag + 1, sum + arr[cur]);
-		recur(cur + 2, 1, sum + arr[cur]);
+		recur(cur + 1, flag + 1, sum + arr[cur+1]);
+		recur(cur + 2, 1, sum + arr[cur+2]);
 	}
-	else recur(cur + 2, 1, sum + arr[cur]);
+	else recur(cur + 2, 1, sum + arr[cur+2]);
 }
 int main(void)
 {
@@ -35,7 +35,7 @@ int main(void)
 	{
 		scanf("%d", &arr[n]);
 	}
-	recur(-1, 1, 0);
+	recur(-1, 0, 0);
 	printf("%d", ret);
 	return 0;
 }
