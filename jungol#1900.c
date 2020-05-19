@@ -17,8 +17,11 @@ int main(void)
 		if (i % 2)
 		{
 			sum += i;
-			printf("%d")
+			printf("%d", i);
+			if (i + 1 >= N) printf("=");
+			else printf("+");
 		}
 	}
+	printf("%d", sum);
 	return 0;
 }
